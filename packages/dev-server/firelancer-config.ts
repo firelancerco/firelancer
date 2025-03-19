@@ -35,7 +35,7 @@ export const config: FirelancerConfig = {
     plugins: [
         AssetServerPlugin.init({
             route: 'assets',
-            assetUploadDir: path.join(__dirname, '../static/assets'),
+            assetUploadDir: path.join(__dirname, './static/assets'),
             assetUrlPrefix: process.env.IS_DEV ? undefined : 'https://www.my-shop.com/assets/',
         }),
         DefaultJobQueuePlugin.init({
