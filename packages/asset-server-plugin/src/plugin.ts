@@ -141,7 +141,7 @@ async function getFileType(buffer: Buffer) {
 @FirelancerPlugin({
     imports: [PluginCommonModule],
     configuration: config => AssetServerPlugin.configure(config),
-    compatibility: '^0.0.0',
+    compatibility: '>=1.0.0',
 })
 export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
     private static assetStorage: AssetStorageStrategy;

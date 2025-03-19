@@ -186,7 +186,7 @@ export interface DefaultJobQueueOptions {
         }
         return config;
     },
-    compatibility: '^0.0.0',
+    compatibility: '>=1.0.0',
 })
 export class DefaultJobQueuePlugin {
     static options: DefaultJobQueueOptions = {};

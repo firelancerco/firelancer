@@ -87,7 +87,7 @@ export interface AdminUiPluginOptions {
 @FirelancerPlugin({
     imports: [PluginCommonModule],
     adminApiExtensions: {},
-    compatibility: '^0.0.0',
+    compatibility: '>=1.0.0',
 })
 export class AdminUiPlugin implements NestModule {
     private static options: AdminUiPluginOptions | undefined;
