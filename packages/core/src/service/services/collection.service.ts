@@ -7,8 +7,8 @@ import { In } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils.js';
 import { RelationPaths } from '../../api';
 import {
-    IllegalOperationError,
-    InternalServerError,
+    IllegalOperationException,
+    InternalServerException,
     ListQueryOptions,
     RequestContext,
     SerializedRequestContext,
@@ -447,7 +447,7 @@ export class CollectionService implements OnModuleInit {
         const descendants = await this.getDescendants(ctx, input.collectionId);
 
         if (idsAreEqual(input.parentId, target.id) || descendants.some(cat => idsAreEqual(input.parentId, cat.id))) {
-            throw new IllegalOperationError('error.cannot-move-collection-into-self');
+            throw new IllegalOperationException('error.cannot-move-collection-into-self');
         }
 
         let siblings = await this.connection
@@ -724,7 +724,7 @@ export class CollectionService implements OnModuleInit {
             .getRepository(Collection)
             .metadata.relations.find(r => r.propertyName === relationName);
         if (!relation || typeof relation.type === 'string' || relation.type !== entityType) {
-            throw new InternalServerError('error.could-not-find-matching-relation');
+            throw new InternalServerException('error.could-not-find-matching-relation');
         }
 
         return relationName;

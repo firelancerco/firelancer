@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InternalServerError } from '../../common/error/errors';
+import { InternalServerException } from '../../common/error/errors';
 import { Logger } from '../../config';
 import { ConfigService } from '../../config/config.service';
 import { Job } from '../job';
@@ -24,7 +24,7 @@ export class JobBufferService {
     addBuffer(buffer: JobBuffer<any>) {
         const idAlreadyExists = Array.from(this.buffers).find(p => p.id === buffer.id);
         if (idAlreadyExists) {
-            throw new InternalServerError(
+            throw new InternalServerException(
                 `There is already a JobBufferProcessor with the id "${buffer.id}". Ids must be unique`,
             );
         }

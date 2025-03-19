@@ -1,6 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { DateUtils } from 'typeorm/util/DateUtils';
-import { InternalServerError, UserInputError } from '../../../common/error/errors';
+import { InternalServerException, UserInputException } from '../../../common/error/errors';
 import { assertNever } from '@firelancerco/common/lib/shared-utils';
 import {
     BooleanOperators,
@@ -70,7 +70,7 @@ export function parseFilterParams<
             } else if (customPropertyMap?.[key]) {
                 fieldName = customPropertyMap[key];
             } else {
-                throw new UserInputError('error.invalid-filter-field');
+                throw new UserInputException('error.invalid-filter-field');
             }
             const condition = buildWhereCondition(fieldName, operator as Operator, operand, argIndex, dbType);
             output.push(condition);
@@ -243,6 +243,6 @@ function getRegexpClause(fieldName: string, argIndex: number, dbType: DataSource
         // function. See https://github.com/mapbox/node-sqlite3/issues/140
         case 'sqlite':
         default:
-            throw new InternalServerError(`The 'regex' filter is not available when using the '${dbType}' driver`);
+            throw new InternalServerException(`The 'regex' filter is not available when using the '${dbType}' driver`);
     }
 }

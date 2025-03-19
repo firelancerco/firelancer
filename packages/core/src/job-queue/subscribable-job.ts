@@ -1,7 +1,7 @@
 import { notNullOrUndefined, pick } from '@firelancerco/common/lib/shared-utils';
 import { interval, Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, takeWhile, tap } from 'rxjs/operators';
-import { InternalServerError } from '../common';
+import { InternalServerException } from '../common';
 import { JobState } from '../common/shared-schema';
 import { isInspectableJobQueueStrategy } from '../config/strategies/job-queue/inspectable-job-queue-strategy';
 import { JobQueueStrategy } from '../config/strategies/job-queue/job-queue-strategy';
@@ -71,7 +71,7 @@ export class SubscribableJob<T extends JobData<T> = any> extends Job<T> {
         const timeoutMs = Math.max(pollInterval, options?.timeoutMs ?? ms('1h'));
         const strategy = this.jobQueueStrategy;
         if (!isInspectableJobQueueStrategy(strategy)) {
-            throw new InternalServerError(
+            throw new InternalServerException(
                 `The configured JobQueueStrategy (${strategy.constructor.name}) is not inspectable, so Job updates cannot be subscribed to`,
             );
         } else {

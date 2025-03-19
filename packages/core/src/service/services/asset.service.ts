@@ -11,7 +11,7 @@ import { Readable, Stream } from 'stream';
 import { FindOneOptions, In, IsNull } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils';
 import { RelationPaths } from '../../api';
-import { InternalServerError, ListQueryOptions, RequestContext } from '../../common';
+import { InternalServerException, ListQueryOptions, RequestContext } from '../../common';
 import { AssetType, CreateAssetInput, ID, UpdateAssetInput } from '../../common/shared-schema';
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
@@ -149,7 +149,7 @@ export class AssetService {
         input: EntityAssetInput,
     ): Promise<T> {
         if (!entity.id) {
-            throw new InternalServerError('error.entity-must-have-an-id');
+            throw new InternalServerException('error.entity-must-have-an-id');
         }
         const { assetIds } = input;
 
@@ -359,7 +359,7 @@ export class AssetService {
                       : RequestContext.empty();
             return this.createAssetInternal(ctx, stream, filename, mimetype);
         } else {
-            throw new InternalServerError('error.path-should-be-a-string-got-buffer');
+            throw new InternalServerException('error.path-should-be-a-string-got-buffer');
         }
     }
 
@@ -448,7 +448,7 @@ export class AssetService {
             .getRepository(ctx, entity.constructor)
             .metadata.relations.find(r => r.propertyName === 'assets');
         if (!assetRelation || typeof assetRelation.type === 'string') {
-            throw new InternalServerError('error.could-not-find-matching-orderable-asset');
+            throw new InternalServerException('error.could-not-find-matching-orderable-asset');
         }
         return assetRelation.type as Type<OrderableAsset>;
     }

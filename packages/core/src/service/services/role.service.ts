@@ -11,11 +11,11 @@ import { Injectable } from '@nestjs/common';
 import { RelationPaths } from '../../api';
 import { RequestContextCacheService } from '../../cache';
 import {
-    EntityNotFoundError,
-    InternalServerError,
+    EntityNotFoundException,
+    InternalServerException,
     ListQueryOptions,
     RequestContext,
-    UserInputError,
+    UserInputException,
 } from '../../common';
 import { getAllPermissionsMetadata } from '../../common/constants';
 import { CreateRoleInput, ID, Permission, UpdateRoleInput } from '../../common/shared-schema';
@@ -102,10 +102,10 @@ export class RoleService {
         this.checkPermissionsAreValid(input.permissions);
         const role = await this.findOne(ctx, input.id);
         if (!role) {
-            throw new EntityNotFoundError('Role', input.id);
+            throw new EntityNotFoundException('Role', input.id);
         }
         if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === SELLER_ROLE_CODE || role.code === BUYER_ROLE_CODE) {
-            throw new InternalServerError('error.cannot-modify-role');
+            throw new InternalServerException('error.cannot-modify-role');
         }
         const updatedRole = patchEntity(role, {
             code: input.code,
@@ -120,10 +120,10 @@ export class RoleService {
     async delete(ctx: RequestContext, id: ID): Promise<void> {
         const role = await this.findOne(ctx, id);
         if (!role) {
-            throw new EntityNotFoundError('Role', id);
+            throw new EntityNotFoundException('Role', id);
         }
         if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === SELLER_ROLE_CODE || role.code === BUYER_ROLE_CODE) {
-            throw new InternalServerError('error.cannot-delete-role');
+            throw new InternalServerException('error.cannot-delete-role');
         }
         await this.connection.getRepository(ctx, Role).remove(role);
         await this.eventBus.publish(new RoleEvent(ctx, role, 'deleted', id));
@@ -136,7 +136,7 @@ export class RoleService {
     async getSuperAdminRole(ctx?: RequestContext): Promise<Role> {
         return this.getRoleByCode(ctx, SUPER_ADMIN_ROLE_CODE).then(role => {
             if (!role) {
-                throw new InternalServerError('error.super-admin-role-not-found');
+                throw new InternalServerException('error.super-admin-role-not-found');
             }
             return role;
         });
@@ -149,7 +149,7 @@ export class RoleService {
     async getBuyerRole(ctx?: RequestContext): Promise<Role> {
         return this.getRoleByCode(ctx, BUYER_ROLE_CODE).then(role => {
             if (!role) {
-                throw new InternalServerError('error.buyer-role-not-found');
+                throw new InternalServerException('error.buyer-role-not-found');
             }
             return role;
         });
@@ -162,7 +162,7 @@ export class RoleService {
     async getSellerRole(ctx?: RequestContext): Promise<Role> {
         return this.getRoleByCode(ctx, SELLER_ROLE_CODE).then(role => {
             if (!role) {
-                throw new InternalServerError('error.seller-role-not-found');
+                throw new InternalServerException('error.seller-role-not-found');
             }
             return role;
         });
@@ -183,7 +183,7 @@ export class RoleService {
         const allAssignablePermissions = this.getAllAssignablePermissions();
         for (const permission of permissions) {
             if (!allAssignablePermissions.includes(permission) || permission === Permission.SuperAdmin) {
-                throw new UserInputError('error.permission-invalid');
+                throw new UserInputException('error.permission-invalid');
             }
         }
     }

@@ -1,6 +1,6 @@
 import date from 'date-fns';
 import { Check, Column, DeepPartial, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { Calculated, UserInputError } from '../../common';
+import { Calculated, UserInputException } from '../../common';
 import { BalanceEntryStatus, BalanceEntryType, CurrencyCode, ID } from '../../common/shared-schema';
 import { FirelancerEntity } from '../base/base.entity';
 import { Customer } from '../customer/customer.entity';
@@ -98,19 +98,19 @@ export class BalanceEntry extends FirelancerEntity {
 
     validate() {
         if (this.debit < 0) {
-            throw new UserInputError('entry.debit-cannot-be-negative-number');
+            throw new UserInputException('entry.debit-cannot-be-negative-number');
         }
 
         if (this.credit < 0) {
-            throw new UserInputError('entry.credit-cannot-be-negative-number');
+            throw new UserInputException('entry.credit-cannot-be-negative-number');
         }
 
         if (!Number.isInteger(this.debit)) {
-            throw new UserInputError('entry.debit-must-be-integer-number');
+            throw new UserInputException('entry.debit-must-be-integer-number');
         }
 
         if (!Number.isInteger(this.credit)) {
-            throw new UserInputError('entry.credit-must-be-integer-number');
+            throw new UserInputException('entry.credit-must-be-integer-number');
         }
     }
 }

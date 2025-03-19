@@ -7,7 +7,7 @@ import {
     MutationAuthenticateArgs,
     MutationLoginArgs,
 } from '../../../common/shared-schema';
-import { ForbiddenError, InvalidCredentialsError } from '../../../common/error/errors';
+import { ForbiddenException, InvalidCredentialsException } from '../../../common/error/errors';
 import { extractSessionToken } from '../../../common/extract-session-token';
 import { ApiType } from '../../../common/get-api-type';
 import { RequestContext } from '../../../common/request-context';
@@ -74,12 +74,12 @@ export class BaseAuthController {
     async me(ctx: RequestContext, apiType: ApiType): Promise<GetCurrentUserQuery> {
         const userId = ctx.activeUserId;
         if (!userId) {
-            throw new ForbiddenError(LogLevel.Verbose);
+            throw new ForbiddenException(LogLevel.Verbose);
         }
         if (apiType === 'admin') {
             const administrator = await this.administratorService.findOneByUserId(ctx, userId, ['user.roles']);
             if (!administrator) {
-                throw new ForbiddenError(LogLevel.Verbose);
+                throw new ForbiddenException(LogLevel.Verbose);
             }
         }
         const user = userId && (await this.userService.getUserById(ctx, userId));
@@ -103,7 +103,7 @@ export class BaseAuthController {
         if (apiType === 'admin') {
             const administrator = await this.administratorService.findOneByUserId(ctx, session.user.id);
             if (!administrator) {
-                throw new InvalidCredentialsError({ authenticationError: '' });
+                throw new InvalidCredentialsException({ authenticationError: '' });
             }
         }
 
@@ -124,7 +124,7 @@ export class BaseAuthController {
     protected async updatePassword(ctx: RequestContext, currentPassword: string, newPassword: string): Promise<void> {
         const { activeUserId } = ctx;
         if (!activeUserId) {
-            throw new ForbiddenError();
+            throw new ForbiddenException();
         }
 
         await this.userService.updatePassword(ctx, activeUserId, currentPassword, newPassword);

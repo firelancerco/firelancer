@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { InternalServerError, RequestContext } from '../../../../common';
+import { InternalServerException, RequestContext } from '../../../../common';
 import { AssetPreviewStrategy } from '../asset-preview-strategy';
 
 /**
@@ -7,6 +7,6 @@ import { AssetPreviewStrategy } from '../asset-preview-strategy';
  */
 export class NoAssetPreviewStrategy implements AssetPreviewStrategy {
     generatePreviewImage(ctx: RequestContext, mimeType: string, data: Buffer): Promise<Buffer> {
-        throw new InternalServerError('error.no-asset-preview-strategy-configured');
+        throw new InternalServerException('error.no-asset-preview-strategy-configured');
     }
 }

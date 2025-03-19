@@ -1037,6 +1037,7 @@ export class NativeAuthInput {
 export class AuthenticationInput {
     @ApiPropertyOptional()
     @IsOptional()
+    @ValidateNested()
     native?: NativeAuthInput;
 }
 

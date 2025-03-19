@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { TransactionIsolationLevel } from '../api/decorators/transaction.decorator';
 import { TRANSACTION_MANAGER_KEY } from '../common/constants';
-import { EntityNotFoundError } from '../common/error/errors';
+import { EntityNotFoundException } from '../common/error/errors';
 import { RequestContext } from '../common/request-context';
 import { SoftDeletable } from '../common/shared-types';
 import { ID } from '../common/shared-schema';
@@ -196,7 +196,7 @@ export class TransactionalConnection {
 
     /**
      * @description
-     * Finds an entity of the given type by ID, or throws an `EntityNotFoundError` if none
+     * Finds an entity of the given type by ID, or throws an `EntityNotFoundException` if none
      * is found.
      */
     async getEntityOrThrow<T extends FirelancerEntity>(
@@ -254,7 +254,7 @@ export class TransactionalConnection {
                 options.includeSoftDeleted !== true)
         ) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            throw new EntityNotFoundError(entityType.name as any, id);
+            throw new EntityNotFoundException(entityType.name as any, id);
         }
         return entity;
     }

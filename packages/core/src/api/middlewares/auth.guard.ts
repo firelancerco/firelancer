@@ -2,7 +2,7 @@ import { Permission } from '@firelancerco/common/lib/shared-schema';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
-import { ForbiddenError } from '../../common/error/errors';
+import { ForbiddenException } from '../../common/error/errors';
 import { extractSessionToken } from '../../common/extract-session-token';
 import { parseContext } from '../../common/parse-context';
 import { internal_setRequestContext } from '../../common/request-context';
@@ -21,7 +21,7 @@ import { PERMISSIONS_METADATA_KEY } from '../decorators/allow.decorator';
  * 1. checks for the existence of a valid session token in the request and if found,
  * attaches the current User entity to the request.
  * 2. enforces any permissions required by the target handler (resolver, field resolver or route),
- * and throws a ForbiddenError if those permissions are not present.
+ * and throws a ForbiddenException if those permissions are not present.
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -51,7 +51,7 @@ export class AuthGuard implements CanActivate {
         } else {
             const canActivate = requestContext.userHasPermissions(permissions) || requestContext.authorizedAsOwnerOnly;
             if (!canActivate) {
-                throw new ForbiddenError();
+                throw new ForbiddenException();
             } else {
                 return canActivate;
             }

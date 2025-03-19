@@ -19,7 +19,7 @@ import {
     NullOptionals,
     RequestContext,
     SortParameter,
-    UserInputError,
+    UserInputException,
 } from '../../../common';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
@@ -294,7 +294,7 @@ export class ListQueryBuilder implements OnApplicationBootstrap {
               ? adminListQueryLimit
               : shopListQueryLimit;
         if (options.take && options.take > takeLimit) {
-            throw new UserInputError('error.list-query-limit-exceeded');
+            throw new UserInputException('error.list-query-limit-exceeded');
         }
         const skip = Math.max(options.skip ?? 0, 0);
         // `take` must not be negative, and must not be greater than takeLimit

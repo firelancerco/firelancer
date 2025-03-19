@@ -3,7 +3,11 @@ import { Request as ExpressRequest, Response as ExpressResponse } from 'express'
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
-import { EmailAddressConflictError, ForbiddenError, NativeAuthStrategyError } from '../../../common/error/errors';
+import {
+    EmailAddressConflictException,
+    ForbiddenException,
+    NativeAuthStrategyException,
+} from '../../../common/error/errors';
 import { RequestContext } from '../../../common/request-context';
 import { setSessionToken } from '../../../common/set-session-token';
 import {
@@ -92,7 +96,7 @@ export class ShopAuthController extends BaseAuthController {
             await this.customerService.registerCustomerAccount(ctx, args.input);
             return { sucess: true };
         } catch (error) {
-            if (error instanceof EmailAddressConflictError) {
+            if (error instanceof EmailAddressConflictException) {
                 // We do not want to reveal the email address conflict,
                 // otherwise account enumeration attacks become possible.
                 return { sucess: true };
@@ -222,7 +226,7 @@ export class ShopAuthController extends BaseAuthController {
     ): Promise<{ success: boolean }> {
         this.requireNativeAuthStrategy();
         if (!ctx.activeUserId) {
-            throw new ForbiddenError();
+            throw new ForbiddenException();
         }
         await this.authService.verifyUserPassword(ctx, ctx.activeUserId, args.password);
         const result = await this.customerService.requestUpdateEmailAddress(
@@ -258,7 +262,7 @@ export class ShopAuthController extends BaseAuthController {
                 'This REST operation requires that the NativeAuthenticationStrategy be configured for the Shop API.\n' +
                 `Currently the following AuthenticationStrategies are enabled: ${authStrategyNames}`;
             Logger.error(errorMessage);
-            throw new NativeAuthStrategyError();
+            throw new NativeAuthStrategyException();
         }
     }
 }

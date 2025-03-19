@@ -2,7 +2,7 @@ import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { assertFound, idsAreEqual } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { RelationPaths } from '../../api';
-import { ListQueryOptions, RequestContext, Translated, UserInputError } from '../../common';
+import { ListQueryOptions, RequestContext, Translated, UserInputException } from '../../common';
 import { CreateFacetInput, ID, UpdateFacetInput } from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { FacetTranslation } from '../../entity';
@@ -149,7 +149,7 @@ export class FacetService {
         const hasUsages = !!jobPostsCount;
         const deletedFacet = new Facet(facet);
         if (hasUsages && !force) {
-            throw new UserInputError('message.facet-used');
+            throw new UserInputException('message.facet-used');
         }
         await this.connection.getRepository(ctx, Facet).remove(facet);
         await this.eventBus.publish(new FacetEvent(ctx, deletedFacet, 'deleted', id));

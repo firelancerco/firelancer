@@ -1,7 +1,7 @@
 import { intersect } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { UserInputError } from '../../../common';
+import { UserInputException } from '../../../common';
 import { ApiType, getApiType } from '../../../common/get-api-type';
 import { RequestContext } from '../../../common/request-context';
 import { CurrencyCode, LanguageCode, Permission } from '../../../common/shared-schema';
@@ -93,7 +93,7 @@ export class RequestContextService {
     private getCurrencyCode(req: Request): CurrencyCode | undefined {
         const queryCurrencyCode = req.query && (req.query.currencyCode as CurrencyCode);
         if (queryCurrencyCode && this.configService.availableCurrencyCodes.includes(queryCurrencyCode)) {
-            throw new UserInputError('error.currency-not-available');
+            throw new UserInputException('error.currency-not-available');
         }
         return queryCurrencyCode;
     }

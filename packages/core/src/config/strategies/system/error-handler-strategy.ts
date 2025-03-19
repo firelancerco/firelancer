@@ -19,7 +19,7 @@ import { Job } from '../../../job-queue';
  * ```ts
  * import { ArgumentsHost, ExecutionContext } from '\@nestjs/common';
  * import { GqlContextType, GqlExecutionContext } from '\@nestjs/graphql';
- * import { ErrorHandlerStrategy, I18nError, Injector, Job, LogLevel } from '\@firelancerco/core';
+ * import { ErrorHandlerStrategy, I18nException, Injector, Job, LogLevel } from '\@firelancerco/core';
  *
  * import { MonitoringService } from './monitoring.service';
  *

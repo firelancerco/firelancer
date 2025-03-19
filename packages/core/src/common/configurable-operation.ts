@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { LocalizedString } from '@firelancerco/common/lib/shared-types';
 import { assertNever } from '@firelancerco/common/lib/shared-utils';
-import { InternalServerError } from './error/errors';
+import { InternalServerException } from './error/errors';
 import { InjectableStrategy } from './injectable-strategy';
 import { Injector } from './injector';
 import { ConfigArg, ConfigArgType, ID } from './shared-schema';
@@ -317,7 +317,7 @@ function coerceValueToType<T extends ConfigArgs>(
         try {
             return (JSON.parse(value) as string[]).map(v => coerceValueToType(v, type, false)) as any;
         } catch (err: any) {
-            throw new InternalServerError(`Could not parse list value "${value}": ` + JSON.stringify(err.message));
+            throw new InternalServerException(`Could not parse list value "${value}": ` + JSON.stringify(err.message));
         }
     }
     switch (type) {

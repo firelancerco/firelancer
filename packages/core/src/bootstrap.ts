@@ -6,7 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { satisfies } from 'semver';
 import { DataSourceOptions, EntitySubscriberInterface } from 'typeorm';
-import { InternalServerError } from './common/error/errors';
+import { InternalServerException } from './common/error/errors';
 import { getConfig, setConfig } from './config/config-helpers';
 import { FirelancerConfig, RuntimeFirelancerConfig } from './config/firelancer-config';
 import { DefaultLogger } from './config/strategies/logger/default/default-logger';
@@ -293,7 +293,7 @@ function getAllEntities(userConfig: Partial<FirelancerConfig>): Array<Type<unkno
     // Check to ensure that no plugins are defining entities with names which conflict with existing entities.
     for (const pluginEntity of pluginEntities) {
         if (allEntities.find(e => e.name === pluginEntity.name)) {
-            throw new InternalServerError('error.entity-name-conflict');
+            throw new InternalServerException('error.entity-name-conflict');
         } else {
             allEntities.push(pluginEntity);
         }
@@ -329,7 +329,7 @@ function checkPluginCompatibility(config: RuntimeFirelancerConfig): void {
                     `Plugin "${pluginName}" is not compatible with this version of Firelancer. ` +
                         `It specifies a semver range of "${compatibility}" but the current version is "${FIRELANCER_VERSION}".`,
                 );
-                throw new InternalServerError(
+                throw new InternalServerException(
                     `Plugin "${pluginName}" is not compatible with this version of Firelancer.`,
                 );
             }

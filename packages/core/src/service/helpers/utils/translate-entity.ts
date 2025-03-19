@@ -1,7 +1,7 @@
 import { LanguageCode } from '../../../common/shared-schema';
 import {
     DEFAULT_LANGUAGE_CODE,
-    InternalServerError,
+    InternalServerException,
     Translatable,
     Translated,
     Translation,
@@ -66,7 +66,7 @@ export function translateEntity<T extends Translatable & FirelancerEntity>(
     }
 
     if (!translation) {
-        throw new InternalServerError('error.entity-has-no-translation-in-language', {
+        throw new InternalServerException('error.entity-has-no-translation-in-language', {
             entityName: translatable.constructor.name,
             languageCode: Array.isArray(languageCode) ? languageCode.join() : languageCode,
         });

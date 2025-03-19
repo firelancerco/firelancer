@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigurableOperationDef } from '../../../common/configurable-operation';
-import { UserInputError } from '../../../common/error/errors';
+import { UserInputException } from '../../../common/error/errors';
 import { ConfigurableOperation } from '../../../common/shared-schema';
 import { ConfigService } from '../../../config';
 import { CollectionFilter } from '../../../config/strategies/catalog/collection-filter';
@@ -32,7 +32,7 @@ export class ConfigArgService {
         const defsOfType = this.getDefinitions(defType);
         const match = defsOfType.find(def => def.code === code);
         if (!match) {
-            throw new UserInputError('error.no-configurable-operation-def-with-code-found');
+            throw new UserInputException('error.no-configurable-operation-def-with-code-found');
         }
         return match;
     }
@@ -82,7 +82,7 @@ export class ConfigArgService {
                 }
 
                 if (!valid) {
-                    throw new UserInputError('error.configurable-argument-is-required');
+                    throw new UserInputException('error.configurable-argument-is-required');
                 }
             }
         }

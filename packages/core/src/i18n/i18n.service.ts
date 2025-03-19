@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Handler, Request } from 'express';
 import * as fs from 'fs';
@@ -7,8 +8,7 @@ import i18nextMiddleware from 'i18next-http-middleware';
 import ICU from 'i18next-icu';
 import path from 'path';
 import { Logger } from '../config';
-import { ConfigService } from '../config/config.service';
-import { I18nError } from './i18n-error';
+import { I18nException } from './i18n-error';
 
 /**
  * @description
@@ -32,18 +32,10 @@ export interface I18nRequest extends Request {
  */
 @Injectable()
 export class I18nService implements OnModuleInit {
-    /**
-     * @internal
-     */
-    constructor(private configService: ConfigService) {}
-
-    /**
-     * @internal
-     */
     onModuleInit() {
         return i18next
             .use(i18nextMiddleware.LanguageDetector)
-            .use(Backend as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+            .use(Backend as any)
             .use(ICU)
             .init({
                 nsSeparator: false,
@@ -59,9 +51,6 @@ export class I18nService implements OnModuleInit {
             });
     }
 
-    /**
-     * @internal
-     */
     handle(): Handler {
         return i18nextMiddleware.handle(i18next);
     }
@@ -90,20 +79,19 @@ export class I18nService implements OnModuleInit {
      * @param langKey language key of the I18n translation file
      * @param resources key-value translations
      */
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     addTranslation(langKey: string, resources: FirelancerTranslationResources | any): void {
         i18next.addResourceBundle(langKey, 'translation', resources, true, true);
     }
 
     /**
-     * Translates the originalError if it is an instance of I18nError.
+     * Translates the originalError if it is an instance of I18nException.
      * @internal
      */
-    translateError(req: I18nRequest, error: I18nError) {
+    translateError(req: I18nRequest, error: I18nException) {
         const t: TFunction = req.t;
-        let translation = error.message;
+        let translation = error.getKey();
         try {
-            translation = t(error.message, error.variables);
+            translation = t(error.getKey(), error.getVariables());
         } catch (e) {
             if (e instanceof Error) {
                 const message = typeof e.message === 'string' ? (e.message as string) : JSON.stringify(e.message);
@@ -113,7 +101,9 @@ export class I18nService implements OnModuleInit {
         error.message = translation;
         // We can now safely remove the variables object so that they do not appear in
         // the error returned by the API
-        delete (error as any).variables; // eslint-disable-line @typescript-eslint/no-explicit-any
+        delete (error as any).variables;
+        delete (error as any).key;
+        delete (error as any).logLevel;
 
         return error;
     }

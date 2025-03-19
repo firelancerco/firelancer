@@ -5,11 +5,11 @@ import { IsNull } from 'typeorm';
 import { RelationPaths } from '../../api';
 import { ListQueryOptions } from '../../common';
 import {
-    EmailAddressConflictError,
-    EntityNotFoundError,
-    InternalServerError,
-    MissingPasswordError,
-    UnauthorizedError,
+    EmailAddressConflictException,
+    EntityNotFoundException,
+    InternalServerException,
+    MissingPasswordException,
+    UnauthorizedException,
 } from '../../common/error/errors';
 import { RequestContext } from '../../common/request-context';
 import {
@@ -116,7 +116,7 @@ export class CustomerService {
             return this.connection.getRepository(ctx, Customer).save(updatedCustomer);
         } else if (existingCustomer || existingUser) {
             // Not sure when this situation would occur
-            throw new EmailAddressConflictError();
+            throw new EmailAddressConflictException();
         }
 
         const customerUser = await this.userService.createCustomerUser(
@@ -171,7 +171,7 @@ export class CustomerService {
                 });
 
                 if (existingCustomer) {
-                    throw new EmailAddressConflictError();
+                    throw new EmailAddressConflictException();
                 }
 
                 if (customer.user) {
@@ -204,7 +204,7 @@ export class CustomerService {
     async registerCustomerAccount(ctx: RequestContext, input: RegisterCustomerInput): Promise<void> {
         if (!this.configService.authOptions.requireVerification) {
             if (!input.password) {
-                throw new MissingPasswordError();
+                throw new MissingPasswordException();
             }
         }
         let user = await this.userService.getUserByEmailAddress(ctx, input.emailAddress);
@@ -303,7 +303,7 @@ export class CustomerService {
 
         const customer = await this.findOneByUserId(ctx, user.id);
         if (!customer) {
-            throw new InternalServerError('error.cannot-locate-customer-for-user');
+            throw new InternalServerException('error.cannot-locate-customer-for-user');
         }
 
         await this.historyService.createHistoryEntryForCustomer({
@@ -331,7 +331,7 @@ export class CustomerService {
             await this.eventBus.publish(new PasswordResetEvent(ctx, user));
             const customer = await this.findOneByUserId(ctx, user.id);
             if (!customer) {
-                throw new InternalServerError('error.cannot-locate-customer-for-user');
+                throw new InternalServerException('error.cannot-locate-customer-for-user');
             }
             await this.historyService.createHistoryEntryForCustomer({
                 customerId: customer.id,
@@ -352,7 +352,7 @@ export class CustomerService {
 
         const customer = await this.findOneByUserId(ctx, user.id);
         if (!customer) {
-            throw new InternalServerError('error.cannot-locate-customer-for-user');
+            throw new InternalServerException('error.cannot-locate-customer-for-user');
         }
         await this.historyService.createHistoryEntryForCustomer({
             customerId: customer.id,
@@ -374,7 +374,7 @@ export class CustomerService {
         const normalizedEmailAddress = normalizeEmailAddress(newEmailAddress);
         const userWithConflictingIdentifier = await this.userService.getUserByEmailAddress(ctx, newEmailAddress);
         if (userWithConflictingIdentifier) {
-            throw new EmailAddressConflictError();
+            throw new EmailAddressConflictException();
         }
         const user = await this.userService.getUserById(ctx, userId);
         if (!user) {
@@ -471,7 +471,7 @@ export class CustomerService {
         if (existing) {
             if (existing.user && errorOnExistingUser) {
                 // It is not permitted to modify an existing *registered* Customer
-                throw new EmailAddressConflictError();
+                throw new EmailAddressConflictException();
             }
             customer = patchEntity(existing, input);
         } else {
@@ -493,11 +493,11 @@ export class CustomerService {
     async getUserCustomerFromRequest(ctx: RequestContext) {
         const userId = ctx.session?.user?.id;
         if (!userId) {
-            throw new UnauthorizedError();
+            throw new UnauthorizedException();
         }
         const customer = await this.findOneByUserId(ctx, userId);
         if (!customer) {
-            throw new EntityNotFoundError('Customer', userId);
+            throw new EntityNotFoundException('Customer', userId);
         }
         return customer;
     }

@@ -4,11 +4,11 @@ import { Injectable } from '@nestjs/common';
 import { In, IsNull } from 'typeorm';
 import { RelationPaths } from '../../api';
 import {
-    EntityNotFoundError,
-    InternalServerError,
+    EntityNotFoundException,
+    InternalServerException,
     ListQueryOptions,
     RequestContext,
-    UserInputError,
+    UserInputException,
 } from '../../common';
 import { CreateAdministratorInput, DeletionResult, ID, UpdateAdministratorInput } from '../../common/shared-schema';
 import { ConfigService } from '../../config';
@@ -133,7 +133,7 @@ export class AdministratorService {
     async update(ctx: RequestContext, input: UpdateAdministratorInput): Promise<Administrator> {
         const administrator = await this.findOne(ctx, input.id);
         if (!administrator) {
-            throw new EntityNotFoundError('Administrator', input.id);
+            throw new EntityNotFoundException('Administrator', input.id);
         }
         if (input.roleIds) {
             await this.checkActiveUserCanGrantRoles(ctx, input.roleIds);
@@ -186,7 +186,7 @@ export class AdministratorService {
         const permissionsRequired = getPermissions(roles);
         const activeUserHasRequiredPermissions = await this.roleService.userHasAllPermissions(ctx, permissionsRequired);
         if (!activeUserHasRequiredPermissions) {
-            throw new UserInputError('error.active-user-does-not-have-sufficient-permissions');
+            throw new UserInputException('error.active-user-does-not-have-sufficient-permissions');
         }
     }
 
@@ -197,11 +197,11 @@ export class AdministratorService {
     async assignRole(ctx: RequestContext, administratorId: ID, roleId: ID): Promise<Administrator> {
         const administrator = await this.findOne(ctx, administratorId);
         if (!administrator) {
-            throw new EntityNotFoundError('Administrator', administratorId);
+            throw new EntityNotFoundException('Administrator', administratorId);
         }
         const role = await this.roleService.findOne(ctx, roleId);
         if (!role) {
-            throw new EntityNotFoundError('Role', roleId);
+            throw new EntityNotFoundException('Role', roleId);
         }
         administrator.user.roles.push(role);
         await this.connection.getRepository(ctx, User).save(administrator.user, { reload: false });
@@ -218,7 +218,7 @@ export class AdministratorService {
         });
         const isSoleSuperadmin = await this.isSoleSuperadmin(ctx, id);
         if (isSoleSuperadmin) {
-            throw new InternalServerError('error.cannot-delete-sole-superadmin');
+            throw new InternalServerException('error.cannot-delete-sole-superadmin');
         }
         await this.connection.getRepository(ctx, Administrator).update({ id }, { deletedAt: new Date() });
         await this.userService.softDelete(ctx, administrator.user.id);

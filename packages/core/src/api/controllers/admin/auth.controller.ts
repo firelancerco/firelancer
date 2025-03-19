@@ -9,7 +9,7 @@ import {
     MutationLoginArgs,
     Permission,
 } from '../../../common/shared-schema';
-import { NativeAuthStrategyError } from '../../../common/error/errors';
+import { NativeAuthStrategyException } from '../../../common/error/errors';
 import { RequestContext } from '../../../common/request-context';
 import { Logger } from '../../../config';
 import { ConfigService } from '../../../config/config.service';
@@ -81,7 +81,7 @@ export class AdminAuthController extends BaseAuthController {
                 'This REST operation requires that the NativeAuthenticationStrategy be configured for the Admin API.\n' +
                 `Currently the following AuthenticationStrategies are enabled: ${authStrategyNames}`;
             Logger.error(errorMessage);
-            throw new NativeAuthStrategyError();
+            throw new NativeAuthStrategyException();
         }
     }
 }

@@ -2,7 +2,7 @@
 import { Request } from 'express';
 import { Stream } from 'stream';
 import { AssetStorageStrategy } from '../asset-storage-strategy';
-import { InternalServerError } from '../../../../common';
+import { InternalServerException } from '../../../../common';
 
 const errorMessage = 'error.no-asset-storage-strategy-configured';
 
@@ -11,30 +11,30 @@ const errorMessage = 'error.no-asset-storage-strategy-configured';
  */
 export class NoAssetStorageStrategy implements AssetStorageStrategy {
     writeFileFromStream(fileName: string, data: Stream): Promise<string> {
-        throw new InternalServerError(errorMessage);
+        throw new InternalServerException(errorMessage);
     }
 
     writeFileFromBuffer(fileName: string, data: Buffer): Promise<string> {
-        throw new InternalServerError(errorMessage);
+        throw new InternalServerException(errorMessage);
     }
 
     readFileToBuffer(identifier: string): Promise<Buffer> {
-        throw new InternalServerError(errorMessage);
+        throw new InternalServerException(errorMessage);
     }
 
     readFileToStream(identifier: string): Promise<Stream> {
-        throw new InternalServerError(errorMessage);
+        throw new InternalServerException(errorMessage);
     }
 
     deleteFile(identifier: string): Promise<void> {
-        throw new InternalServerError(errorMessage);
+        throw new InternalServerException(errorMessage);
     }
 
     toAbsoluteUrl(request: Request, identifier: string): string {
-        throw new InternalServerError(errorMessage);
+        throw new InternalServerException(errorMessage);
     }
 
     fileExists(fileName: string): Promise<boolean> {
-        throw new InternalServerError(errorMessage);
+        throw new InternalServerException(errorMessage);
     }
 }

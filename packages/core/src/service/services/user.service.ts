@@ -2,18 +2,18 @@ import { isEmailAddressLike, normalizeEmailAddress } from '@firelancerco/common/
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
-    EntityNotFoundError,
-    IdentifierChangeTokenExpiredError,
-    IdentifierChangeTokenInvalidError,
-    InternalServerError,
-    InvalidCredentialsError,
-    MissingPasswordError,
-    PasswordAlreadySetError,
-    PasswordResetTokenExpiredError,
-    PasswordResetTokenInvalidError,
-    PasswordValidationError,
-    VerificationTokenExpiredError,
-    VerificationTokenInvalidError,
+    EntityNotFoundException,
+    IdentifierChangeTokenExpiredException,
+    IdentifierChangeTokenInvalidException,
+    InternalServerException,
+    InvalidCredentialsException,
+    MissingPasswordException,
+    PasswordAlreadySetException,
+    PasswordResetTokenExpiredException,
+    PasswordResetTokenInvalidException,
+    PasswordValidationException,
+    VerificationTokenExpiredException,
+    VerificationTokenInvalidException,
 } from '../../common/error/errors';
 import { RequestContext } from '../../common/request-context';
 import { CustomerType, ID } from '../../common/shared-schema';
@@ -204,11 +204,11 @@ export class UserService {
                 const nativeAuthMethod = user.getNativeAuthenticationMethod();
                 if (!password) {
                     if (!nativeAuthMethod.passwordHash) {
-                        throw new MissingPasswordError();
+                        throw new MissingPasswordException();
                     }
                 } else {
                     if (nativeAuthMethod.passwordHash) {
-                        throw new PasswordAlreadySetError();
+                        throw new PasswordAlreadySetException();
                     }
                     await this.validatePassword(ctx, password);
                     nativeAuthMethod.passwordHash = await this.passwordCipher.hash(password);
@@ -218,10 +218,10 @@ export class UserService {
                 await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod);
                 return this.connection.getRepository(ctx, User).save(user);
             } else {
-                throw new VerificationTokenExpiredError();
+                throw new VerificationTokenExpiredException();
             }
         } else {
-            throw new VerificationTokenInvalidError();
+            throw new VerificationTokenInvalidException();
         }
     }
 
@@ -260,7 +260,7 @@ export class UserService {
             .where('authenticationMethod.passwordResetToken = :passwordResetToken', { passwordResetToken })
             .getOne();
         if (!user) {
-            throw new PasswordResetTokenInvalidError();
+            throw new PasswordResetTokenInvalidException();
         }
         await this.validatePassword(ctx, password);
 
@@ -279,7 +279,7 @@ export class UserService {
             }
             return this.connection.getRepository(ctx, User).save(user);
         } else {
-            throw new PasswordResetTokenExpiredError();
+            throw new PasswordResetTokenExpiredException();
         }
     }
 
@@ -336,15 +336,15 @@ export class UserService {
             })
             .getOne();
         if (!user) {
-            throw new IdentifierChangeTokenInvalidError();
+            throw new IdentifierChangeTokenInvalidException();
         }
         if (!this.verificationTokenGenerator.verifyVerificationToken(token)) {
-            throw new IdentifierChangeTokenExpiredError();
+            throw new IdentifierChangeTokenExpiredException();
         }
         const nativeAuthMethod = user.getNativeAuthenticationMethod();
         const pendingIdentifier = nativeAuthMethod.pendingIdentifier;
         if (!pendingIdentifier) {
-            throw new InternalServerError('error.pending-identifier-missing');
+            throw new InternalServerException('error.pending-identifier-missing');
         }
         const oldIdentifier = user.identifier;
         user.identifier = pendingIdentifier;
@@ -370,7 +370,7 @@ export class UserService {
             .getOne();
 
         if (!user) {
-            throw new EntityNotFoundError('User', userId);
+            throw new EntityNotFoundException('User', userId);
         }
 
         const password = newPassword;
@@ -380,7 +380,7 @@ export class UserService {
         const matches = await this.passwordCipher.check(currentPassword, nativeAuthMethod.passwordHash);
 
         if (!matches) {
-            throw new InvalidCredentialsError({ authenticationError: '' });
+            throw new InvalidCredentialsException({ authenticationError: '' });
         }
 
         nativeAuthMethod.passwordHash = await this.passwordCipher.hash(newPassword);
@@ -395,7 +395,7 @@ export class UserService {
         if (passwordValidationResult !== true) {
             const message =
                 typeof passwordValidationResult === 'string' ? passwordValidationResult : 'Password is invalid';
-            throw new PasswordValidationError({ validationErrorMessage: message });
+            throw new PasswordValidationException({ validationErrorMessage: message });
         }
     }
 }

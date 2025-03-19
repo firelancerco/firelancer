@@ -4,7 +4,7 @@ import { OrderByCondition } from 'typeorm';
 import { DataSource } from 'typeorm/data-source/DataSource';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { NullOptionals, SortParameter } from '../../../common';
-import { UserInputError } from '../../../common/error/errors';
+import { UserInputException } from '../../../common/error/errors';
 import { FirelancerEntity } from '../../../entity';
 import { escapeCalculatedColumnExpression, getColumnMetadata } from './connection-utils';
 import { getCalculatedColumns } from './get-calculated-columns';
@@ -51,7 +51,7 @@ export function parseSortParams<T extends FirelancerEntity>(
         } else if (customPropertyMap?.[key]) {
             output[customPropertyMap[key]] = order as 'ASC' | 'DESC';
         } else {
-            throw new UserInputError('error.invalid-sort-field', {
+            throw new UserInputException('error.invalid-sort-field', {
                 fieldName: key,
                 validFields: [
                     ...getValidSortFields([...columns, ...translationColumns]),

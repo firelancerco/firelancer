@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InternalServerError, InvalidCredentialsError, NotVerifiedError } from '../../common/error/errors';
+import { InternalServerException, InvalidCredentialsException, NotVerifiedException } from '../../common/error/errors';
 import { ApiType } from '../../common/get-api-type';
 import { RequestContext } from '../../common/request-context';
 import { ID } from '../../common/shared-schema';
@@ -53,10 +53,10 @@ export class AuthService {
         const authenticationStrategy = this.getAuthenticationStrategy(apiType, authenticationMethod);
         const authenticateResult = await authenticationStrategy.authenticate(ctx, authenticationData);
         if (typeof authenticateResult === 'string') {
-            throw new InvalidCredentialsError({ authenticationError: authenticateResult });
+            throw new InvalidCredentialsException({ authenticationError: authenticateResult });
         }
         if (!authenticateResult) {
-            throw new InvalidCredentialsError({ authenticationError: '' });
+            throw new InvalidCredentialsException({ authenticationError: '' });
         }
         const session = await this.createAuthenticatedSessionForUser(
             ctx,
@@ -79,7 +79,7 @@ export class AuthService {
             this.configService.authOptions.requireVerification &&
             !user.verified
         ) {
-            throw new NotVerifiedError();
+            throw new NotVerifiedException();
         }
         if (ctx.session) {
             await this.sessionService.deleteSessionsByUser(ctx, user);
@@ -100,7 +100,7 @@ export class AuthService {
         const nativeAuthenticationStrategy = this.getAuthenticationStrategy('shop', NATIVE_AUTH_STRATEGY_NAME);
         const passwordMatches = await nativeAuthenticationStrategy.verifyUserPassword(ctx, userId, password);
         if (!passwordMatches) {
-            throw new InvalidCredentialsError({ authenticationError: '' });
+            throw new InvalidCredentialsException({ authenticationError: '' });
         }
     }
 
@@ -135,7 +135,7 @@ export class AuthService {
             apiType === 'admin' ? authOptions.adminAuthenticationStrategy : authOptions.shopAuthenticationStrategy;
         const match = strategies.find(s => s.name === method);
         if (!match) {
-            throw new InternalServerError('error.unrecognized-authentication-strategy');
+            throw new InternalServerException('error.unrecognized-authentication-strategy');
         }
         return match;
     }

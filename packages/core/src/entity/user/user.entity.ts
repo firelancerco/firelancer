@@ -1,5 +1,5 @@
 import { Column, DeepPartial, DeleteDateColumn, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
-import { InternalServerError } from '../../common/error/errors';
+import { InternalServerException } from '../../common/error/errors';
 import { SoftDeletable } from '../../common/shared-types';
 import { AuthenticationMethod } from '../authentication-method/authentication-method.entity';
 import { NativeAuthenticationMethod } from '../authentication-method/native-authentication-method.entity';
@@ -43,13 +43,13 @@ export class User extends FirelancerEntity implements SoftDeletable {
     getNativeAuthenticationMethod(strict?: boolean): NativeAuthenticationMethod | undefined;
     getNativeAuthenticationMethod(strict?: boolean): NativeAuthenticationMethod | undefined {
         if (!this.authenticationMethods) {
-            throw new InternalServerError('error.user-authentication-methods-not-loaded');
+            throw new InternalServerException('error.user-authentication-methods-not-loaded');
         }
         const match = this.authenticationMethods.find(
             (m): m is NativeAuthenticationMethod => m instanceof NativeAuthenticationMethod,
         );
         if (!match && (strict === undefined || strict)) {
-            throw new InternalServerError('error.native-authentication-methods-not-found');
+            throw new InternalServerException('error.native-authentication-methods-not-found');
         }
         return match;
     }

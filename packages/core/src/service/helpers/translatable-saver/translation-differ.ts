@@ -1,6 +1,6 @@
 import { foundIn, not } from '@firelancerco/common/lib/shared-utils';
 import { DeepPartial } from '@firelancerco/common/lib/shared-types';
-import { RequestContext, InternalServerError, Translatable, Translation, TranslationInput } from '../../../common';
+import { RequestContext, InternalServerException, Translatable, Translation, TranslationInput } from '../../../common';
 import { TransactionalConnection } from '../../../connection/transactional-connection';
 
 export type TranslationContructor<T> = new (
@@ -63,7 +63,7 @@ export class TranslationDiffer<Entity extends Translatable> {
                 try {
                     newTranslation = await this.connection.getRepository(ctx, this.translationCtor).save(translation);
                 } catch (err) {
-                    throw new InternalServerError(
+                    throw new InternalServerException(
                         err instanceof Error ? err.message : "Couldn't save translation entity",
                     );
                 }
