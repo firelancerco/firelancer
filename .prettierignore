@@ -1,0 +1,10 @@
+
+node_modules/
+dist/
+lib/
+.angular/
+.next/
+package/
+
+*.d.ts
+*.hbs

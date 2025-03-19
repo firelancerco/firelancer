@@ -1,0 +1,13 @@
+{
+    "apiHost": "http://localhost",
+    "apiPort": "3000",
+    "adminApiPath": "admin-api",
+    "tokenMethod": "bearer",
+    "authTokenHeaderKey": "firelancer-auth-token",
+    "brand": "",
+    "hideVersion": false,
+    "defaultLanguage": "en",
+    "defaultLocale": "US",
+    "availableLanguages": ["ar", "en"],
+    "availableLocales": ["AR", "US"]
+}

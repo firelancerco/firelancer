@@ -1,0 +1,29 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": "./",
+        "importHelpers": true,
+        "module": "es2020",
+        "outDir": "./dist/out-tsc",
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "strict": true,
+        "noImplicitAny": false,
+        "strictPropertyInitialization": false,
+        "target": "ES2022",
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "jsx": "react",
+        "typeRoots": ["node_modules/@types", "./typings"],
+        "lib": ["es2019", "dom", "esnext.asynciterable"],
+        "paths": {
+            "@firelancerco/admin-ui": ["./src/modules/public_api"],
+            "@firelancerco/admin-ui/core": ["./src/modules/core/src/public_api"],
+            "@firelancerco/admin-ui/login": ["./src/modules/login/src/public_api"]
+        },
+        "useDefineForClassFields": false
+    }
+}
