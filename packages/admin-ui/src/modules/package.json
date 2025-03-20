@@ -1,6 +1,6 @@
 {
   "name": "@firelancerco/admin-ui",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "dependencies": {
     "@angular/animations": "^19.0.0",
     "@angular/common": "^19.0.0",
@@ -10,7 +10,7 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "@firelancerco/common": "^1.0.3",
+    "@firelancerco/common": "^1.0.4",
     "@ngx-translate/core": "^16.0.4",
     "@primeng/themes": "^19.0.5",
     "primeng": "^19.0.5",
