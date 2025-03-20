@@ -1,6 +1,6 @@
 {
     "name": "@firelancerco/dev-server",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "main": "index.js",
     "private": true,
     "scripts": {
@@ -10,9 +10,9 @@
         "dev": "concurrently npm:dev:*"
     },
     "dependencies": {
-        "@firelancerco/admin-ui-plugin": "^1.0.2",
-        "@firelancerco/asset-server-plugin": "^1.0.2",
-        "@firelancerco/core": "^1.0.2"
+        "@firelancerco/admin-ui-plugin": "^1.0.3",
+        "@firelancerco/asset-server-plugin": "^1.0.3",
+        "@firelancerco/core": "^1.0.3"
     },
     "devDependencies": {
         "ts-node": "^10.9.2",
