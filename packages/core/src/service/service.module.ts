@@ -28,6 +28,7 @@ import { TranslatableSaver } from './helpers/translatable-saver/translatable-sav
 import { TranslationDiffer } from './helpers/translatable-saver/translation-differ';
 import { TranslatorService } from './helpers/translator/translator.service';
 import { SlugValidator } from './helpers/slug-validator/slug-validator';
+import { LocaleStringHydrator } from './helpers/locale-string-hydrator/locale-string-hydrator';
 
 const services = [
     HistoryService,
@@ -56,6 +57,7 @@ const helpers = [
     TranslationDiffer,
     TranslatorService,
     VerificationTokenGenerator,
+    LocaleStringHydrator,
 ];
 
 /**

@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
-import { CreateJobPostInput, MutationCreateJobPostArgs, Permission } from '../../../common/shared-schema';
 import { RequestContext } from '../../../common';
+import { CreateJobPostInput, MutationCreateJobPostArgs, Permission } from '../../../common/shared-schema';
 import { AssetService, CustomerService } from '../../../service';
 import { JobPostService } from '../../../service/services/job-post.service';
 
@@ -18,20 +20,20 @@ export class ShopJobPostController {
     @Transaction()
     @Post('create')
     @Allow(Permission.CreateJobPost)
-    // @UseInterceptors(FilesInterceptor('files'))
+    @UseInterceptors(FilesInterceptor('files'))
     async createJobPost(
         @Ctx() ctx: RequestContext,
         @Body() args: MutationCreateJobPostArgs,
-        // @UploadedFiles() files: Array<Express.Multer.File>,
+        @UploadedFiles() files: Array<Express.Multer.File>,
     ) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const input: CreateJobPostInput = { ...args, customerId: customer.id, enabled: true, assetIds: [] };
-        // if (files && files.length > 0) {
-        //     for (const file of files) {
-        //         const asset = await this.assetService.create(ctx, { file });
-        //         input?.assetIds?.push(asset.id);
-        //     }
-        // }
+        if (files && files.length > 0) {
+            for (const file of files) {
+                const asset = await this.assetService.create(ctx, { file });
+                input?.assetIds?.push(asset.id);
+            }
+        }
         return this.jobPostService.create(ctx, input);
     }
 

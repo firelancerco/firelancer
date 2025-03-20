@@ -87,7 +87,9 @@ export class RequestContextService {
     }
 
     private getLanguageCode(req: Request): LanguageCode | undefined {
-        return (req.query && (req.query.languageCode as LanguageCode)) ?? this.configService.defaultLanguageCode;
+        const queryLanguage = req.query && (req.query.languageCode as LanguageCode);
+        const headerLanguage = req.header('Accept-Language')?.split(',')[0] as LanguageCode;
+        return queryLanguage || headerLanguage || this.configService.defaultLanguageCode;
     }
 
     private getCurrencyCode(req: Request): CurrencyCode | undefined {
