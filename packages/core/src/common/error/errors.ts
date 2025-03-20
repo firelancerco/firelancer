@@ -97,7 +97,7 @@ export class NativeAuthStrategyException extends I18nException {
 
 export class EmailAddressConflictException extends I18nException {
     constructor() {
-        super('error.email-address-conlict', HttpStatus.CONFLICT, {}, LogLevel.Warn);
+        super('error.email-address-conflict', HttpStatus.CONFLICT, {}, LogLevel.Warn);
     }
 }
 
@@ -127,7 +127,7 @@ export class VerificationTokenInvalidException extends I18nException {
 
 export class PasswordResetTokenInvalidException extends I18nException {
     constructor() {
-        super('error.password-reset-token', HttpStatus.BAD_REQUEST, {}, LogLevel.Warn);
+        super('error.password-reset-token-invalid', HttpStatus.BAD_REQUEST, {}, LogLevel.Warn);
     }
 }
 
