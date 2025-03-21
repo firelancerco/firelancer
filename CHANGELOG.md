@@ -1,3 +1,11 @@
+## <small>1.0.7 (2025-03-21)</small>
+
+
+#### Features
+
+*
+    **email-plugin**
+add initial implementation of email plugin with templates and event handling([5303017](https://github.com/firelancerco/firelancer    /commit/5303017))
 ## <small>1.0.6 (2025-03-21)</small>
 
 
