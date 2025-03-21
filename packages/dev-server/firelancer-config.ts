@@ -15,7 +15,8 @@ const serverPort = Number(process.env.PORT) || 3000;
 const serverHost = process.env.HOST || 'localhost';
 
 const extendedEmailVerificationHandler = emailVerificationHandler
-    .setTemplateVars(() => ({
+    .setTemplateVars(event => ({
+        verificationToken: event.user.getNativeAuthenticationMethod().verificationToken,
         subject: {
             en: 'Please verify your email address',
             ar: 'يرجى التحقق من عنوان بريدك الإلكتروني',
@@ -24,7 +25,8 @@ const extendedEmailVerificationHandler = emailVerificationHandler
     .setSubject((_event, ctx) => `{{subject.${ctx.languageCode}}}`);
 
 const extendedPasswordResetHandler = passwordResetHandler
-    .setTemplateVars(() => ({
+    .setTemplateVars(event => ({
+        passwordResetToken: event.user.getNativeAuthenticationMethod().passwordResetToken,
         subject: {
             en: 'Forgotten password reset',
             ar: 'إعادة تعيين كلمة المرور',
@@ -33,7 +35,8 @@ const extendedPasswordResetHandler = passwordResetHandler
     .setSubject((_event, ctx) => `{{subject.${ctx.languageCode}}}`);
 
 const extendedEmailAddressChangeHandler = emailAddressChangeHandler
-    .setTemplateVars(() => ({
+    .setTemplateVars(event => ({
+        identifierChangeToken: event.user.getNativeAuthenticationMethod().identifierChangeToken,
         subject: {
             en: 'Please verify your change of email address',
             ar: 'تحقق من عنوان بريدك الإلكتروني الجديد',
@@ -88,9 +91,9 @@ export const config: FirelancerConfig = {
             },
         }),
         EmailPlugin.init({
-            devMode: true,
-            outputPath: path.join(__dirname, './test-emails'),
-            route: 'mailbox',
+            // devMode: true,
+            // outputPath: path.join(__dirname, './test-emails'),
+            // route: 'mailbox',
             handlers: [
                 extendedEmailVerificationHandler,
                 extendedPasswordResetHandler,
@@ -101,7 +104,17 @@ export const config: FirelancerConfig = {
                 localized: true,
             }),
             globalTemplateVars: {
-                fromAddress: '"Firelancer" <noreply@example.com>',
+                fromAddress: `"Firelancer" <${process.env.GOOGLE_EMAIL!}>`,
+            },
+            transport: {
+                type: 'smtp',
+                host: 'smtp.gmail.com',
+                port: 465,
+                auth: {
+                    user: process.env.GOOGLE_EMAIL!,
+                    pass: process.env.GOOGLE_APP_PASSWORD!,
+                },
+                logging: true,
             },
         }),
     ],

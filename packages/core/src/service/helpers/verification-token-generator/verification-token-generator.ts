@@ -18,11 +18,11 @@ export class VerificationTokenGenerator {
      * random id.
      */
     generateVerificationToken() {
-        // const now = new Date();
-        // const base64Now = Buffer.from(now.toJSON()).toString('base64');
-        // const id = generateRandomString(8, alphabet('0-9'));
-        // return `${base64Now}_${id}`;
-        return generateRandomString(6, alphabet('0-9'));
+        const now = new Date();
+        const base64Now = Buffer.from(now.toJSON()).toString('base64');
+        const id = generateRandomString(8, alphabet('0-9'));
+        return `${base64Now}_${id}`;
+        // return generateRandomString(6, alphabet('0-9'));
     }
 
     /**

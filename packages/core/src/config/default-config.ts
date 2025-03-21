@@ -61,7 +61,7 @@ export const defaultConfig: RuntimeFirelancerConfig = {
         sessionCacheStrategy: new InMemorySessionCacheStrategy(),
         sessionCacheTTL: 300,
         requireVerification: true,
-        verificationTokenDuration: '30s',
+        verificationTokenDuration: '2m',
         superadminCredentials: {
             identifier: SUPER_ADMIN_USER_IDENTIFIER,
             password: SUPER_ADMIN_USER_PASSWORD,
