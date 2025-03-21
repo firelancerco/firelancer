@@ -69,7 +69,7 @@ export const defaultConfig: RuntimeFirelancerConfig = {
         shopAuthenticationStrategy: [new NativeAuthenticationStrategy()],
         adminAuthenticationStrategy: [new NativeAuthenticationStrategy()],
         passwordHashingStrategy: new BcryptPasswordHashingStrategy(),
-        passwordValidationStrategy: new DefaultPasswordValidationStrategy({ minLength: 4 }),
+        passwordValidationStrategy: new DefaultPasswordValidationStrategy({ minLength: 8 }),
     },
     assetOptions: {
         assetNamingStrategy: new DefaultAssetNamingStrategy(),
