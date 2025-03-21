@@ -57,11 +57,11 @@ export const defaultConfig: RuntimeFirelancerConfig = {
             secure: false,
         },
         authTokenHeaderKey: DEFAULT_AUTH_TOKEN_HEADER_KEY,
-        sessionDuration: '1y',
+        sessionDuration: '15d',
         sessionCacheStrategy: new InMemorySessionCacheStrategy(),
         sessionCacheTTL: 300,
         requireVerification: true,
-        verificationTokenDuration: '7d',
+        verificationTokenDuration: '30s',
         superadminCredentials: {
             identifier: SUPER_ADMIN_USER_IDENTIFIER,
             password: SUPER_ADMIN_USER_PASSWORD,
