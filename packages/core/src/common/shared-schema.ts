@@ -1106,6 +1106,7 @@ export class UpdateCustomerInput {
 export class RegisterCustomerInput {
     @ApiProperty()
     @IsString()
+    @IsEmail()
     emailAddress: string;
     @ApiProperty()
     @IsEnum(CustomerType)
@@ -1185,12 +1186,14 @@ export class MutationVerifyCustomerAccountArgs {
 export class MutationRefreshCustomerVerificationArgs {
     @ApiProperty()
     @IsString()
+    @IsEmail()
     emailAddress: string;
 }
 
 export class MutationRequestPasswordResetArgs {
     @ApiProperty()
     @IsString()
+    @IsEmail()
     emailAddress: string;
 }
 
@@ -1215,6 +1218,7 @@ export class MutationUpdateCustomerPasswordArgs {
 export class MutationRequestUpdateCustomerEmailAddressArgs {
     @ApiProperty()
     @IsString()
+    @IsEmail()
     newEmailAddress: string;
     @ApiProperty()
     @IsString()

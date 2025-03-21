@@ -1,5 +1,6 @@
 import path from 'path';
 import { AdminUiPlugin } from '@firelancerco/admin-ui-plugin';
+import { GoogleAuthPlugin } from '@firelancerco/google-auth-plugin';
 import { AssetServerPlugin } from '@firelancerco/asset-server-plugin';
 import { DefaultJobQueuePlugin, FirelancerConfig } from '@firelancerco/core';
 
@@ -33,6 +34,9 @@ export const config: FirelancerConfig = {
         },
     },
     plugins: [
+        GoogleAuthPlugin.init({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+        }),
         AssetServerPlugin.init({
             route: 'assets',
             assetUploadDir: path.join(__dirname, './static/assets'),

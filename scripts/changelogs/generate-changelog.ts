@@ -26,6 +26,7 @@ const VALID_SCOPES: string[] = [
     'cli',
     'common',
     'core',
+    'google-auth-plugin',
 ];
 
 const mainTemplate = fs.readFileSync(path.join(__dirname, 'template.hbs'), 'utf-8');

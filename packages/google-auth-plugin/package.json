@@ -1,0 +1,27 @@
+{
+    "name": "@firelancerco/google-auth-plugin",
+    "version": "1.0.4",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib/**/*"
+    ],
+    "scripts": {
+        "watch": "tsc -p ./tsconfig.build.json --watch",
+        "build": "rimraf lib && tsc -p ./tsconfig.build.json",
+        "lint": "eslint --fix ."
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/",
+        "access": "restricted"
+    },
+    "dependencies": {
+        "@firelancerco/common": "^1.0.4",
+        "@firelancerco/core": "^1.0.4",
+        "google-auth-library": "^9.15.1"
+    },
+    "devDependencies": {
+        "rimraf": "^6.0.1",
+        "typescript": "^5.7.2"
+    }
+}

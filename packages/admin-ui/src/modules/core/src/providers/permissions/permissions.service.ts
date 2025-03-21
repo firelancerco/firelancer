@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 /**
  * @description
  * This service is used internally to power components & logic that are dependent on knowing the
- * current user's permissions in the currently-active channel.
+ * current user's permissions.
  */
 @Injectable({
     providedIn: 'root',

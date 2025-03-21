@@ -13,6 +13,7 @@ export * from './helpers/utils/tree-relations-qb-joiner';
 export * from './helpers/utils/translate-entity';
 export * from './helpers/list-query-builder/list-query-builder';
 export * from './helpers/locale-string-hydrator/locale-string-hydrator';
+export * from './helpers/external-authentication/external-authentication.service';
 export * from './services/administrator.service';
 export * from './services/asset.service';
 export * from './services/auth.service';

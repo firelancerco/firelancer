@@ -12,7 +12,8 @@
     "dependencies": {
         "@firelancerco/admin-ui-plugin": "^1.0.4",
         "@firelancerco/asset-server-plugin": "^1.0.4",
-        "@firelancerco/core": "^1.0.4"
+        "@firelancerco/core": "^1.0.4",
+        "@firelancerco/google-auth-plugin": "^1.0.4"
     },
     "devDependencies": {
         "ts-node": "^10.9.2",

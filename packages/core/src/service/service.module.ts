@@ -1,12 +1,20 @@
 import { Module } from '@nestjs/common';
+
 import { CacheModule } from '../cache/cache.module';
 import { ConfigModule } from '../config/config.module';
 import { ConnectionModule } from '../connection/connection.module';
 import { EventBusModule } from '../event-bus/event-bus.module';
 import { JobQueueModule } from '../job-queue/job-queue.module';
 import { ConfigArgService } from './helpers/config-arg/config-arg.service';
+import { ExternalAuthenticationService } from './helpers/external-authentication/external-authentication.service';
+import { ListQueryBuilder } from './helpers/list-query-builder/list-query-builder';
+import { LocaleStringHydrator } from './helpers/locale-string-hydrator/locale-string-hydrator';
 import { PasswordCipher } from './helpers/password-cipher/password-cipher';
 import { RequestContextService } from './helpers/request-context/request-context.service';
+import { SlugValidator } from './helpers/slug-validator/slug-validator';
+import { TranslatableSaver } from './helpers/translatable-saver/translatable-saver';
+import { TranslationDiffer } from './helpers/translatable-saver/translation-differ';
+import { TranslatorService } from './helpers/translator/translator.service';
 import { VerificationTokenGenerator } from './helpers/verification-token-generator/verification-token-generator';
 import { InitializerService } from './initializer.service';
 import { AdministratorService } from './services/administrator.service';
@@ -23,28 +31,22 @@ import { RoleService } from './services/role.service';
 import { SearchService } from './services/search.service';
 import { SessionService } from './services/session.service';
 import { UserService } from './services/user.service';
-import { ListQueryBuilder } from './helpers/list-query-builder/list-query-builder';
-import { TranslatableSaver } from './helpers/translatable-saver/translatable-saver';
-import { TranslationDiffer } from './helpers/translatable-saver/translation-differ';
-import { TranslatorService } from './helpers/translator/translator.service';
-import { SlugValidator } from './helpers/slug-validator/slug-validator';
-import { LocaleStringHydrator } from './helpers/locale-string-hydrator/locale-string-hydrator';
 
 const services = [
-    HistoryService,
     AdministratorService,
     AssetService,
     AuthService,
     BalanceService,
+    CollectionService,
     CustomerService,
-    FacetService,
     FacetValueService,
+    FacetService,
+    HistoryService,
     JobPostService,
     RoleService,
+    SearchService,
     SessionService,
     UserService,
-    CollectionService,
-    SearchService,
 ];
 
 const helpers = [
@@ -58,6 +60,7 @@ const helpers = [
     TranslatorService,
     VerificationTokenGenerator,
     LocaleStringHydrator,
+    ExternalAuthenticationService,
 ];
 
 /**
