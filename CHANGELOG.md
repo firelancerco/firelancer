@@ -1,3 +1,16 @@
+## <small>1.0.5 (2025-03-21)</small>
+
+
+#### Fixes
+
+*
+    **core**
+update password validation strategy to require a minimum length of 8([33d18dd](https://github.com/firelancerco/firelancer    /commit/33d18dd))
+#### Features
+
+*
+    **google-auth-plugin**
+add Google authentication plugin with strategy and configuration([8e8fa91](https://github.com/firelancerco/firelancer    /commit/8e8fa91))
 ## <small>1.0.4 (2025-03-20)</small>
 
 
