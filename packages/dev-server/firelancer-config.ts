@@ -3,9 +3,43 @@ import { AdminUiPlugin } from '@firelancerco/admin-ui-plugin';
 import { GoogleAuthPlugin } from '@firelancerco/google-auth-plugin';
 import { AssetServerPlugin } from '@firelancerco/asset-server-plugin';
 import { DefaultJobQueuePlugin, FirelancerConfig } from '@firelancerco/core';
+import {
+    emailAddressChangeHandler,
+    EmailPlugin,
+    emailVerificationHandler,
+    FileBasedTemplateLoader,
+    passwordResetHandler,
+} from '@firelancerco/email-plugin';
 
 const serverPort = Number(process.env.PORT) || 3000;
 const serverHost = process.env.HOST || 'localhost';
+
+const extendedEmailVerificationHandler = emailVerificationHandler
+    .setTemplateVars(() => ({
+        subject: {
+            en: 'Please verify your email address',
+            ar: 'يرجى التحقق من عنوان بريدك الإلكتروني',
+        },
+    }))
+    .setSubject((_event, ctx) => `{{subject.${ctx.languageCode}}}`);
+
+const extendedPasswordResetHandler = passwordResetHandler
+    .setTemplateVars(() => ({
+        subject: {
+            en: 'Forgotten password reset',
+            ar: 'إعادة تعيين كلمة المرور',
+        },
+    }))
+    .setSubject((_event, ctx) => `{{subject.${ctx.languageCode}}}`);
+
+const extendedEmailAddressChangeHandler = emailAddressChangeHandler
+    .setTemplateVars(() => ({
+        subject: {
+            en: 'Please verify your change of email address',
+            ar: 'تحقق من عنوان بريدك الإلكتروني الجديد',
+        },
+    }))
+    .setSubject((_event, ctx) => `{{subject.${ctx.languageCode}}}`);
 
 export const config: FirelancerConfig = {
     apiOptions: {
@@ -51,6 +85,23 @@ export const config: FirelancerConfig = {
             adminUiConfig: {
                 apiHost: `http://${serverHost}`,
                 apiPort: serverPort,
+            },
+        }),
+        EmailPlugin.init({
+            devMode: true,
+            outputPath: path.join(__dirname, './test-emails'),
+            route: 'mailbox',
+            handlers: [
+                extendedEmailVerificationHandler,
+                extendedPasswordResetHandler,
+                extendedEmailAddressChangeHandler,
+            ],
+            templateLoader: new FileBasedTemplateLoader({
+                templatePath: path.join(__dirname, '../email-plugin/templates'),
+                localized: true,
+            }),
+            globalTemplateVars: {
+                fromAddress: '"Firelancer" <noreply@example.com>',
             },
         }),
     ],

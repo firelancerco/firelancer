@@ -1,0 +1,20 @@
+{{> header title="Forgotten Password Reset" }}
+
+<mj-section background-color="#fafafa">
+    <mj-column>
+        <mj-text color="#525252">
+            Someone requested a new password for your account. Use the verification code below to reset your password:
+        </mj-text>
+
+        <mj-text font-size="20px" font-weight="bold" color="#f45e43">
+            {{ passwordResetToken }}
+        </mj-text>
+
+        <mj-text color="#525252">
+            If you didn't make this request, you can safely ignore this email—nothing has been changed on your account.
+        </mj-text>
+    </mj-column>
+</mj-section>
+
+{{> footer }}
+

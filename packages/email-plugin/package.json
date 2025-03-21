@@ -1,0 +1,37 @@
+{
+    "name": "@firelancerco/email-plugin",
+    "version": "1.0.6",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib/**/*",
+        "templates/**/*",
+        "dev-mailbox.html"
+    ],
+    "scripts": {
+        "watch": "tsc -p ./tsconfig.build.json --watch",
+        "build": "rimraf lib && tsc -p ./tsconfig.build.json"
+    },
+    "publishConfig": {
+        "access": "restricted"
+    },
+    "dependencies": {
+        "@firelancerco/common": "^1.0.6",
+        "@firelancerco/core": "^1.0.6",
+        "dateformat": "^4.5.1",
+        "express": "^4.21.2",
+        "fs-extra": "^11.3.0",
+        "handlebars": "^4.7.8",
+        "mjml": "^4.15.3",
+        "nodemailer": "^6.10.0"
+    },
+    "devDependencies": {
+        "@types/dateformat": "^3.0.1",
+        "@types/express": "^5.0.1",
+        "@types/fs-extra": "^11.0.4",
+        "@types/mjml": "^4.7.4",
+        "@types/nodemailer": "^6.4.17",
+        "rimraf": "^6.0.1",
+        "typescript": "^5.8.2"
+    }
+}

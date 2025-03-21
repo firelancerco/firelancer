@@ -25,6 +25,7 @@ const VALID_SCOPES: string[] = [
     'asset-server-plugin',
     'cli',
     'common',
+    'email-plugin',
     'core',
     'google-auth-plugin',
 ];

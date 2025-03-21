@@ -1,5 +1,5 @@
 {
-    "name": "@firelancerco/dev-server",
+    "name": "dev-server",
     "version": "1.0.6",
     "main": "index.js",
     "private": true,
@@ -13,6 +13,7 @@
         "@firelancerco/admin-ui-plugin": "^1.0.6",
         "@firelancerco/asset-server-plugin": "^1.0.6",
         "@firelancerco/core": "^1.0.6",
+        "@firelancerco/email-plugin": "^1.0.6",
         "@firelancerco/google-auth-plugin": "^1.0.6"
     },
     "devDependencies": {

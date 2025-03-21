@@ -1,0 +1,19 @@
+{{> header title="إعادة تعيين كلمة المرور" }}
+
+<mj-section background-color="#fafafa">
+    <mj-column>
+        <mj-text color="#525252">
+            قام شخص ما بطلب كلمة مرور جديدة لحسابك. استخدم رمز التحقق أدناه لإعادة تعيين كلمة المرور:
+        </mj-text>
+
+        <mj-text font-size="20px" font-weight="bold" color="#f45e43">
+            {{ passwordResetToken }}
+        </mj-text>
+
+        <mj-text color="#525252">
+            إذا لم تقم بطلب هذا، يمكنك تجاهل هذا البريد الإلكتروني بأمان — لم يتم تغيير أي شيء في حسابك.
+        </mj-text>
+    </mj-column>
+</mj-section>
+
+{{> footer }}

@@ -19,4 +19,6 @@ cd ../asset-server-plugin && npm publish -reg $VERDACCIO &&\
 cd ../cli && npm publish -reg $VERDACCIO &&\
 cd ../common && npm publish -reg $VERDACCIO &&\
 cd ../core && npm publish -reg $VERDACCIO &&\
+cd ../email-plugin && npm publish -reg $VERDACCIO &&\
+cd ../google-auth-plugin && npm publish -reg $VERDACCIO &&\
 cd ../admin-ui/package && npm publish -reg $VERDACCIO
