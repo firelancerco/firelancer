@@ -1,3 +1,11 @@
+## <small>1.0.6 (2025-03-21)</small>
+
+
+#### Fixes
+
+*
+    **core**
+reduce session duration to 15 days and verification token duration to 30 seconds([cc159b5](https://github.com/firelancerco/firelancer    /commit/cc159b5))
 ## <small>1.0.5 (2025-03-21)</small>
 
 
