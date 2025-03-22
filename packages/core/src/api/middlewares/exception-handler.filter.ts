@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+
 import { InternalServerException, parseContext } from '../../common';
 import { ConfigService, Logger } from '../../config';
 import { I18nException, I18nService } from '../../i18n';
@@ -33,22 +34,29 @@ export class ExceptionHandlerFilter implements ExceptionFilter {
     private handleHttpException(exception: HttpException, req: any, res: any): void {
         const status = exception.getStatus();
 
-        // Translate the exception if it's an i18n-aware exception
         if (exception instanceof I18nException) {
             exception = this.i18nService.translateError(req, exception);
         }
 
-        res.status(status).json(exception);
+        res.status(status).json({
+            status: exception['status'],
+            name: exception['name'],
+            message: exception['message'],
+            response: exception['response'],
+        });
     }
 
     private handleUnknownException(exception: Error, req: any, res: any): void {
-        // Log unknown exceptions
-        Logger.error(exception.message, exception.stack);
+        Logger.error(exception as any, exception.stack);
 
-        // Convert to InternalServerException and translate it
         const internalException = new InternalServerException(exception.message);
         const translatedError = this.i18nService.translateError(req, internalException);
 
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(translatedError);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            status: translatedError['status'],
+            name: translatedError['name'],
+            message: translatedError['message'],
+            response: translatedError['response'],
+        });
     }
 }

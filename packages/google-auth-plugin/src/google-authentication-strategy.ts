@@ -33,8 +33,6 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
     async authenticate(ctx: RequestContext, data: GoogleAuthData): Promise<User | false> {
         let payload: any | undefined = undefined;
 
-        console.log(data);
-
         if (data.access_token) {
             const userInfoResponse = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
                 headers: {
