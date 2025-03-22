@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CustomerType } from '@firelancerco/common/lib/shared-schema';
 import {
     AuthenticationStrategy,
@@ -7,10 +8,12 @@ import {
     User,
     UserInputException,
 } from '@firelancerco/core';
+import axios from 'axios';
 import { OAuth2Client } from 'google-auth-library';
 
 export type GoogleAuthData = {
-    token: string;
+    id_token?: string;
+    access_token?: string;
     type?: CustomerType;
 };
 
@@ -27,15 +30,26 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
         this.externalAuthenticationService = injector.get(ExternalAuthenticationService);
     }
 
-    /**
-     * Implements https://developers.google.com/identity/sign-in/web/backend-auth
-     */
     async authenticate(ctx: RequestContext, data: GoogleAuthData): Promise<User | false> {
-        const ticket = await this.client.verifyIdToken({
-            idToken: data.token,
-            audience: this.clientId,
-        });
-        const payload = ticket.getPayload();
+        let payload: any | undefined = undefined;
+
+        console.log(data);
+
+        if (data.access_token) {
+            const userInfoResponse = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: {
+                    Authorization: `Bearer ${data.access_token}`,
+                },
+            });
+            payload = userInfoResponse.data;
+        } else if (data.id_token) {
+            const ticket = await this.client.verifyIdToken({
+                idToken: data.id_token,
+                audience: this.clientId,
+            });
+            payload = ticket.getPayload();
+        }
+
         if (!payload || !payload.email) {
             return false;
         }
@@ -45,8 +59,9 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
             return user;
         }
 
+        // user does not exist; register new user
         if (!data.type) {
-            throw new UserInputException('error.customer-type-required');
+            throw new UserInputException('error.register-customer-type-required');
         }
 
         return this.externalAuthenticationService.createCustomerAndUser(ctx, {
