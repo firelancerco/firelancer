@@ -1,6 +1,6 @@
 {
     "name": "dev-server",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "main": "index.js",
     "private": true,
     "scripts": {
@@ -10,11 +10,11 @@
         "dev": "concurrently npm:dev:*"
     },
     "dependencies": {
-        "@firelancerco/admin-ui-plugin": "^1.0.7",
-        "@firelancerco/asset-server-plugin": "^1.0.7",
-        "@firelancerco/core": "^1.0.7",
-        "@firelancerco/email-plugin": "^1.0.7",
-        "@firelancerco/google-auth-plugin": "^1.0.7"
+        "@firelancerco/admin-ui-plugin": "^1.0.8",
+        "@firelancerco/asset-server-plugin": "^1.0.8",
+        "@firelancerco/core": "^1.0.8",
+        "@firelancerco/email-plugin": "^1.0.8",
+        "@firelancerco/google-auth-plugin": "^1.0.8"
     },
     "devDependencies": {
         "ts-node": "^10.9.2",

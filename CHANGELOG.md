@@ -1,3 +1,16 @@
+## <small>1.0.8 (2025-03-22)</small>
+
+
+#### Features
+
+*
+    **google-auth-plugin**
+integrate authentication using OAuth 2.0([485e936](https://github.com/firelancerco/firelancer    /commit/485e936))
+#### Fixes
+
+*
+    **core**
+increase verification token duration to 2 minutes and revert to previous token generation logic([a12e2ef](https://github.com/firelancerco/firelancer    /commit/a12e2ef))
 ## <small>1.0.7 (2025-03-21)</small>
 
 
