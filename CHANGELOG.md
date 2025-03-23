@@ -1,3 +1,11 @@
+## <small>1.0.10 (2025-03-23)</small>
+
+
+#### Fixes
+
+*
+    **core**
+fix bug where passwordHash is not returned with authentication-method([eb9f912](https://github.com/firelancerco/firelancer    /commit/eb9f912))
 ## <small>1.0.9 (2025-03-23)</small>
 
 
