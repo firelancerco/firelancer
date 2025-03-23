@@ -1,3 +1,18 @@
+## <small>1.0.9 (2025-03-23)</small>
+
+
+#### Features
+
+*
+    **core**
+add created-at timestamps fields for different authentication-method tokens([848b710](https://github.com/firelancerco/firelancer    /commit/848b710))*
+    **core**
+integrate throttling and enhance exception handling in API([47abb65](https://github.com/firelancerco/firelancer    /commit/47abb65))
+#### Fixes
+
+*
+    **core**
+enhance exception handling and improve error response structure([d6c3a6c](https://github.com/firelancerco/firelancer    /commit/d6c3a6c))
 ## <small>1.0.8 (2025-03-22)</small>
 
 
