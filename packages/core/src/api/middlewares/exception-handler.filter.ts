@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
-import { InternalServerException, parseContext } from '../../common';
+import { parseContext } from '../../common';
 import { ConfigService, Logger } from '../../config';
 import { I18nException, I18nService } from '../../i18n';
 
@@ -13,50 +13,46 @@ export class ExceptionHandlerFilter implements ExceptionFilter {
     ) {}
 
     catch(exception: Error, host: ArgumentsHost): void {
-        // Process the exception through all configured error handlers
-        this.processErrorHandlers(exception, host);
-
         const { req, res } = parseContext(host);
 
-        if (exception instanceof HttpException) {
-            this.handleHttpException(exception, req, res);
-        } else {
-            this.handleUnknownException(exception, req, res);
-        }
-    }
-
-    private processErrorHandlers(exception: Error, host: ArgumentsHost): void {
         for (const handler of this.configService.systemOptions.errorHandlers) {
             void handler.handleServerError(exception, { host });
         }
-    }
 
-    private handleHttpException(exception: HttpException, req: any, res: any): void {
-        const status = exception.getStatus();
+        let status: number;
+        let message: string;
+        let error: string;
+        let details: any;
+
+        if (exception instanceof HttpException) {
+            status = exception.getStatus();
+            const exceptionResponse = exception.getResponse();
+            message =
+                typeof exceptionResponse === 'object'
+                    ? (exceptionResponse as any).message || exceptionResponse
+                    : exceptionResponse;
+            error = exception.name;
+            details = (exceptionResponse as any).details || undefined;
+        } else {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            message = 'Internal server error';
+            error = 'InternalServerError';
+            details = exception instanceof Error ? exception.message : undefined;
+        }
 
         if (exception instanceof I18nException) {
-            exception = this.i18nService.translateError(req, exception);
+            message = this.i18nService.translateError(req, exception).message;
         }
 
         res.status(status).json({
-            status: exception['status'],
-            name: exception['name'],
-            message: exception['message'],
-            response: exception['response'],
+            statusCode: status,
+            message,
+            error,
+            timestamp: new Date().toISOString(),
+            path: req.url,
+            details,
         });
-    }
 
-    private handleUnknownException(exception: Error, req: any, res: any): void {
-        Logger.error(exception as any, exception.stack);
-
-        const internalException = new InternalServerException(exception.message);
-        const translatedError = this.i18nService.translateError(req, internalException);
-
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-            status: translatedError['status'],
-            name: translatedError['name'],
-            message: translatedError['message'],
-            response: translatedError['response'],
-        });
+        Logger.error(JSON.stringify(exception));
     }
 }

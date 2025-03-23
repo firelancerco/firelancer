@@ -50,7 +50,7 @@ export interface FirelancerPluginMetadata extends ModuleMetadata {
      *
      * @example
      * ```ts
-     * compatibility: '^3.0.0'
+     * compatibility: '^1.0.0'
      * ```
      */
     compatibility?: string;

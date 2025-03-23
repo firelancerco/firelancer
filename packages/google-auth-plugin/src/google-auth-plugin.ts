@@ -10,6 +10,7 @@ export type GoogleAuthPluginOptions = {
  * An implementation of a Google login flow.
  */
 @FirelancerPlugin({
+    compatibility: '>=1.0.0',
     imports: [PluginCommonModule],
     configuration: config => {
         config.authOptions.shopAuthenticationStrategy = [

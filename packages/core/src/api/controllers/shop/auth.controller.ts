@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
+
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
@@ -106,6 +108,7 @@ export class ShopAuthController extends BaseAuthController {
         }
     }
 
+    @Throttle({ default: { ttl: 60000, limit: 3 } })
     @Transaction()
     @Post('verify')
     @Allow(Permission.Public)
@@ -122,7 +125,6 @@ export class ShopAuthController extends BaseAuthController {
             ctx,
             // We know that there is a user, since the Customer
             // was found with the .getCustomerByUserId() method.
-
             customer.user!,
             NATIVE_AUTH_STRATEGY_NAME,
         );
@@ -162,6 +164,7 @@ export class ShopAuthController extends BaseAuthController {
         return { success: true };
     }
 
+    @Throttle({ default: { ttl: 60000, limit: 3 } })
     @Transaction()
     @Post('reset-password')
     @Allow(Permission.Public)
@@ -239,6 +242,7 @@ export class ShopAuthController extends BaseAuthController {
         };
     }
 
+    @Throttle({ default: { ttl: 60000, limit: 3 } })
     @Transaction()
     @Post('update-email')
     @Allow(Permission.Owner)

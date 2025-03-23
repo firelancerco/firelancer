@@ -1,5 +1,6 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_PIPE, RouterModule } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { CacheModule } from '../cache';
 import { getConfig } from '../config/config-helpers';
@@ -33,8 +34,19 @@ export const adminEntityControllers = [];
  * one API module.
  */
 @Module({
-    imports: [ConfigModule, ServiceModule, CacheModule, ConnectionModule.forRoot()],
-    providers: [],
+    imports: [
+        ConfigModule,
+        ServiceModule,
+        CacheModule,
+        ConnectionModule.forRoot(),
+        ThrottlerModule.forRoot({ throttlers: [{ ttl: 60000, limit: 10 }] }),
+    ],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
+    ],
     exports: [CacheModule, ConfigModule, ServiceModule, ConnectionModule.forRoot()],
 })
 export class ApiSharedModule {}
