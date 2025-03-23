@@ -39,7 +39,7 @@ export class RequestContextService {
                     id: user.id,
                     identifier: user.identifier,
                     verified: user.verified,
-                    permissions: user.roles.flatMap(role => role.permissions),
+                    permissions: user?.roles?.flatMap(role => role.permissions) ?? [],
                 },
                 id: 0,
                 token: '__dummy_session_token__',

@@ -1,4 +1,5 @@
 import { Column, Entity, Index, TableInheritance } from 'typeorm';
+
 import { FirelancerEntity } from '../base/base.entity';
 
 /**

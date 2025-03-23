@@ -18,24 +18,21 @@ export class VerificationTokenGenerator {
      * random id.
      */
     generateVerificationToken() {
-        const now = new Date();
-        const base64Now = Buffer.from(now.toJSON()).toString('base64');
-        const id = generateRandomString(6, alphabet('0-9'));
-        return `${base64Now}_${id}`;
+        return generateRandomString(6, alphabet('0-9'));
     }
 
     /**
      * Checks the age of the verification token to see if it falls within the token duration
      * as specified in the FirelancerConfig.
      */
-    verifyVerificationToken(token: string): boolean {
+    verifyVerificationToken(token: string, createdAt: string | Date | null): boolean {
         const { verificationTokenDuration } = this.configService.authOptions;
         const verificationTokenDurationInMs =
             typeof verificationTokenDuration === 'string' ? ms(verificationTokenDuration) : verificationTokenDuration;
 
-        const [generatedOn] = token.split('_');
-        const dateString = Buffer.from(generatedOn, 'base64').toString();
-        const date = new Date(dateString);
+        if (!createdAt) return false;
+
+        const date = new Date(createdAt);
         const elapsed = +new Date() - +date;
         return elapsed < verificationTokenDurationInMs;
     }

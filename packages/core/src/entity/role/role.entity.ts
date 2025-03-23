@@ -1,5 +1,6 @@
-import { Permission } from '../../common/shared-schema';
 import { Column, DeepPartial, Entity } from 'typeorm';
+
+import { Permission } from '../../common/shared-schema';
 import { FirelancerEntity } from '../base/base.entity';
 
 /**

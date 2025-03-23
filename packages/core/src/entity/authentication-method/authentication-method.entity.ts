@@ -1,6 +1,7 @@
 import { Entity, Index, ManyToOne, TableInheritance } from 'typeorm';
+
 import { FirelancerEntity } from '../base/base.entity';
-import type { User } from '../user/user.entity';
+import { User } from '../user/user.entity';
 
 /**
  * @description
@@ -10,6 +11,6 @@ import type { User } from '../user/user.entity';
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export abstract class AuthenticationMethod extends FirelancerEntity {
     @Index()
-    @ManyToOne('User', 'authenticationMethods')
+    @ManyToOne(() => User, user => user.authenticationMethods)
     user: User;
 }

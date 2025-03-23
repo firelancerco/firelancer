@@ -1,4 +1,5 @@
 import { ChildEntity, Column, DeepPartial } from 'typeorm';
+
 import { AuthenticationMethod } from './authentication-method.entity';
 
 /**

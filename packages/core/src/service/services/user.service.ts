@@ -1,6 +1,7 @@
 import { isEmailAddressLike, normalizeEmailAddress } from '@firelancerco/common/lib/shared-utils';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
+
 import {
     EntityNotFoundException,
     IdentifierChangeTokenExpiredException,
@@ -178,6 +179,7 @@ export class UserService {
     async setVerificationToken(ctx: RequestContext, user: User): Promise<User> {
         const nativeAuthMethod = user.getNativeAuthenticationMethod();
         nativeAuthMethod.verificationToken = this.verificationTokenGenerator.generateVerificationToken();
+        nativeAuthMethod.verificationTokenCreatedAt = new Date();
         user.verified = false;
         await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod);
         return this.connection.getRepository(ctx, User).save(user);
@@ -191,38 +193,42 @@ export class UserService {
      * If valid, the User will be set to `verified: true`.
      */
     async verifyUserByToken(ctx: RequestContext, verificationToken: string, password?: string): Promise<User> {
-        const user = await this.connection
-            .getRepository(ctx, User)
-            .createQueryBuilder('user')
-            .leftJoinAndSelect('user.authenticationMethods', 'aums')
-            .leftJoin('user.authenticationMethods', 'authenticationMethod')
-            .addSelect('aums.passwordHash')
-            .where('authenticationMethod.verificationToken = :verificationToken', { verificationToken })
-            .getOne();
-        if (user) {
-            if (this.verificationTokenGenerator.verifyVerificationToken(verificationToken)) {
-                const nativeAuthMethod = user.getNativeAuthenticationMethod();
-                if (!password) {
-                    if (!nativeAuthMethod.passwordHash) {
-                        throw new MissingPasswordException();
-                    }
-                } else {
-                    if (nativeAuthMethod.passwordHash) {
-                        throw new PasswordAlreadySetException();
-                    }
-                    await this.validatePassword(ctx, password);
-                    nativeAuthMethod.passwordHash = await this.passwordCipher.hash(password);
-                }
-                nativeAuthMethod.verificationToken = null;
-                user.verified = true;
-                await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod);
-                return this.connection.getRepository(ctx, User).save(user);
-            } else {
-                throw new VerificationTokenExpiredException();
-            }
-        } else {
+        const nativeAuthMethod = await this.connection.getRepository(ctx, NativeAuthenticationMethod).findOne({
+            where: {
+                verificationToken,
+            },
+            relations: ['user'],
+        });
+
+        if (!nativeAuthMethod || !nativeAuthMethod?.user) {
             throw new VerificationTokenInvalidException();
         }
+
+        if (
+            !this.verificationTokenGenerator.verifyVerificationToken(
+                verificationToken,
+                nativeAuthMethod.verificationTokenCreatedAt,
+            )
+        ) {
+            throw new VerificationTokenExpiredException();
+        }
+
+        if (!password) {
+            if (!nativeAuthMethod.passwordHash) {
+                throw new MissingPasswordException();
+            }
+        } else {
+            if (nativeAuthMethod.passwordHash) {
+                throw new PasswordAlreadySetException();
+            }
+            await this.validatePassword(ctx, password);
+            nativeAuthMethod.passwordHash = await this.passwordCipher.hash(password);
+        }
+        nativeAuthMethod.verificationToken = null;
+        nativeAuthMethod.verificationTokenCreatedAt = null;
+        nativeAuthMethod.user.verified = true;
+        await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod);
+        return this.connection.getRepository(ctx, User).save(nativeAuthMethod.user);
     }
 
     /**
@@ -240,6 +246,7 @@ export class UserService {
             return undefined;
         }
         nativeAuthMethod.passwordResetToken = this.verificationTokenGenerator.generateVerificationToken();
+        nativeAuthMethod.passwordResetTokenCreatedAt = new Date();
         await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod);
         return user;
     }
@@ -252,35 +259,41 @@ export class UserService {
      * If valid, the User's credentials will be updated with the new password.
      */
     async resetPasswordByToken(ctx: RequestContext, passwordResetToken: string, password: string): Promise<User> {
-        const user = await this.connection
-            .getRepository(ctx, User)
-            .createQueryBuilder('user')
-            .leftJoinAndSelect('user.authenticationMethods', 'aums')
-            .leftJoin('user.authenticationMethods', 'authenticationMethod')
-            .where('authenticationMethod.passwordResetToken = :passwordResetToken', { passwordResetToken })
-            .getOne();
-        if (!user) {
+        const nativeAuthMethod = await this.connection.getRepository(ctx, NativeAuthenticationMethod).findOne({
+            where: {
+                passwordResetToken,
+            },
+            relations: ['user'],
+        });
+
+        if (!nativeAuthMethod || !nativeAuthMethod?.user) {
             throw new PasswordResetTokenInvalidException();
         }
+
         await this.validatePassword(ctx, password);
 
-        if (this.verificationTokenGenerator.verifyVerificationToken(passwordResetToken)) {
-            const nativeAuthMethod = user.getNativeAuthenticationMethod();
-            nativeAuthMethod.passwordHash = await this.passwordCipher.hash(password);
-            nativeAuthMethod.passwordResetToken = null;
-            await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod);
-            if (user.verified === false && this.configService.authOptions.requireVerification) {
-                // This code path represents an edge-case in which the Customer creates an account,
-                // but prior to verifying their email address, they start the password reset flow.
-                // Since the password reset flow makes the exact same guarantee as the email verification
-                // flow (i.e. the person controls the specified email account), we can also consider it
-                // a verification.
-                user.verified = true;
-            }
-            return this.connection.getRepository(ctx, User).save(user);
-        } else {
+        if (
+            !this.verificationTokenGenerator.verifyVerificationToken(
+                passwordResetToken,
+                nativeAuthMethod.passwordResetTokenCreatedAt,
+            )
+        ) {
             throw new PasswordResetTokenExpiredException();
         }
+
+        nativeAuthMethod.passwordHash = await this.passwordCipher.hash(password);
+        nativeAuthMethod.passwordResetToken = null;
+        nativeAuthMethod.passwordResetTokenCreatedAt = null;
+        await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod);
+        if (nativeAuthMethod.user.verified === false && this.configService.authOptions.requireVerification) {
+            // This code path represents an edge-case in which the Customer creates an account,
+            // but prior to verifying their email address, they start the password reset flow.
+            // Since the password reset flow makes the exact same guarantee as the email verification
+            // flow (i.e. the person controls the specified email account), we can also consider it
+            // a verification.
+            nativeAuthMethod.user.verified = true;
+        }
+        return this.connection.getRepository(ctx, User).save(nativeAuthMethod.user);
     }
 
     /**
@@ -316,6 +329,7 @@ export class UserService {
     async setIdentifierChangeToken(ctx: RequestContext, user: User): Promise<User> {
         const nativeAuthMethod = user.getNativeAuthenticationMethod();
         nativeAuthMethod.identifierChangeToken = this.verificationTokenGenerator.generateVerificationToken();
+        nativeAuthMethod.identifierChangeTokenCreatedAt = new Date();
         await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod);
         return user;
     }
@@ -326,34 +340,38 @@ export class UserService {
      * new email address, with the token previously set using the `setIdentifierChangeToken()` method.
      */
     async changeIdentifierByToken(ctx: RequestContext, token: string): Promise<{ user: User; oldIdentifier: string }> {
-        const user = await this.connection
-            .getRepository(ctx, User)
-            .createQueryBuilder('user')
-            .leftJoinAndSelect('user.authenticationMethods', 'aums')
-            .leftJoin('user.authenticationMethods', 'authenticationMethod')
-            .where('authenticationMethod.identifierChangeToken = :identifierChangeToken', {
+        const nativeAuthMethod = await this.connection.getRepository(ctx, NativeAuthenticationMethod).findOne({
+            where: {
                 identifierChangeToken: token,
-            })
-            .getOne();
-        if (!user) {
+            },
+            relations: ['user'],
+        });
+
+        if (!nativeAuthMethod || !nativeAuthMethod?.user) {
             throw new IdentifierChangeTokenInvalidException();
         }
-        if (!this.verificationTokenGenerator.verifyVerificationToken(token)) {
+
+        if (
+            !this.verificationTokenGenerator.verifyVerificationToken(
+                token,
+                nativeAuthMethod.identifierChangeTokenCreatedAt,
+            )
+        ) {
             throw new IdentifierChangeTokenExpiredException();
         }
-        const nativeAuthMethod = user.getNativeAuthenticationMethod();
         const pendingIdentifier = nativeAuthMethod.pendingIdentifier;
         if (!pendingIdentifier) {
             throw new InternalServerException('error.pending-identifier-missing');
         }
-        const oldIdentifier = user.identifier;
-        user.identifier = pendingIdentifier;
+        const oldIdentifier = nativeAuthMethod.user.identifier;
+        nativeAuthMethod.user.identifier = pendingIdentifier;
         nativeAuthMethod.identifier = pendingIdentifier;
         nativeAuthMethod.identifierChangeToken = null;
+        nativeAuthMethod.identifierChangeTokenCreatedAt = null;
         nativeAuthMethod.pendingIdentifier = null;
         await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod, { reload: false });
-        await this.connection.getRepository(ctx, User).save(user, { reload: false });
-        return { user, oldIdentifier };
+        await this.connection.getRepository(ctx, User).save(nativeAuthMethod.user, { reload: false });
+        return { user: nativeAuthMethod.user, oldIdentifier };
     }
 
     /**
@@ -364,6 +382,7 @@ export class UserService {
         const user = await this.connection
             .getRepository(ctx, User)
             .createQueryBuilder('user')
+            .leftJoinAndSelect('user.roles', 'roles')
             .leftJoinAndSelect('user.authenticationMethods', 'authenticationMethods')
             .addSelect('authenticationMethods.passwordHash')
             .where('user.id = :id', { id: userId })

@@ -1,4 +1,5 @@
 import { ChildEntity, Column, DeepPartial } from 'typeorm';
+
 import { AuthenticationMethod } from './authentication-method.entity';
 
 /**
@@ -21,8 +22,14 @@ export class NativeAuthenticationMethod extends AuthenticationMethod {
     @Column({ type: 'varchar', nullable: true })
     verificationToken: string | null;
 
+    @Column({ type: 'timestamp', nullable: true })
+    verificationTokenCreatedAt: Date | null;
+
     @Column({ type: 'varchar', nullable: true })
     passwordResetToken: string | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    passwordResetTokenCreatedAt: Date | null;
 
     /**
      * @description
@@ -30,6 +37,9 @@ export class NativeAuthenticationMethod extends AuthenticationMethod {
      */
     @Column({ type: 'varchar', nullable: true })
     identifierChangeToken: string | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    identifierChangeTokenCreatedAt: Date | null;
 
     /**
      * @description

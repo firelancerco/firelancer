@@ -138,7 +138,7 @@ export class SessionService implements EntitySubscriberInterface {
                 id: user.id,
                 identifier: user.identifier,
                 verified: user.verified,
-                permissions: user.roles.flatMap(role => role.permissions),
+                permissions: user?.roles?.flatMap(role => role.permissions) ?? [],
             };
         }
         return serializedSession;
