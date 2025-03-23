@@ -1,14 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CustomerType } from '@firelancerco/common/lib/shared-schema';
 import { AuthenticationStrategy, ExternalAuthenticationService, Injector, RequestContext } from '@firelancerco/core';
 import axios from 'axios';
 import { OAuth2Client } from 'google-auth-library';
 
-export type GoogleAuthData = {
-    id_token?: string;
-    access_token?: string;
-    type?: CustomerType;
-};
+import { GoogleAuthData } from './shared-schema';
 
 export class GoogleAuthenticationStrategy implements AuthenticationStrategy<GoogleAuthData> {
     readonly name = 'google';

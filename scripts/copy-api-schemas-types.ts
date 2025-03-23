@@ -3,7 +3,10 @@ import * as path from 'path';
 import { Project, SourceFile, SyntaxKind } from 'ts-morph';
 
 const PATHS = {
-    source: path.resolve(__dirname, '../packages/core/src/common/shared-schema.ts'),
+    source: [
+        path.resolve(__dirname, '../packages/core/src/common/shared-schema.ts'),
+        path.resolve(__dirname, '../packages/google-auth-plugin/src/shared-schema.ts'),
+    ],
     output: path.resolve(__dirname, '../packages/common/src/shared-schema.ts'),
 };
 
@@ -36,12 +39,12 @@ function removeDecorators(sourceFile: SourceFile) {
     sourceFile.getDescendantsOfKind(SyntaxKind.Decorator).forEach(decorator => decorator.remove());
 }
 
-function processSourceFile() {
-    if (!fs.existsSync(PATHS.source)) {
-        throw new Error(`Source file not found: ${PATHS.source}`);
+function processSourceFile(sourcePath: string): string {
+    if (!fs.existsSync(sourcePath)) {
+        throw new Error(`Source file not found: ${sourcePath}`);
     }
 
-    const sourceFile = project.addSourceFileAtPath(PATHS.source);
+    const sourceFile = project.addSourceFileAtPath(sourcePath);
 
     removeImports(sourceFile);
     removeRequires(sourceFile);
@@ -65,8 +68,15 @@ function writeOutput(content: string) {
 function main() {
     try {
         console.log('Starting schema processing...');
-        const cleanedContent = processSourceFile();
-        writeOutput(cleanedContent);
+        let mergedContent = '';
+
+        PATHS.source.forEach(sourcePath => {
+            console.log(`Processing source file: ${sourcePath}`);
+            const cleanedContent = processSourceFile(sourcePath);
+            mergedContent += cleanedContent + '\n';
+        });
+
+        writeOutput(mergedContent.trim());
     } catch (error) {
         console.error('Processing failed:', error instanceof Error ? error.message : 'unknown error');
         process.exit(1);
