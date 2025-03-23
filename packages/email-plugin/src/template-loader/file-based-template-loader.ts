@@ -3,7 +3,6 @@ import fs from 'fs/promises';
 import path from 'path';
 
 import { LoadTemplateInput, Partial } from '../types';
-
 import { TemplateLoader } from './template-loader';
 
 /**

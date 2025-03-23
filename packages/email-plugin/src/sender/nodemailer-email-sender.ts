@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { assertNever, normalizeString } from '@firelancerco/common/lib/shared-utils';
 import { Logger } from '@firelancerco/core';
 import fs from 'fs-extra';

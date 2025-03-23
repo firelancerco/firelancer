@@ -912,342 +912,194 @@ export class FacetValueTranslation {
 }
 
 export class CreateAdministratorInput {
-    
-    
-    
-    
     emailAddress: string;
-    
-    
-    
+
     firstName: string;
-    
-    
-    
+
     lastName: string;
-    
-    
-    
+
     password: string;
-    
-    
+
     roleIds: Array<ID>;
 }
 
 export class UpdateAdministratorInput {
-    
-    
     id: ID;
-    
-    
-    
+
     emailAddress?: string;
-    
-    
-    
+
     firstName?: string;
-    
-    
-    
+
     lastName?: string;
-    
-    
-    
+
     password?: string;
-    
-    
-    
+
     roleIds?: Array<ID>;
 }
 
 export class UpdateActiveAdministratorInput {
-    
-    
-    
     emailAddress?: string;
-    
-    
-    
+
     firstName?: string;
-    
-    
-    
+
     lastName?: string;
-    
-    
-    
+
     password?: string;
 }
 
 export class CurrentUser {
-    
-    
     id: ID;
-    
-    
+
     identifier: string;
-    
-    
+
     permissions: Array<Permission>;
 }
 
 export class MutationLoginArgs {
-    
-    
     password: string;
-    
-    
-    
+
     rememberMe?: boolean;
-    
-    
+
     username: string;
 }
 
 export class NativeAuthInput {
-    
-    
     password: string;
-    
-    
+
     username: string;
 }
 
 export class AuthenticationInput {
-    
-    
-    
     native?: NativeAuthInput;
 }
 
 export class MutationAuthenticateArgs {
-    
-    
-    
-    
-    
-    
     input: AuthenticationInput;
-    
-    
+
     rememberMe?: boolean;
 }
 
 export class CreateCustomerInput {
-    
-    
     emailAddress: string;
-    
-    
+
     customerType: CustomerType;
-    
-    
+
     firstName: string;
-    
-    
+
     lastName: string;
-    
-    
-    
+
     phoneNumber?: string;
-    
-    
-    
+
     title?: string;
 }
 
 export class UpdateCustomerInput {
-    
-    
     id: ID;
-    
-    
-    
+
     emailAddress?: string;
-    
-    
-    
+
     firstName?: string;
-    
-    
-    
+
     lastName?: string;
-    
-    
-    
+
     phoneNumber?: string;
-    
-    
-    
+
     title?: string;
 }
 
 export class RegisterCustomerInput {
-    
-    
     emailAddress: string;
-    
-    
+
     customerType: CustomerType;
-    
-    
-    
+
     firstName?: string;
-    
-    
-    
+
     lastName?: string;
-    
-    
-    
+
     password?: string;
-    
-    
-    
+
     phoneNumber?: string;
-    
-    
-    
+
     title?: string;
 }
 
 export class CreateRoleInput {
-    
-    
     code: string;
-    
-    
+
     description: string;
-    
-    
+
     permissions: Array<Permission>;
 }
 
 export class UpdateRoleInput {
-    
-    
     id: ID;
-    
-    
-    
+
     code?: string;
-    
-    
-    
+
     description?: string;
-    
-    
-    
+
     permissions?: Array<Permission>;
 }
 
 export class MutationRegisterCustomerAccountArgs {
-    
-    
-    
-    
-    
-    
     input: RegisterCustomerInput;
 }
 
 export class MutationVerifyCustomerAccountArgs {
-    
-    
-    
     password?: string;
-    
-    
+
     token: string;
 }
 
 export class MutationRefreshCustomerVerificationArgs {
-    
-    
     emailAddress: string;
 }
 
 export class MutationRequestPasswordResetArgs {
-    
-    
     emailAddress: string;
 }
 
 export class MutationResetPasswordArgs {
-    
-    
     password: string;
-    
-    
+
     token: string;
 }
 
 export class MutationUpdateCustomerPasswordArgs {
-    
-    
     currentPassword: string;
-    
-    
+
     newPassword: string;
 }
 
 export class MutationRequestUpdateCustomerEmailAddressArgs {
-    
-    
     newEmailAddress: string;
-    
-    
+
     password: string;
 }
 
 export class MutationUpdateCustomerEmailAddressArgs {
-    
-    
     token: string;
 }
 
 export class MutationCreateAdministratorArgs {
-    
-    
-    
-    
-    
-    
     input: CreateAdministratorInput;
 }
 
 export class MutationUpdateAdministratorArgs {
-    
-    
-    
-    
-    
-    
     input: UpdateAdministratorInput;
 }
 
 export class MutationUpdateActiveAdministratorArgs {
-    
-    
-    
-    
-    
-    
     input: UpdateActiveAdministratorInput;
 }
 
 export class MutationAssignRoleToAdministratorArgs {
-    
-    
     administratorId: ID;
-    
-    
+
     roleId: ID;
 }
 
 export class MutationDeleteAdministratorArgs {
-    
-    
     id: ID;
 }
 
@@ -1256,417 +1108,238 @@ export class MutationDeleteAdministratorsArgs {
 }
 
 export class QueryAdministratorArgs {
-    
-    
     id: ID;
 }
 
 export class File {
-    
     originalname: string;
-    
+
     mimetype: string;
-    
-    
-    
-    
+
     buffer: Buffer;
-    
+
     size: number;
 }
 
 export class CreateAssetInput {
-    
-    
-    
-    
-    
     file: File;
 }
 
 export class CoordinateInput {
-    
-    
     x: number;
-    
-    
+
     y: number;
 }
 
 export class UpdateAssetInput {
-    
-    
     id: ID;
-    
-    
-    
-    
-    
-    
+
     focalPoint?: CoordinateInput;
-    
-    
-    
+
     name?: string;
-    
-    
-    
+
     tags?: string;
 }
 
 export class CreateJobPostInput {
-    
-    
     customerId: ID;
-    
-    
+
     title: string;
-    
-    
+
     description: string;
-    
-    
+
     enabled: boolean;
-    
-    
+
     private: boolean;
-    
-    
-    
+
     assetIds?: Array<ID>;
-    
-    
-    
+
     facetValueIds?: Array<ID>;
 }
 
 export class MutationCreateJobPostArgs {
-    
-    
     title: string;
-    
-    
+
     description: string;
-    
-    
+
     private: boolean;
-    
-    
-    
+
     facetValueIds?: Array<ID>;
 }
 
 export class FacetValueTranslationInput {
-    
-    
-    
     id?: ID;
-    
-    
+
     languageCode: LanguageCode;
-    
-    
-    
+
     name?: string;
 }
 
 export class CreateFacetValueInput {
-    
-    
     code: string;
-    
-    
+
     facetId: ID;
-    
-    
-    
-    
+
     translations: Array<FacetValueTranslationInput>;
 }
 
 export class UpdateFacetValueInput {
-    
-    
     id: ID;
-    
-    
-    
+
     code?: string;
-    
-    
-    
-    
-    
+
     translations?: Array<FacetValueTranslationInput>;
 }
 
 export class CreateFacetValueWithFacetInput {
-    
-    
     code: string;
-    
-    
+
     name: string;
 }
 
 export class FacetTranslationInput {
-    
-    
-    
     id?: ID;
-    
-    
+
     languageCode: LanguageCode;
-    
-    
-    
+
     name?: string;
 }
 
 export class CreateFacetInput {
-    
-    
     code: string;
-    
-    
-    
-    
+
     translations: Array<FacetTranslationInput>;
-    
-    
-    
-    
-    
+
     values?: CreateFacetValueWithFacetInput[];
 }
 
 export class UpdateFacetInput {
-    
-    
     id: ID;
-    
-    
-    
+
     code?: string;
-    
-    
-    
-    
+
     translations: Array<FacetTranslationInput>;
 }
 
 export class CreateBalanceEntryInput {
-    
-    
-    
-    
     customer: Customer;
-    
+
     type: BalanceEntryType;
-    
-    
-    
+
     reviewDays?: number;
-    
+
     currencyCode: CurrencyCode;
-    
-    
+
     credit: number;
-    
-    
+
     debit: number;
-    
-    
+
     description?: string;
-    
+
     metadata?: Record<string, string>;
 }
 
 export class ConfigArg {
-    
     name: string;
-    
+
     value: string;
 }
 
 export class ConfigurableOperation {
-    
     code: string;
-    
+
     args: Array<ConfigArg>;
 }
 
 export class CreateCollectionTranslationInput {
-    
-    
     languageCode: LanguageCode;
-    
-    
+
     name: string;
-    
-    
+
     slug: string;
-    
-    
+
     description: string;
 }
 
 export class CreateCollectionInput {
-    
-    
-    
-    
     translations: Array<CreateCollectionTranslationInput>;
-    
-    
-    
+
     featuredAssetId?: ID;
-    
-    
-    
+
     assetIds?: Array<ID>;
-    
-    
-    
-    
+
     filters: Array<ConfigurableOperation>;
-    
-    
-    
+
     inheritFilters?: boolean;
-    
-    
-    
+
     isPrivate?: boolean;
-    
-    
-    
+
     parentId?: ID;
 }
 
 export class MutationCreateCollectionArgs {
-    
-    
-    
-    
-    
-    
     input: CreateCollectionInput;
 }
 
 export class UpdateCollectionTranslationInput {
-    
-    
-    
     id?: ID;
-    
-    
+
     languageCode: LanguageCode;
-    
-    
-    
+
     name?: string;
-    
-    
-    
+
     slug?: string;
-    
-    
-    
+
     description?: string;
 }
 
 export class UpdateCollectionInput {
-    
-    
     id: ID;
-    
-    
-    
-    
-    
+
     translations?: Array<UpdateCollectionTranslationInput>;
-    
-    
-    
+
     featuredAssetId?: ID;
-    
-    
-    
+
     assetIds?: Array<ID>;
-    
-    
-    
-    
-    
+
     filters?: Array<ConfigurableOperation>;
-    
-    
-    
+
     inheritFilters?: boolean;
-    
-    
-    
+
     isPrivate?: boolean;
-    
-    
-    
+
     parentId?: ID;
 }
 
 export class MutationUpdateCollectionArgs {
-    
-    
-    
-    
     input: UpdateCollectionInput;
 }
 
 export class MoveCollectionInput {
-    
     collectionId: ID;
-    
+
     index: number;
-    
+
     parentId: ID;
 }
 
 export class MutationMoveCollectionArgs {
-    
-    
-    
-    
     input: MoveCollectionInput;
 }
 
 export class Success {
-    
-    
     success: boolean;
 }
 
 export class GetCurrentUserQuery {
-    
-    
-    
-    
-    
     me?: CurrentUser | null;
 }
 
 export class AttemptLoginMutation {
-    
-    
-    
-    
     login: CurrentUser;
 }
 
 export class LogOutMutation {
-    
-    
-    
-    
     logout: Success;
 }
 
