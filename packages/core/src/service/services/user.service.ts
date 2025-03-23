@@ -193,12 +193,14 @@ export class UserService {
      * If valid, the User will be set to `verified: true`.
      */
     async verifyUserByToken(ctx: RequestContext, verificationToken: string, password?: string): Promise<User> {
-        const nativeAuthMethod = await this.connection.getRepository(ctx, NativeAuthenticationMethod).findOne({
-            where: {
-                verificationToken,
-            },
-            relations: ['user'],
-        });
+        const nativeAuthMethod = await this.connection
+            .getRepository(ctx, NativeAuthenticationMethod)
+            .createQueryBuilder('nativeAuthMethod')
+            .leftJoinAndSelect('nativeAuthMethod.user', 'user')
+            .leftJoinAndSelect('user.roles', 'roles')
+            .addSelect('nativeAuthMethod.passwordHash')
+            .where('nativeAuthMethod.verificationToken = :verificationToken', { verificationToken })
+            .getOne();
 
         if (!nativeAuthMethod || !nativeAuthMethod?.user) {
             throw new VerificationTokenInvalidException();
@@ -259,12 +261,14 @@ export class UserService {
      * If valid, the User's credentials will be updated with the new password.
      */
     async resetPasswordByToken(ctx: RequestContext, passwordResetToken: string, password: string): Promise<User> {
-        const nativeAuthMethod = await this.connection.getRepository(ctx, NativeAuthenticationMethod).findOne({
-            where: {
-                passwordResetToken,
-            },
-            relations: ['user'],
-        });
+        const nativeAuthMethod = await this.connection
+            .getRepository(ctx, NativeAuthenticationMethod)
+            .createQueryBuilder('nativeAuthMethod')
+            .leftJoinAndSelect('nativeAuthMethod.user', 'user')
+            .leftJoinAndSelect('user.roles', 'roles')
+            .addSelect('nativeAuthMethod.passwordHash')
+            .where('nativeAuthMethod.passwordResetToken = :passwordResetToken', { passwordResetToken })
+            .getOne();
 
         if (!nativeAuthMethod || !nativeAuthMethod?.user) {
             throw new PasswordResetTokenInvalidException();
@@ -339,13 +343,17 @@ export class UserService {
      * Changes the User identifier as part of the storefront flow used by Customers to set a
      * new email address, with the token previously set using the `setIdentifierChangeToken()` method.
      */
-    async changeIdentifierByToken(ctx: RequestContext, token: string): Promise<{ user: User; oldIdentifier: string }> {
-        const nativeAuthMethod = await this.connection.getRepository(ctx, NativeAuthenticationMethod).findOne({
-            where: {
-                identifierChangeToken: token,
-            },
-            relations: ['user'],
-        });
+    async changeIdentifierByToken(
+        ctx: RequestContext,
+        identifierChangeToken: string,
+    ): Promise<{ user: User; oldIdentifier: string }> {
+        const nativeAuthMethod = await this.connection
+            .getRepository(ctx, NativeAuthenticationMethod)
+            .createQueryBuilder('nativeAuthMethod')
+            .leftJoinAndSelect('nativeAuthMethod.user', 'user')
+            .leftJoinAndSelect('user.roles', 'roles')
+            .where('nativeAuthMethod.identifierChangeToken = :identifierChangeToken', { identifierChangeToken })
+            .getOne();
 
         if (!nativeAuthMethod || !nativeAuthMethod?.user) {
             throw new IdentifierChangeTokenInvalidException();
@@ -353,7 +361,7 @@ export class UserService {
 
         if (
             !this.verificationTokenGenerator.verifyVerificationToken(
-                token,
+                identifierChangeToken,
                 nativeAuthMethod.identifierChangeTokenCreatedAt,
             )
         ) {
