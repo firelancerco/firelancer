@@ -1000,6 +1000,15 @@ export class UpdateActiveAdministratorInput {
     password?: string;
 }
 
+export class CurrentUserRole {
+    @ApiProperty()
+    @IsString()
+    code: string;
+    @ApiProperty()
+    @IsString()
+    description: string;
+}
+
 export class CurrentUser {
     @ApiProperty()
     @IsEntityId()
@@ -1007,6 +1016,10 @@ export class CurrentUser {
     @ApiProperty()
     @IsString()
     identifier: string;
+    @ApiProperty()
+    @ValidateNested({ each: true })
+    @Type(() => CurrentUserRole)
+    roles: Array<CurrentUserRole>;
     @ApiProperty()
     @IsEnum(Permission, { each: true })
     permissions: Array<Permission>;

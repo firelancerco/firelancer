@@ -8,6 +8,7 @@ import { CurrencyCode, LanguageCode, Permission } from '../../../common/shared-s
 import { ConfigService } from '../../../config/config.service';
 import { CachedSession, CachedSessionUser } from '../../../config/strategies/session-cache/session-cache-strategy';
 import { User } from '../../../entity';
+import { getPermissions } from '../utils/get-user-permissions';
 const ms = require('ms'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 /**
@@ -39,7 +40,7 @@ export class RequestContextService {
                     id: user.id,
                     identifier: user.identifier,
                     verified: user.verified,
-                    permissions: user?.roles?.flatMap(role => role.permissions) ?? [],
+                    roles: user?.roles ?? [],
                 },
                 id: 0,
                 token: '__dummy_session_token__',
@@ -110,7 +111,7 @@ export class RequestContextService {
         if (permissions.length === 0) {
             return true;
         }
-        const matched = intersect(permissions, user.permissions);
+        const matched = intersect(permissions, getPermissions(user.roles));
         return matched.length === permissions.length;
     }
 }

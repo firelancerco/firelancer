@@ -70,6 +70,9 @@ export const config: FirelancerConfig = {
             },
         },
     },
+    importExportOptions: {
+        importAssetsDir: path.join(__dirname, './import/assets'),
+    },
     plugins: [
         GoogleAuthPlugin.init({
             clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -118,7 +121,4 @@ export const config: FirelancerConfig = {
             },
         }),
     ],
-    importExportOptions: {
-        importAssetsDir: path.join(__dirname, './import/assets'),
-    },
 };

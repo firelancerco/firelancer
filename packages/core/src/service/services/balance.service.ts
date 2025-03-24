@@ -1,12 +1,15 @@
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { IsNull, Not } from 'typeorm';
+
 import { RelationPaths } from '../../api/decorators/relations.decorator';
 import { ListQueryOptions, RequestContext } from '../../common';
 import { CreateBalanceEntryInput, ID } from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
-import { Customer } from '../../entity';
 import { BalanceEntry } from '../../entity/balance-entry/balance-entry.entity';
+import { Customer } from '../../entity/customer/customer.entity';
+import { EventBus } from '../../event-bus';
+import { BalanceEntryEvent } from '../../event-bus/events/balance-entry-event';
 import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
 
 /**
@@ -14,11 +17,19 @@ import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-build
  * Contains methods relating to Balance entities.
  */
 @Injectable()
-export class BalanceService {
+export class BalanceService implements OnModuleInit {
     constructor(
         private connection: TransactionalConnection,
         private listQueryBuilder: ListQueryBuilder,
+        private eventBus: EventBus,
     ) {}
+    onModuleInit() {
+        this.eventBus.ofType(BalanceEntryEvent).subscribe(async event => {
+            if (event.type == 'created') {
+                await this.trySettleBalance(event.ctx, event.entity.id);
+            }
+        });
+    }
 
     async findAll(
         ctx: RequestContext,
@@ -43,8 +54,8 @@ export class BalanceService {
             const entry = new BalanceEntry(input);
             entry.validate();
             await this.connection.getRepository(ctx, BalanceEntry).save(entry);
-            // immediatly settle balance if entry does not require review
-            return this.trySettleBalance(ctx, entry.id);
+            await this.eventBus.publish(new BalanceEntryEvent(ctx, entry, 'created', input.type, input));
+            return entry;
         });
     }
 

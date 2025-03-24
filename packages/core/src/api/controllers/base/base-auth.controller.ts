@@ -1,4 +1,9 @@
 import { Request, Response } from 'express';
+import { ForbiddenException, InvalidCredentialsException } from '../../../common/error/errors';
+import { extractSessionToken } from '../../../common/extract-session-token';
+import { ApiType } from '../../../common/get-api-type';
+import { RequestContext } from '../../../common/request-context';
+import { setSessionToken } from '../../../common/set-session-token';
 import {
     AttemptLoginMutation,
     CurrentUser,
@@ -7,20 +12,15 @@ import {
     MutationAuthenticateArgs,
     MutationLoginArgs,
 } from '../../../common/shared-schema';
-import { ForbiddenException, InvalidCredentialsException } from '../../../common/error/errors';
-import { extractSessionToken } from '../../../common/extract-session-token';
-import { ApiType } from '../../../common/get-api-type';
-import { RequestContext } from '../../../common/request-context';
-import { setSessionToken } from '../../../common/set-session-token';
 import { LogLevel } from '../../../config';
 import { ConfigService } from '../../../config/config.service';
 import { AuthOptions } from '../../../config/firelancer-config';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../../config/strategies/authentication/default/native-authentication-strategy';
 import { User } from '../../../entity';
+import { getUserPermissions } from '../../../service/helpers/utils/get-user-permissions';
 import { AdministratorService } from '../../../service/services/administrator.service';
 import { AuthService } from '../../../service/services/auth.service';
 import { UserService } from '../../../service/services/user.service';
-import { getUserPermissions } from '../../../service/helpers/utils/get-user-permissions';
 
 export class BaseAuthController {
     constructor(
@@ -137,6 +137,7 @@ export class BaseAuthController {
         return {
             id: user.id,
             identifier: user.identifier,
+            roles: user.roles.map(role => ({ code: role.code, description: role.description })),
             permissions: getUserPermissions(user),
         };
     }

@@ -1,4 +1,4 @@
-import { CustomerType } from '@firelancerco/common/lib/generated-schema';
+import { CustomerType } from '@firelancerco/common/lib/shared-schema';
 
 export class GoogleAuthData {
     id_token?: string;

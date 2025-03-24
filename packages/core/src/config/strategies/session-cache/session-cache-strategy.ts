@@ -1,5 +1,6 @@
-import { ID, Permission } from '../../../common/shared-schema';
 import { InjectableStrategy } from '../../../common/injectable-strategy';
+import { ID } from '../../../common/shared-schema';
+import { Role } from '../../../entity/role/role.entity';
 
 /**
  * @description
@@ -11,7 +12,7 @@ export type CachedSessionUser = {
     id: ID;
     identifier: string;
     verified: boolean;
-    permissions: Permission[];
+    roles: Role[];
 };
 
 /**
