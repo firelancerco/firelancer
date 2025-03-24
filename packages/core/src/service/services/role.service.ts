@@ -6,8 +6,10 @@ import {
     SUPER_ADMIN_ROLE_CODE,
     SUPER_ADMIN_ROLE_DESCRIPTION,
 } from '@firelancerco/common/lib/shared-constants';
+import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { assertFound, unique } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
+
 import { RelationPaths } from '../../api';
 import { RequestContextCacheService } from '../../cache';
 import {
@@ -26,7 +28,6 @@ import { EventBus, RoleEvent } from '../../event-bus';
 import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
 import { getPermissions, getUserPermissions } from '../helpers/utils/get-user-permissions';
 import { patchEntity } from '../helpers/utils/patch-entity';
-import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 
 /**
  * @description
@@ -204,8 +205,7 @@ export class RoleService {
             const superAdminRole = await this.getSuperAdminRole();
             superAdminRole.permissions = assignablePermissions;
             await this.connection.rawConnection.getRepository(Role).save(superAdminRole, { reload: false });
-            /* eslint-disable @typescript-eslint/no-unused-vars */
-        } catch (err) {
+        } catch {
             const superAdminRole = new Role({
                 code: SUPER_ADMIN_ROLE_CODE,
                 description: SUPER_ADMIN_ROLE_DESCRIPTION,
@@ -218,18 +218,11 @@ export class RoleService {
     private async ensureBuyerRoleExists() {
         try {
             await this.getBuyerRole();
-            /* eslint-disable @typescript-eslint/no-unused-vars */
-        } catch (err) {
+        } catch {
             const buyerRole = new Role({
                 code: BUYER_ROLE_CODE,
                 description: BUYER_ROLE_DESCRIPTION,
-                permissions: [
-                    Permission.Authenticated,
-                    Permission.CreateJobPost,
-                    Permission.ReadJobPost,
-                    Permission.DeleteJobPost,
-                    Permission.UpdateJobPost,
-                ],
+                permissions: [Permission.Authenticated],
             });
             await this.connection.rawConnection.getRepository(Role).save(buyerRole, { reload: false });
         }
@@ -238,12 +231,11 @@ export class RoleService {
     private async ensureSellerRoleExists() {
         try {
             await this.getSellerRole();
-            /* eslint-disable @typescript-eslint/no-unused-vars */
-        } catch (err) {
+        } catch {
             const sellerRole = new Role({
                 code: SELLER_ROLE_CODE,
                 description: SELLER_ROLE_DESCRIPTION,
-                permissions: [Permission.Authenticated, Permission.ReadJobPost],
+                permissions: [Permission.Authenticated],
             });
             await this.connection.rawConnection.getRepository(Role).save(sellerRole, { reload: false });
         }
