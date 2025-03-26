@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IsEntityId } from './entity-id-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Buffer } from 'buffer';
 import { Type } from 'class-transformer';
 import {
     IsArray,
     IsBoolean,
+    IsDate,
     IsDefined,
     IsEmail,
     IsEnum,
@@ -17,8 +16,10 @@ import {
     IsOptional,
     IsPositive,
     IsString,
+    Min,
     ValidateNested,
 } from 'class-validator';
+import { IsEntityId } from './entity-id-validator';
 
 export type ID = string | number;
 
@@ -76,6 +77,8 @@ export enum Permission {
     UpdateJobPost = 'UpdateJobPost',
     /** Grants permission to update Facet */
     UpdateFacet = 'UpdateFacet',
+    /** Grants permission to publish new JobPost */
+    PublishJobPost = 'PublishJobPost',
 }
 
 export enum HistoryEntryType {
@@ -87,6 +90,11 @@ export enum HistoryEntryType {
     CUSTOMER_PASSWORD_UPDATED = 'CUSTOMER_PASSWORD_UPDATED',
     CUSTOMER_REGISTERED = 'CUSTOMER_REGISTERED',
     CUSTOMER_VERIFIED = 'CUSTOMER_VERIFIED',
+}
+
+export enum JobPostVisibility {
+    PUBLIC = 'PUBLIC',
+    INVITE_ONLY = 'INVITE_ONLY',
 }
 
 export enum AssetType {
@@ -786,398 +794,653 @@ export enum LanguageCode {
 }
 
 export class AuthenticationMethod {
-    createdAt: Date;
+    @IsEntityId()
     id: ID;
-    strategy?: string;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
     updatedAt: Date;
-    // TODO
-    user: any;
+
+    @IsOptional()
+    @IsString()
+    strategy?: string;
+
+    user?: User;
 }
 
 export class Role {
-    code: string;
-    createdAt: Date;
-    description: string;
+    @IsEntityId()
     id: ID;
-    permissions: Array<Permission>;
+
+    @IsString()
+    code: string;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
     updatedAt: Date;
+
+    @IsString()
+    description: string;
+
+    @IsEnum(Permission, { each: true })
+    permissions: Array<Permission>;
 }
 
 export class User {
-    authenticationMethods: Array<AuthenticationMethod>;
-    createdAt: Date;
+    @IsEntityId()
     id: ID;
-    identifier: string;
-    lastLogin?: Date | null;
-    roles: Array<Role>;
+
+    @ValidateNested({ each: true })
+    @Type(() => AuthenticationMethod)
+    authenticationMethods: Array<AuthenticationMethod>;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
     updatedAt: Date;
+
+    @IsString()
+    identifier: string;
+
+    @IsOptional()
+    @IsDate()
+    lastLogin?: Date | null;
+
+    @ValidateNested({ each: true })
+    @Type(() => Role)
+    roles: Array<Role>;
+
+    @IsBoolean()
     verified: boolean;
 }
 
 export class Customer {
+    @IsOptional()
+    @IsDate()
     deletedAt: Date | null;
+
+    @IsOptional()
+    @IsString()
     title: string | null;
+
+    @IsString()
     firstName: string;
+
+    @IsString()
     lastName: string;
+
+    @IsOptional()
+    @IsString()
     phoneNumber: string | null;
+
+    @IsString()
     emailAddress: string;
+
+    @IsOptional()
+    @Type(() => User)
     user?: User;
 }
 
+export class Coordinate {
+    x: number;
+    y: number;
+}
+
+export class Asset {
+    @IsEntityId()
+    id: ID;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
+    updatedAt: Date;
+
+    @IsInt()
+    fileSize: number;
+
+    @IsOptional()
+    @Type(() => Coordinate)
+    focalPoint?: Coordinate;
+
+    @IsInt()
+    height: number;
+
+    @IsString()
+    mimeType: string;
+
+    @IsString()
+    name: string;
+
+    @IsString()
+    preview: string;
+
+    @IsString()
+    source: string;
+
+    @IsEnum(AssetType)
+    type: AssetType;
+
+    @IsInt()
+    width: number;
+}
+
+export abstract class OrderableAsset {
+    @IsEntityId()
+    id: ID;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
+    updatedAt: Date;
+
+    @IsEntityId()
+    assetId: ID;
+
+    @Type(() => Asset)
+    asset: Asset;
+
+    @IsInt()
+    position: number;
+}
+
 export class JobPost {
+    @IsEntityId()
+    id: ID;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
+    updatedAt: Date;
+
+    @IsOptional()
+    @IsDate()
     deletedAt: Date | null;
+
+    @IsOptional()
+    @IsDate()
     publishedAt: Date | null;
+
+    @IsEntityId()
     customerId: ID;
+
+    @Type(() => Customer)
     customer: Customer;
+
+    @IsString()
     title: string;
+
+    @IsString()
     description: string;
-    enabled: boolean;
-    private: boolean;
-    assets: Array<Asset>;
-    facetValues: Array<FacetValue>;
-    collections: Array<Collection>;
+
+    @IsEnum(JobPostVisibility)
+    visibility: JobPostVisibility;
+
+    @ValidateNested({ each: true })
+    @Type(() => JobPostAsset)
+    assets: JobPostAsset[];
+
+    @ValidateNested({ each: true })
+    @Type(() => FacetValue)
+    facetValues: FacetValue[];
+
+    @ValidateNested({ each: true })
+    @Type(() => Collection)
+    collections: Collection[];
+}
+
+export class JobPostAsset extends OrderableAsset {
+    @IsEntityId()
+    assetId: ID;
+
+    @Type(() => Asset)
+    asset: Asset;
+
+    @IsInt()
+    position: number;
+
+    @IsEntityId()
+    jobPostId: ID;
+
+    @Type(() => JobPost)
+    jobPost: JobPost;
 }
 
 export class CollectionBreadcrumb {
+    @IsEntityId()
     id: ID;
+
+    @IsString()
     name: string;
+
+    @IsString()
     slug: string;
 }
 
 export class Collection {
-    assets: Array<Asset>;
-    breadcrumbs: Array<CollectionBreadcrumb>;
-    children?: Array<Collection>;
-    createdAt: Date;
-    description: string;
-    featuredAsset?: Asset;
-    filters: Array<ConfigurableOperation>;
+    @IsEntityId()
     id: ID;
-    inheritFilters: boolean;
-    isPrivate: boolean;
-    languageCode?: LanguageCode;
-    name: string;
-    parent?: Collection;
-    parentId: ID;
-    position: number;
-    slug: string;
-    translations: Array<CollectionTranslation>;
+
+    @ValidateNested({ each: true })
+    @Type(() => Asset)
+    assets: Array<Asset>;
+
+    @ValidateNested({ each: true })
+    @Type(() => CollectionBreadcrumb)
+    breadcrumbs: Array<CollectionBreadcrumb>;
+
+    @ValidateNested({ each: true })
+    @Type(() => Collection)
+    children?: Array<Collection>;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
     updatedAt: Date;
+
+    @IsString()
+    description: string;
+
+    @IsOptional()
+    @Type(() => Asset)
+    featuredAsset?: Asset;
+
+    @ValidateNested({ each: true })
+    @Type(() => ConfigurableOperation)
+    filters: Array<ConfigurableOperation>;
+
+    @IsBoolean()
+    inheritFilters: boolean;
+
+    @IsBoolean()
+    isPrivate: boolean;
+
+    @IsOptional()
+    @IsEnum(LanguageCode)
+    languageCode?: LanguageCode;
+
+    @IsString()
+    name: string;
+
+    @IsOptional()
+    @Type(() => Collection)
+    parent?: Collection;
+
+    @IsOptional()
+    @IsEntityId()
+    parentId?: ID | null;
+
+    @IsInt()
+    position: number;
+
+    @IsString()
+    slug: string;
+
+    @ValidateNested({ each: true })
+    @Type(() => CollectionTranslation)
+    translations: Array<CollectionTranslation>;
+
     // TODO
     // jobPosts: JobPostList;
 }
 
 export class CollectionTranslation {
-    createdAt: Date;
-    description: string;
+    @IsEntityId()
     id: ID;
-    languageCode: LanguageCode;
-    name: string;
-    slug: string;
-    updatedAt: Date;
-}
 
-export class Asset {
+    @IsDate()
     createdAt: Date;
-    fileSize: number;
-    focalPoint?: Coordinate;
-    height: number;
-    id: ID;
-    mimeType: string;
-    name: string;
-    preview: string;
-    source: string;
-    type: AssetType;
+
+    @IsDate()
     updatedAt: Date;
-    width: number;
+
+    @IsString()
+    description: string;
+
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
+
+    @IsString()
+    name: string;
+
+    @IsString()
+    slug: string;
 }
 
 export class Facet {
-    code: string;
-    createdAt: Date;
+    @IsEntityId()
     id: ID;
-    isPrivate: boolean;
-    languageCode: LanguageCode;
-    name: string;
-    translations: Array<FacetTranslation>;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
     updatedAt: Date;
+
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
+
+    @IsString()
+    code: string;
+
+    @IsBoolean()
+    isPrivate: boolean;
+
+    @IsString()
+    name: string;
+
+    @ValidateNested({ each: true })
+    @Type(() => FacetTranslation)
+    translations: Array<FacetTranslation>;
+
+    @ValidateNested({ each: true })
+    @Type(() => FacetValue)
     values: Array<FacetValue>;
 }
 
 export class FacetTranslation {
+    @IsEntityId()
     id: ID;
-    languageCode: LanguageCode;
-    name: string;
+
+    @IsDate()
     createdAt: Date;
+
+    @IsDate()
     updatedAt: Date;
+
+    @IsString()
+    name: string;
+
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
 }
 
 export class FacetValue {
+    @IsEntityId()
     id: ID;
-    code: string;
-    facet: Facet;
-    facetId: ID;
-    languageCode: LanguageCode;
-    name: string;
-    translations: Array<FacetValueTranslation>;
+
+    @IsDate()
     createdAt: Date;
+
+    @IsDate()
     updatedAt: Date;
+
+    @IsString()
+    code: string;
+
+    @IsEntityId()
+    facetId: ID;
+
+    @Type(() => Facet)
+    facet: Facet;
+
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
+
+    @IsString()
+    name: string;
+
+    @ValidateNested({ each: true })
+    @Type(() => FacetValueTranslation)
+    translations: Array<FacetValueTranslation>;
 }
 
 export class FacetValueTranslation {
+    @IsEntityId()
     id: ID;
-    languageCode: LanguageCode;
-    name: string;
+
+    @IsDate()
     createdAt: Date;
+
+    @IsDate()
     updatedAt: Date;
+
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
+
+    @IsString()
+    name: string;
 }
 
 export class CreateAdministratorInput {
-    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     @IsEmail()
     emailAddress: string;
-    @ApiProperty()
+
     @IsString()
     @IsNotEmpty()
     firstName: string;
-    @ApiProperty()
+
     @IsString()
     @IsNotEmpty()
     lastName: string;
-    @ApiProperty()
+
     @IsString()
     @IsNotEmpty()
     password: string;
-    @ApiProperty({ isArray: true, type: 'number' })
     @IsEntityId({ each: true })
     roleIds: Array<ID>;
 }
 
 export class UpdateAdministratorInput {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     emailAddress?: string;
-    @ApiProperty()
+
     @IsString()
     @IsOptional()
     firstName?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     lastName?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     password?: string;
-    @ApiProperty({ isArray: true, type: 'number' })
+
     @IsOptional()
     @IsEntityId({ each: true })
     roleIds?: Array<ID>;
 }
 
 export class UpdateActiveAdministratorInput {
-    @ApiPropertyOptional()
     @IsString()
     @IsOptional()
     emailAddress?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     firstName?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     lastName?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     password?: string;
 }
 
 export class CurrentUserRole {
-    @ApiProperty()
     @IsString()
     code: string;
-    @ApiProperty()
+
     @IsString()
     description: string;
 }
 
 export class CurrentUser {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
-    @ApiProperty()
+
     @IsString()
     identifier: string;
-    @ApiProperty()
+
     @ValidateNested({ each: true })
     @Type(() => CurrentUserRole)
     roles: Array<CurrentUserRole>;
-    @ApiProperty()
+
     @IsEnum(Permission, { each: true })
     permissions: Array<Permission>;
 }
 
 export class MutationLoginArgs {
-    @ApiProperty()
     @IsString()
     password: string;
-    @ApiPropertyOptional()
+
     @IsBoolean()
     @IsOptional()
     rememberMe?: boolean;
-    @ApiProperty()
+
     @IsString()
     username: string;
 }
 
 export class NativeAuthInput {
-    @ApiProperty()
     @IsString()
     password: string;
-    @ApiProperty()
+
     @IsString()
     username: string;
 }
 
 export class AuthenticationInput {
-    @ApiPropertyOptional()
     @IsOptional()
     @ValidateNested()
     native?: NativeAuthInput;
 }
 
 export class MutationAuthenticateArgs {
-    @ApiProperty()
     @IsDefined()
     @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
     @Type(() => AuthenticationInput)
     input: AuthenticationInput;
+
     @IsBoolean()
     @IsOptional()
     rememberMe?: boolean;
 }
 
 export class CreateCustomerInput {
-    @ApiProperty()
     @IsString()
     emailAddress: string;
-    @ApiProperty()
+
     @IsEnum(CustomerType)
     customerType: CustomerType;
-    @ApiProperty()
+
     @IsString()
     firstName: string;
-    @ApiProperty()
+
     @IsString()
     lastName: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     phoneNumber?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     title?: string;
 }
 
 export class UpdateCustomerInput {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     emailAddress?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     firstName?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     lastName?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     phoneNumber?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     title?: string;
 }
 
 export class RegisterCustomerInput {
-    @ApiProperty()
     @IsString()
     @IsEmail()
     emailAddress: string;
-    @ApiProperty()
+
     @IsEnum(CustomerType)
     customerType: CustomerType;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     firstName?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     lastName?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     password?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     phoneNumber?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     title?: string;
 }
 
 export class CreateRoleInput {
-    @ApiProperty()
     @IsString()
     code: string;
-    @ApiProperty()
+
     @IsString()
     description: string;
-    @ApiProperty()
+
     @IsEnum(Permission, { each: true })
     permissions: Array<Permission>;
 }
 
 export class UpdateRoleInput {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     code?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     description?: string;
-    @ApiPropertyOptional()
+
     @IsEnum(Permission, { each: true })
     @IsOptional()
     permissions?: Array<Permission>;
 }
 
 export class MutationRegisterCustomerAccountArgs {
-    @ApiProperty()
     @IsDefined()
     @IsNotEmptyObject()
     @IsObject()
@@ -1187,65 +1450,57 @@ export class MutationRegisterCustomerAccountArgs {
 }
 
 export class MutationVerifyCustomerAccountArgs {
-    @ApiPropertyOptional()
     @IsString()
     @IsOptional()
     password?: string;
-    @ApiProperty()
+
     @IsString()
     token: string;
 }
 
 export class MutationRefreshCustomerVerificationArgs {
-    @ApiProperty()
     @IsString()
     @IsEmail()
     emailAddress: string;
 }
 
 export class MutationRequestPasswordResetArgs {
-    @ApiProperty()
     @IsString()
     @IsEmail()
     emailAddress: string;
 }
 
 export class MutationResetPasswordArgs {
-    @ApiProperty()
     @IsString()
     password: string;
-    @ApiProperty()
+
     @IsString()
     token: string;
 }
 
 export class MutationUpdateCustomerPasswordArgs {
-    @ApiProperty()
     @IsString()
     currentPassword: string;
-    @ApiProperty()
+
     @IsString()
     newPassword: string;
 }
 
 export class MutationRequestUpdateCustomerEmailAddressArgs {
-    @ApiProperty()
     @IsString()
     @IsEmail()
     newEmailAddress: string;
-    @ApiProperty()
+
     @IsString()
     password: string;
 }
 
 export class MutationUpdateCustomerEmailAddressArgs {
-    @ApiProperty()
     @IsString()
     token: string;
 }
 
 export class MutationCreateAdministratorArgs {
-    @ApiProperty()
     @IsDefined()
     @IsNotEmptyObject()
     @IsObject()
@@ -1255,7 +1510,6 @@ export class MutationCreateAdministratorArgs {
 }
 
 export class MutationUpdateAdministratorArgs {
-    @ApiProperty()
     @IsDefined()
     @IsNotEmptyObject()
     @IsObject()
@@ -1265,7 +1519,6 @@ export class MutationUpdateAdministratorArgs {
 }
 
 export class MutationUpdateActiveAdministratorArgs {
-    @ApiProperty()
     @IsDefined()
     @IsNotEmptyObject()
     @IsObject()
@@ -1275,16 +1528,14 @@ export class MutationUpdateActiveAdministratorArgs {
 }
 
 export class MutationAssignRoleToAdministratorArgs {
-    @ApiProperty()
     @IsEntityId()
     administratorId: ID;
-    @ApiProperty()
+
     @IsEntityId()
     roleId: ID;
 }
 
 export class MutationDeleteAdministratorArgs {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
 }
@@ -1294,7 +1545,6 @@ export class MutationDeleteAdministratorsArgs {
 }
 
 export class QueryAdministratorArgs {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
 }
@@ -1302,13 +1552,16 @@ export class QueryAdministratorArgs {
 export class File {
     @IsString()
     originalname: string;
+
     @IsString()
     mimetype: string;
+
     @IsDefined()
     @IsNotEmptyObject()
     @IsObject()
     @Type(() => Buffer)
     buffer: Buffer;
+
     @IsNumber()
     size: number;
 }
@@ -1323,99 +1576,182 @@ export class CreateAssetInput {
 }
 
 export class CoordinateInput {
-    @ApiProperty()
     @IsNumber()
     x: number;
-    @ApiProperty()
+
     @IsNumber()
     y: number;
 }
 
 export class UpdateAssetInput {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
+
     @IsOptional()
     @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
-    @ApiProperty()
     @Type(() => CoordinateInput)
     focalPoint?: CoordinateInput;
-    @ApiProperty()
-    @IsString()
+
     @IsOptional()
+    @IsString()
     name?: string;
-    @ApiProperty()
-    @IsString()
+
     @IsOptional()
+    @IsString()
     tags?: string;
 }
 
 export class CreateJobPostInput {
-    @ApiProperty()
     @IsEntityId()
     customerId: ID;
-    @ApiProperty()
+
+    @IsOptional()
     @IsString()
-    title: string;
-    @ApiProperty()
+    title?: string;
+
+    @IsOptional()
     @IsString()
-    description: string;
-    @ApiProperty()
-    @IsBoolean()
-    enabled: boolean;
-    @ApiProperty()
-    @IsBoolean()
-    private: boolean;
-    @ApiPropertyOptional({ isArray: true, type: 'number' })
+    description?: string;
+
+    @IsOptional()
+    @IsEnum(JobPostVisibility)
+    visibility?: JobPostVisibility;
+
+    @IsOptional()
+    @IsEnum(CurrencyCode)
+    currencyCode?: CurrencyCode;
+
+    @IsOptional()
+    @IsInt()
+    @IsPositive()
+    budget?: number;
+
     @IsOptional()
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
-    @ApiPropertyOptional({ isArray: true, type: 'number' })
+
     @IsOptional()
     @IsEntityId({ each: true })
     facetValueIds?: Array<ID>;
 }
 
+export class UpdateJobPostInput {
+    @IsEntityId()
+    id: ID;
+
+    @IsOptional()
+    @IsString()
+    title?: string;
+
+    @IsOptional()
+    @IsString()
+    description?: string;
+
+    @IsOptional()
+    @IsEnum(JobPostVisibility)
+    visibility?: JobPostVisibility;
+
+    @IsOptional()
+    @IsEnum(CurrencyCode)
+    currencyCode?: CurrencyCode;
+
+    @IsInt()
+    @IsPositive()
+    @Min(5)
+    budget?: number;
+
+    @IsOptional()
+    @IsEntityId({ each: true })
+    assetIds?: Array<ID>;
+
+    @IsOptional()
+    @IsEntityId({ each: true })
+    facetValueIds?: Array<ID>;
+}
+
+export class PublishJobPostInput {
+    @IsEntityId()
+    id: ID;
+}
+
+export class PublishableJobPost {
+    @IsEntityId()
+    customerId: ID | null;
+
+    @IsString()
+    title: string | null;
+
+    @IsString()
+    description: string | null;
+
+    @IsEnum(JobPostVisibility)
+    visibility: JobPostVisibility | null;
+
+    @IsEnum(CurrencyCode)
+    currencyCode?: CurrencyCode | null;
+
+    @IsOptional()
+    @IsInt()
+    @IsPositive()
+    budget: number | null;
+
+    @IsEntityId({ each: true })
+    facetValueIds: Array<ID> | null;
+
+    @IsOptional()
+    @IsEntityId({ each: true })
+    assetIds: Array<ID> | null;
+}
+
 export class MutationCreateJobPostArgs {
-    @ApiProperty()
     @IsString()
     title: string;
-    @ApiProperty()
+
+    @IsOptional()
     @IsString()
     description: string;
-    @ApiProperty()
-    @IsBoolean()
-    private: boolean;
-    @ApiPropertyOptional({ isArray: true, type: 'number' })
+
+    @IsOptional()
+    @IsEnum(JobPostVisibility)
+    visibility: JobPostVisibility;
+
+    @IsOptional()
+    @IsEnum(CurrencyCode)
+    currencyCode: CurrencyCode;
+
+    @IsOptional()
+    @IsInt()
+    @IsPositive()
+    @Min(5)
+    budget: number;
+
     @IsOptional()
     @IsEntityId({ each: true })
     facetValueIds?: Array<ID>;
 }
 
 export class FacetValueTranslationInput {
-    @ApiPropertyOptional()
     @IsOptional()
     @IsEntityId()
     id?: ID;
-    @ApiProperty()
+
     @IsEnum(LanguageCode)
     languageCode: LanguageCode;
-    @ApiProperty()
+
     @IsString()
     @IsOptional()
     name?: string;
 }
 
 export class CreateFacetValueInput {
-    @ApiProperty()
     @IsString()
     code: string;
-    @ApiProperty()
+
     @IsEntityId()
     facetId: ID;
-    @ApiProperty()
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => FacetValueTranslationInput)
@@ -1423,14 +1759,13 @@ export class CreateFacetValueInput {
 }
 
 export class UpdateFacetValueInput {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     code?: string;
-    @ApiPropertyOptional()
+
     @IsArray()
     @IsOptional()
     @ValidateNested({ each: true })
@@ -1439,38 +1774,35 @@ export class UpdateFacetValueInput {
 }
 
 export class CreateFacetValueWithFacetInput {
-    @ApiProperty()
     @IsString()
     code: string;
-    @ApiProperty()
+
     @IsString()
     name: string;
 }
 
 export class FacetTranslationInput {
-    @ApiPropertyOptional()
     @IsOptional()
     @IsEntityId()
     id?: ID;
-    @ApiProperty()
+
     @IsEnum(LanguageCode)
     languageCode: LanguageCode;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     name?: string;
 }
 
 export class CreateFacetInput {
-    @ApiProperty()
     @IsString()
     code: string;
-    @ApiProperty()
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => FacetTranslationInput)
     translations: Array<FacetTranslationInput>;
-    @ApiPropertyOptional()
+
     @IsArray()
     @IsOptional()
     @ValidateNested({ each: true })
@@ -1479,14 +1811,13 @@ export class CreateFacetInput {
 }
 
 export class UpdateFacetInput {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     code?: string;
-    @ApiProperty()
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => FacetTranslationInput)
@@ -1494,7 +1825,6 @@ export class UpdateFacetInput {
 }
 
 export class CreateBalanceEntryInput {
-    @ApiProperty()
     @IsObject()
     @ValidateNested()
     @Type(() => Customer)
@@ -1535,55 +1865,52 @@ export class ConfigurableOperation {
 }
 
 export class CreateCollectionTranslationInput {
-    @ApiProperty()
     @IsEnum(LanguageCode)
     languageCode: LanguageCode;
-    @ApiProperty()
+
     @IsString()
     name: string;
-    @ApiProperty()
+
     @IsString()
     slug: string;
-    @ApiProperty()
+
     @IsString()
     description: string;
 }
 
 export class CreateCollectionInput {
-    @ApiProperty()
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => CreateCollectionTranslationInput)
     translations: Array<CreateCollectionTranslationInput>;
-    @ApiPropertyOptional()
+
     @IsOptional()
     @IsEntityId()
     featuredAssetId?: ID;
-    @ApiPropertyOptional({ isArray: true, type: 'number' })
+
     @IsOptional()
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
-    @ApiProperty()
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => ConfigurableOperation)
     filters: Array<ConfigurableOperation>;
-    @ApiPropertyOptional()
+
     @IsBoolean()
     @IsOptional()
     inheritFilters?: boolean;
-    @ApiPropertyOptional()
+
     @IsBoolean()
     @IsOptional()
     isPrivate?: boolean;
-    @ApiPropertyOptional()
+
     @IsOptional()
     @IsEntityId()
     parentId?: ID;
 }
 
 export class MutationCreateCollectionArgs {
-    @ApiProperty()
     @IsDefined()
     @IsNotEmptyObject()
     @IsObject()
@@ -1593,67 +1920,64 @@ export class MutationCreateCollectionArgs {
 }
 
 export class UpdateCollectionTranslationInput {
-    @ApiPropertyOptional()
     @IsOptional()
     @IsEntityId()
     id?: ID;
-    @ApiPropertyOptional()
+
     @IsEnum(LanguageCode)
     languageCode: LanguageCode;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     name?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     slug?: string;
-    @ApiPropertyOptional()
+
     @IsString()
     @IsOptional()
     description?: string;
 }
 
 export class UpdateCollectionInput {
-    @ApiProperty()
     @IsEntityId()
     id: ID;
-    @ApiPropertyOptional()
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => UpdateCollectionTranslationInput)
     @IsOptional()
     translations?: Array<UpdateCollectionTranslationInput>;
-    @ApiPropertyOptional()
+
     @IsOptional()
     @IsEntityId()
     featuredAssetId?: ID;
-    @ApiPropertyOptional({ isArray: true, type: 'number' })
+
     @IsOptional()
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
-    @ApiPropertyOptional()
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => ConfigurableOperation)
     @IsOptional()
     filters?: Array<ConfigurableOperation>;
-    @ApiPropertyOptional()
+
     @IsBoolean()
     @IsOptional()
     inheritFilters?: boolean;
-    @ApiPropertyOptional()
+
     @IsBoolean()
     @IsOptional()
     isPrivate?: boolean;
-    @ApiPropertyOptional()
+
     @IsOptional()
     @IsEntityId()
     parentId?: ID;
 }
 
 export class MutationUpdateCollectionArgs {
-    @ApiProperty()
     @IsObject()
     @ValidateNested()
     @Type(() => UpdateCollectionInput)
@@ -1670,7 +1994,6 @@ export class MoveCollectionInput {
 }
 
 export class MutationMoveCollectionArgs {
-    @ApiProperty()
     @IsObject()
     @ValidateNested()
     @Type(() => MoveCollectionInput)
@@ -1678,13 +2001,11 @@ export class MutationMoveCollectionArgs {
 }
 
 export class Success {
-    @ApiProperty()
     @IsBoolean()
     success: boolean;
 }
 
 export class GetCurrentUserQuery {
-    @ApiPropertyOptional()
     @IsObject()
     @IsOptional()
     @ValidateNested()
@@ -1693,7 +2014,6 @@ export class GetCurrentUserQuery {
 }
 
 export class AttemptLoginMutation {
-    @ApiProperty()
     @IsObject()
     @ValidateNested()
     @Type(() => CurrentUser)
@@ -1701,16 +2021,10 @@ export class AttemptLoginMutation {
 }
 
 export class LogOutMutation {
-    @ApiProperty()
     @IsObject()
     @ValidateNested()
     @Type(() => Success)
     logout: Success;
-}
-
-export class Coordinate {
-    x: number;
-    y: number;
 }
 
 export class AssetFragment {

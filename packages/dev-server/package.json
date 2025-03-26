@@ -17,6 +17,7 @@
         "@firelancerco/google-auth-plugin": "^1.0.11"
     },
     "devDependencies": {
+        "@firelancerco/cli": "^1.0.11",
         "ts-node": "^10.9.2",
         "typescript": "^5.8.2"
     }

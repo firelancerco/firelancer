@@ -19,7 +19,7 @@ export class ShopJobPostController {
 
     @Transaction()
     @Post('create')
-    @Allow(Permission.CreateJobPost)
+    @Allow(Permission.Owner)
     @UseInterceptors(FilesInterceptor('files'))
     async createJobPost(
         @Ctx() ctx: RequestContext,
@@ -27,7 +27,7 @@ export class ShopJobPostController {
         @UploadedFiles() files: Array<Express.Multer.File>,
     ) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-        const input: CreateJobPostInput = { ...args, customerId: customer.id, enabled: true, assetIds: [] };
+        const input: CreateJobPostInput = { ...args, customerId: customer.id, assetIds: [] };
         if (files && files.length > 0) {
             for (const file of files) {
                 const asset = await this.assetService.create(ctx, { file });

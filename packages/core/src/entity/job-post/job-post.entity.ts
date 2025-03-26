@@ -1,11 +1,12 @@
 import { Column, DeepPartial, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
 import { Draftable, SoftDeletable } from '../../common';
-import { ID } from '../../common/shared-schema';
+import { CurrencyCode, ID, JobPostVisibility } from '../../common/shared-schema';
 import { FirelancerEntity } from '../base/base.entity';
 import { Collection } from '../collection/collection.entity';
 import { Customer } from '../customer/customer.entity';
 import { FacetValue } from '../facet-value/facet-value.entity';
+import { Money } from '../money.decorator';
 import { JobPostAsset } from './job-post-asset.entity';
 
 /**
@@ -30,24 +31,27 @@ export class JobPost extends FirelancerEntity implements SoftDeletable, Draftabl
     @ManyToOne(() => Customer, customer => customer.jobPosts)
     customer: Customer;
 
-    @Column()
-    title: string;
+    @Column({ type: 'varchar', nullable: true })
+    title: string | null;
 
-    @Column()
-    description: string;
+    @Column({ type: 'varchar', nullable: true })
+    description: string | null;
 
-    @Column()
-    enabled: boolean;
+    @Column({ type: 'varchar', nullable: true })
+    visibility: JobPostVisibility | null;
 
-    @Column()
-    private: boolean;
+    @Column({ type: 'varchar', nullable: true })
+    currencyCode: CurrencyCode | null;
+
+    @Money({ nullable: true })
+    budget: number | null;
 
     @OneToMany(() => JobPostAsset, jobPostAsset => jobPostAsset.jobPost)
     assets: JobPostAsset[];
 
-    @ManyToMany(() => FacetValue, facetValue => facetValue.jobPosts)
+    @ManyToMany(() => FacetValue, facetValue => facetValue.jobPosts, { nullable: true })
     @JoinTable()
-    facetValues: FacetValue[];
+    facetValues: FacetValue[] | null;
 
     @ManyToMany(() => Collection, collection => collection.jobPosts)
     collections: Collection[];

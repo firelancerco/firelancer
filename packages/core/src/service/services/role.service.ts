@@ -222,7 +222,7 @@ export class RoleService {
             const buyerRole = new Role({
                 code: BUYER_ROLE_CODE,
                 description: BUYER_ROLE_DESCRIPTION,
-                permissions: [Permission.Authenticated],
+                permissions: [Permission.Authenticated, Permission.PublishJobPost],
             });
             await this.connection.rawConnection.getRepository(Role).save(buyerRole, { reload: false });
         }

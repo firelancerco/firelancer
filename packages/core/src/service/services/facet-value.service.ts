@@ -64,7 +64,7 @@ export class FacetValueService {
         }
         const facetValues = await this.connection.getRepository(ctx, FacetValue).find({
             where: { id: In(ids) },
-            relations: { facet: true },
+            relations: ['facet'],
         });
 
         return facetValues.map(facetValue => this.translator.translate(facetValue, ctx, ['facet']));

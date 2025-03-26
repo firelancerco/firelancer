@@ -10,7 +10,7 @@ export function isEntityId(value: unknown) {
         return typeof value === 'string' && isUuidValidator(value, 4);
     }
     if (config.entityOptions.entityIdStrategy.primaryKeyType === 'increment') {
-        return typeof value === 'number' && Number.isInteger(value) && value > 0;
+        return Number.isInteger(Number(value)) && Number(value) > 0;
     }
     throw Error('Unsupported entity id type');
 }

@@ -8,11 +8,16 @@ import { FirelancerEvent } from './firelancer-event';
  * */
 export abstract class FirelancerEntityEvent<Entity, Input = unknown> extends FirelancerEvent {
     public readonly entity: Entity;
-    public readonly type: 'created' | 'updated' | 'deleted';
+    public readonly type: 'created' | 'updated' | 'deleted' | string;
     public readonly ctx: RequestContext;
     public readonly input?: Input;
 
-    protected constructor(entity: Entity, type: 'created' | 'updated' | 'deleted', ctx: RequestContext, input?: Input) {
+    protected constructor(
+        entity: Entity,
+        type: 'created' | 'updated' | 'deleted' | string,
+        ctx: RequestContext,
+        input?: Input,
+    ) {
         super();
         this.entity = entity;
         this.type = type;

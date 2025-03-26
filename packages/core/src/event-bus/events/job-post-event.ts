@@ -1,9 +1,9 @@
 import { RequestContext } from '../../common';
-import { CreateJobPostInput, ID } from '../../common/shared-schema';
+import { CreateJobPostInput, ID, PublishJobPostInput, UpdateJobPostInput } from '../../common/shared-schema';
 import { JobPost } from '../../entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 
-type JobPostInputTypes = CreateJobPostInput | ID;
+type JobPostInputTypes = PublishJobPostInput | CreateJobPostInput | UpdateJobPostInput | ID;
 
 /**
  * @description
@@ -13,7 +13,7 @@ export class JobPostEvent extends FirelancerEntityEvent<JobPost, JobPostInputTyp
     constructor(
         ctx: RequestContext,
         entity: JobPost,
-        type: 'created' | 'updated' | 'deleted',
+        type: 'created' | 'updated' | 'deleted' | 'published',
         input?: JobPostInputTypes,
     ) {
         super(entity, type, ctx, input);
