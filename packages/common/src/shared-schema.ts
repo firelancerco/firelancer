@@ -1654,52 +1654,67 @@ export class PublishJobPostInput {
     id: ID;
 }
 
-export class PublishableJobPost {
-    
-    customerId: ID | null;
-
-    
-    title: string | null;
-
-    
-    description: string | null;
-
-    
-    visibility: JobPostVisibility | null;
-
-    
-    currencyCode?: CurrencyCode | null;
-
-    
-    
-    
-    budget: number | null;
-
-    
-    facetValueIds: Array<ID> | null;
-
-    
-    
-    assetIds: Array<ID> | null;
-}
-
 export class MutationCreateJobPostArgs {
     
     title: string;
 
     
+    
     description: string;
 
     
+    
     visibility: JobPostVisibility;
 
+    
     
     currencyCode: CurrencyCode;
 
     
     
     
+    
     budget: number;
+
+    
+    
+    facetValueIds?: Array<ID>;
+}
+
+export class MutationPublishJobPostArgs {
+    
+    id: ID;
+}
+
+export class MutationEditJobPostArgs {
+    
+    id: ID;
+
+    
+    
+    title?: string;
+
+    
+    
+    description?: string;
+
+    
+    
+    visibility?: JobPostVisibility;
+
+    
+    
+    currencyCode?: CurrencyCode;
+
+    
+    
+    
+    
+    budget?: number;
+
+    
+    
+    assetIds?: Array<ID>;
 
     
     

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-function-type */
 
-import { LanguageCode } from './shared-schema';
+import { ID, LanguageCode } from './shared-schema';
 
 export interface Type<T = any> extends Function {
     new (...args: any[]): T;
@@ -94,9 +94,9 @@ export enum LogicalOperator {
 
 /** Operators for filtering on a String field */
 export type StringOperators = {
-    contains?: string;
-    eq?: string;
-    in?: string;
+    contains?: string | ID;
+    eq?: string | ID;
+    in?: string | ID;
     isNull?: boolean;
     notContains?: string;
     notEq?: string;
