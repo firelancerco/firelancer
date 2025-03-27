@@ -27,26 +27,33 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
             }
 
             const user = await this.externalAuthenticationService.findCustomerUser(ctx, this.name, profile.sub);
-            if (user) {
-                return user;
+
+            if (data.action === 'login') {
+                if (user) {
+                    return user;
+                }
+
+                return 'error.user-not-registered';
             }
 
-            if (!data.type) {
-                return 'error.register-customer-type-required';
-            }
+            if (data.action === 'register') {
+                if (!data.customer_type) {
+                    return 'error.register-customer-type-required';
+                }
 
-            // user does not exist; register new user
-            return this.externalAuthenticationService.createCustomerAndUser(ctx, {
-                strategy: this.name,
-                externalIdentifier: profile.sub,
-                verified: profile.email_verified || false,
-                emailAddress: profile.email,
-                firstName: profile.given_name ?? '',
-                lastName: profile.family_name ?? '',
-                type: data.type,
-            });
+                // user does not exist; register new user
+                return this.externalAuthenticationService.createCustomerAndUser(ctx, {
+                    strategy: this.name,
+                    externalIdentifier: profile.sub,
+                    verified: profile.email_verified || false,
+                    emailAddress: profile.email,
+                    firstName: profile.given_name ?? '',
+                    lastName: profile.family_name ?? '',
+                    type: data.customer_type,
+                });
+            }
         } catch (error: any) {
-            return error.message ?? 'Unknown error';
+            return error.message ?? 'error.unkown-error';
         }
     }
 
