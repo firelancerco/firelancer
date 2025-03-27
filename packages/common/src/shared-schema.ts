@@ -2212,7 +2212,8 @@ export class DeleteRolesMutation {
 }
 
 export class GoogleAuthData {
+    action: 'register' | 'login';
     id_token?: string;
     access_token?: string;
-    type?: CustomerType;
+    customer_type?: CustomerType;
 }

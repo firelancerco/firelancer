@@ -40,7 +40,7 @@ export const adminEntityControllers = [];
         ServiceModule,
         CacheModule,
         ConnectionModule.forRoot(),
-        ThrottlerModule.forRoot({ throttlers: [{ ttl: 60000, limit: 10 }] }),
+        ThrottlerModule.forRoot({ throttlers: [{ ttl: 60000, limit: 50 }] }),
     ],
     providers: [
         {

@@ -5,11 +5,7 @@ import { Request as ExpressRequest, Response as ExpressResponse } from 'express'
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
-import {
-    EmailAddressConflictException,
-    ForbiddenException,
-    NativeAuthStrategyException,
-} from '../../../common/error/errors';
+import { ForbiddenException, NativeAuthStrategyException } from '../../../common/error/errors';
 import { RequestContext } from '../../../common/request-context';
 import { setSessionToken } from '../../../common/set-session-token';
 import {
@@ -93,22 +89,24 @@ export class ShopAuthController extends BaseAuthController {
     @Post('register')
     @Allow(Permission.Public)
     async registerCustomerAccount(@Ctx() ctx: RequestContext, @Body() args: MutationRegisterCustomerAccountArgs) {
-        try {
-            this.requireNativeAuthStrategy();
-            await this.customerService.registerCustomerAccount(ctx, args.input);
-            return { sucess: true };
-        } catch (error) {
-            if (error instanceof EmailAddressConflictException) {
-                // We do not want to reveal the email address conflict,
-                // otherwise account enumeration attacks become possible.
-                return { sucess: true };
-            }
-
-            throw error;
-        }
+        this.requireNativeAuthStrategy();
+        await this.customerService.registerCustomerAccount(ctx, args.input);
+        return { sucess: true };
+        // try {
+        // await this.customerService.registerCustomerAccount(ctx, args.input);
+        // return { sucess: true };
+        // } catch (error) {
+        //     if (error instanceof EmailAddressConflictException) {
+        //         // We do not want to reveal the email address conflict,
+        //         // otherwise account enumeration attacks become possible.
+        //         return { sucess: true };
+        //     }
+        //
+        //     throw error;
+        // }
     }
 
-    @Throttle({ default: { ttl: 60000, limit: 3 } })
+    @Throttle({ default: { ttl: 60000, limit: 20 } })
     @Transaction()
     @Post('verify')
     @Allow(Permission.Public)
@@ -164,7 +162,7 @@ export class ShopAuthController extends BaseAuthController {
         return { success: true };
     }
 
-    @Throttle({ default: { ttl: 60000, limit: 3 } })
+    @Throttle({ default: { ttl: 60000, limit: 20 } })
     @Transaction()
     @Post('reset-password')
     @Allow(Permission.Public)
@@ -242,7 +240,7 @@ export class ShopAuthController extends BaseAuthController {
         };
     }
 
-    @Throttle({ default: { ttl: 60000, limit: 3 } })
+    @Throttle({ default: { ttl: 60000, limit: 20 } })
     @Transaction()
     @Post('update-email')
     @Allow(Permission.Owner)
