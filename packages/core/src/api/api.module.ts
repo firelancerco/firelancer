@@ -14,8 +14,9 @@ import { AdministratorController } from './controllers/admin/administrator.contr
 import { AdminAuthController } from './controllers/admin/auth.controller';
 import { RoleController } from './controllers/admin/roles.controller';
 import { FacetController } from './controllers/entity/facet-entity.controller';
+import { JobPostController } from './controllers/entity/job-post-entity.controller';
 import { ShopAuthController } from './controllers/shop/auth.controller';
-import { ShopJobPostController } from './controllers/shop/job-post.controller';
+import { ShopHiringController } from './controllers/shop/hiring.controller';
 import { AuthGuard } from './middlewares/auth.guard';
 import { ExceptionHandlerFilter } from './middlewares/exception-handler.filter';
 
@@ -23,9 +24,9 @@ const { apiOptions } = getConfig();
 
 const adminResolvers = [AdminAuthController, AdministratorController, RoleController];
 
-const shopControllers = [ShopAuthController, ShopJobPostController];
+const shopControllers = [ShopAuthController, ShopHiringController];
 
-export const entityControllers = [FacetController];
+export const entityControllers = [FacetController, JobPostController];
 
 export const adminEntityControllers = [];
 

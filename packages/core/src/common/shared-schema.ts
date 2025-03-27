@@ -1676,35 +1676,6 @@ export class PublishJobPostInput {
     id: ID;
 }
 
-export class PublishableJobPost {
-    @IsEntityId()
-    customerId: ID | null;
-
-    @IsString()
-    title: string | null;
-
-    @IsString()
-    description: string | null;
-
-    @IsEnum(JobPostVisibility)
-    visibility: JobPostVisibility | null;
-
-    @IsEnum(CurrencyCode)
-    currencyCode?: CurrencyCode | null;
-
-    @IsOptional()
-    @IsInt()
-    @IsPositive()
-    budget: number | null;
-
-    @IsEntityId({ each: true })
-    facetValueIds: Array<ID> | null;
-
-    @IsOptional()
-    @IsEntityId({ each: true })
-    assetIds: Array<ID> | null;
-}
-
 export class MutationCreateJobPostArgs {
     @IsString()
     title: string;
@@ -1726,6 +1697,46 @@ export class MutationCreateJobPostArgs {
     @IsPositive()
     @Min(5)
     budget: number;
+
+    @IsOptional()
+    @IsEntityId({ each: true })
+    facetValueIds?: Array<ID>;
+}
+
+export class MutationPublishJobPostArgs {
+    @IsEntityId()
+    id: ID;
+}
+
+export class MutationEditJobPostArgs {
+    @IsEntityId()
+    id: ID;
+
+    @IsOptional()
+    @IsString()
+    title?: string;
+
+    @IsOptional()
+    @IsString()
+    description?: string;
+
+    @IsOptional()
+    @IsEnum(JobPostVisibility)
+    visibility?: JobPostVisibility;
+
+    @IsOptional()
+    @IsEnum(CurrencyCode)
+    currencyCode?: CurrencyCode;
+
+    @IsOptional()
+    @IsInt()
+    @IsPositive()
+    @Min(5)
+    budget?: number;
+
+    @IsOptional()
+    @IsEntityId({ each: true })
+    assetIds?: Array<ID>;
 
     @IsOptional()
     @IsEntityId({ each: true })

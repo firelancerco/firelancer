@@ -7,18 +7,11 @@ import {
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { assertFound, unique } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
-import { validateOrReject } from 'class-validator';
 import { IsNull } from 'typeorm';
 
 import { RelationPaths } from '../../api';
 import { ListQueryOptions, RequestContext, UserInputException } from '../../common';
-import {
-    CreateJobPostInput,
-    ID,
-    PublishableJobPost,
-    PublishJobPostInput,
-    UpdateJobPostInput,
-} from '../../common/shared-schema';
+import { CreateJobPostInput, ID, PublishJobPostInput, UpdateJobPostInput } from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { FacetValue, JobPost } from '../../entity';
 import { EventBus, JobPostEvent } from '../../event-bus';
@@ -95,20 +88,32 @@ export class JobPostService {
         return assertFound(this.findOne(ctx, jobPost.id));
     }
 
+    // TODO: add error message translations
     async publish(ctx: RequestContext, input: PublishJobPostInput): Promise<JobPost> {
         const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
             relations: ['facetValues'],
         });
 
-        const post = new PublishableJobPost();
-        post.title = jobPost.title;
-        post.description = jobPost.description;
-        post.visibility = jobPost.visibility;
-        post.budget = jobPost.budget;
-        post.facetValueIds = jobPost?.facetValues?.map(fv => fv.id) ?? [];
-        post.assetIds = jobPost?.assets?.map(a => a.id);
-        post.currencyCode = jobPost.currencyCode;
-        await validateOrReject(post);
+        if (!jobPost.title) {
+            throw new UserInputException('error.job-post-title-required');
+        }
+        if (!jobPost.description) {
+            throw new UserInputException('error.job-post-description-required');
+        }
+        if (!jobPost.visibility) {
+            throw new UserInputException('error.job-post-visibility-required');
+        }
+
+        if (!jobPost.budget) {
+            throw new UserInputException('error.job-post-budget-required');
+        }
+        if (!jobPost.currencyCode) {
+            throw new UserInputException('error.job-post-currencyCode-required');
+        }
+
+        if (!jobPost.facetValues?.length) {
+            throw new UserInputException('error.job-post-facetValues-required');
+        }
 
         const updatedJobPost = patchEntity(jobPost, { publishedAt: new Date() });
         await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
