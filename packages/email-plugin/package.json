@@ -1,6 +1,6 @@
 {
     "name": "@firelancerco/email-plugin",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "files": [
@@ -16,8 +16,8 @@
         "access": "restricted"
     },
     "dependencies": {
-        "@firelancerco/common": "^1.0.13",
-        "@firelancerco/core": "^1.0.13",
+        "@firelancerco/common": "^1.0.14",
+        "@firelancerco/core": "^1.0.14",
         "dateformat": "^4.5.1",
         "express": "^4.21.2",
         "fs-extra": "^11.3.0",

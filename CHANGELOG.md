@@ -1,3 +1,17 @@
+## <small>1.0.14 (2025-03-27)</small>
+
+
+#### Features
+
+*
+    **core**
+change throttling limits for authentication endpoints([818c792](https://github.com/firelancerco/firelancer    /commit/818c792))*
+    **core**
+force throw email-address-conflict exception on customer registeration([fcf4689](https://github.com/firelancerco/firelancer    /commit/fcf4689))*
+    **core**
+simplify InvalidCredentialsException handling and improve error messaging([60fe1b6](https://github.com/firelancerco/firelancer    /commit/60fe1b6))*
+    **google-auth-plugin**
+enhance user registration and login handling with action-based flow([f8a3a48](https://github.com/firelancerco/firelancer    /commit/f8a3a48))
 ## <small>1.0.13 (2025-03-27)</small>
 
 
