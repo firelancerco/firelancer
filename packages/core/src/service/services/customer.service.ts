@@ -209,21 +209,25 @@ export class CustomerService {
         }
         let user = await this.userService.getUserByEmailAddress(ctx, input.emailAddress);
         const hasNativeAuthMethod = !!user?.authenticationMethods.find(m => m instanceof NativeAuthenticationMethod);
-        if (user && user.verified) {
-            if (hasNativeAuthMethod) {
-                // If the user has already been verified and has already registered
-                // with the native authentication strategy, do nothing.
-                return;
-            }
-        }
-        const customer = await this.createOrUpdate(ctx, {
-            emailAddress: input.emailAddress,
-            customerType: input.customerType,
-            title: input.title || '',
-            firstName: input.firstName || '',
-            lastName: input.lastName || '',
-            phoneNumber: input.phoneNumber || '',
-        });
+        // if (user && user.verified) {
+        //     if (hasNativeAuthMethod) {
+        //         // If the user has already been verified and has already registered
+        //         // with the native authentication strategy, do nothing.
+        //         return;
+        //     }
+        // }
+        const customer = await this.createOrUpdate(
+            ctx,
+            {
+                emailAddress: input.emailAddress,
+                customerType: input.customerType,
+                title: input.title || '',
+                firstName: input.firstName || '',
+                lastName: input.lastName || '',
+                phoneNumber: input.phoneNumber || '',
+            },
+            true,
+        );
 
         await this.historyService.createHistoryEntryForCustomer({
             customerId: customer.id,
