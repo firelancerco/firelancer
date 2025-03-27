@@ -1,3 +1,18 @@
+## <small>1.0.12 (2025-03-27)</small>
+
+
+#### Fixes
+
+*
+    **core**
+fix shared-types type definitions([30822e4](https://github.com/firelancerco/firelancer    /commit/30822e4))
+#### Features
+
+*
+    **core**
+add JobPostController and refactor job post handling in services([a6c6c79](https://github.com/firelancerco/firelancer    /commit/a6c6c79))*
+    **core**
+update job post schema and entity to support new fields and nullable properties([88f1984](https://github.com/firelancerco/firelancer    /commit/88f1984))
 ## <small>1.0.11 (2025-03-24)</small>
 
 
