@@ -407,7 +407,7 @@ export class UserService {
         const matches = await this.passwordCipher.check(currentPassword, nativeAuthMethod.passwordHash);
 
         if (!matches) {
-            throw new InvalidCredentialsException({ authenticationError: '' });
+            throw new InvalidCredentialsException();
         }
 
         nativeAuthMethod.passwordHash = await this.passwordCipher.hash(newPassword);

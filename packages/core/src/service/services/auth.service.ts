@@ -53,10 +53,10 @@ export class AuthService {
         const authenticationStrategy = this.getAuthenticationStrategy(apiType, authenticationMethod);
         const authenticateResult = await authenticationStrategy.authenticate(ctx, authenticationData);
         if (typeof authenticateResult === 'string') {
-            throw new InvalidCredentialsException({ authenticationError: authenticateResult });
+            throw new InvalidCredentialsException(authenticateResult);
         }
         if (!authenticateResult) {
-            throw new InvalidCredentialsException({ authenticationError: '' });
+            throw new InvalidCredentialsException();
         }
         const session = await this.createAuthenticatedSessionForUser(
             ctx,
@@ -100,7 +100,7 @@ export class AuthService {
         const nativeAuthenticationStrategy = this.getAuthenticationStrategy('shop', NATIVE_AUTH_STRATEGY_NAME);
         const passwordMatches = await nativeAuthenticationStrategy.verifyUserPassword(ctx, userId, password);
         if (!passwordMatches) {
-            throw new InvalidCredentialsException({ authenticationError: '' });
+            throw new InvalidCredentialsException();
         }
     }
 

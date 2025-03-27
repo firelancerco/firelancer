@@ -67,10 +67,8 @@ export class EntityNotFoundException extends I18nException {
 }
 
 export class InvalidCredentialsException extends I18nException {
-    readonly authenticationError: string;
-    constructor(input: { authenticationError: string }) {
-        super('error.invalid-credentials', HttpStatus.UNAUTHORIZED, {});
-        this.authenticationError = input.authenticationError;
+    constructor(authenticationError: string = 'error.invalid-credentials') {
+        super(authenticationError, HttpStatus.UNAUTHORIZED, {});
     }
 }
 

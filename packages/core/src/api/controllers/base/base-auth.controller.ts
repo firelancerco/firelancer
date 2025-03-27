@@ -103,7 +103,7 @@ export class BaseAuthController {
         if (apiType === 'admin') {
             const administrator = await this.administratorService.findOneByUserId(ctx, session.user.id);
             if (!administrator) {
-                throw new InvalidCredentialsException({ authenticationError: '' });
+                throw new InvalidCredentialsException();
             }
         }
 

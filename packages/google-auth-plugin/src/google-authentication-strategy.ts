@@ -28,11 +28,11 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
 
             const user = await this.externalAuthenticationService.findCustomerUser(ctx, this.name, profile.sub);
 
-            if (data.action === 'login') {
-                if (user) {
-                    return user;
-                }
+            if (user) {
+                return user;
+            }
 
+            if (data.action === 'login') {
                 return 'error.user-not-registered';
             }
 
@@ -40,8 +40,6 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
                 if (!data.customer_type) {
                     return 'error.register-customer-type-required';
                 }
-
-                // user does not exist; register new user
                 return this.externalAuthenticationService.createCustomerAndUser(ctx, {
                     strategy: this.name,
                     externalIdentifier: profile.sub,
