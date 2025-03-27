@@ -1,6 +1,6 @@
 {
     "name": "@firelancerco/cli",
-    "version": "1.0.12",
+    "version": "1.0.13",
     "main": "index.js",
     "type": "commonjs",
     "scripts": {
@@ -20,8 +20,8 @@
     ],
     "dependencies": {
         "@clack/prompts": "^0.9.0",
-        "@firelancerco/common": "^1.0.12",
-        "@firelancerco/core": "^1.0.12",
+        "@firelancerco/common": "^1.0.13",
+        "@firelancerco/core": "^1.0.13",
         "change-case": "^5.4.4",
         "commander": "^12.1.0",
         "cross-spawn": "^7.0.6",

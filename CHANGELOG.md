@@ -1,3 +1,11 @@
+## <small>1.0.13 (2025-03-27)</small>
+
+
+#### Features
+
+*
+    **core**
+update facet definitions and initial data structure for multilingual support([c78309e](https://github.com/firelancerco/firelancer    /commit/c78309e))
 ## <small>1.0.12 (2025-03-27)</small>
 
 
