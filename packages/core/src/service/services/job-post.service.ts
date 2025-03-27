@@ -154,20 +154,20 @@ export class JobPostService {
             throw new UserInputException('Job category is required');
         }
 
-        if (!duration) {
-            throw new UserInputException('Duration must be specified');
-        }
-
-        if (!experienceLevel) {
-            throw new UserInputException('Experience level required');
-        }
-
         if (skills.length < MIN_SKILLS) {
             throw new UserInputException(`Minimum ${MIN_SKILLS} skills required`);
         }
 
         if (skills.length > MAX_SKILLS) {
             throw new UserInputException(`Maximum ${MAX_SKILLS} skills allowed`);
+        }
+
+        if (!duration) {
+            throw new UserInputException('Duration must be specified');
+        }
+
+        if (!experienceLevel) {
+            throw new UserInputException('Experience level required');
         }
 
         return facetValues;
