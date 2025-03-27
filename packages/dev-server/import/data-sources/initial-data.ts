@@ -1,4 +1,5 @@
 import { InitialData, LanguageCode, Permission } from '@firelancerco/core';
+import { CATEGORY_FACET_CODE, SKILL_FACET_CODE } from '@firelancerco/common/lib/shared-constants';
 
 export const initialData: InitialData = {
     defaultLanguage: LanguageCode.en,
@@ -15,63 +16,75 @@ export const initialData: InitialData = {
         },
     ],
     facets: [
-        'category:Web Development',
-        'category:Web & Mobile Design',
-        'category:QA Testing',
-        'category:Desktop Application Development',
-        'category:Mobile Development',
-        'category:Language Tutoring & Interpretation',
-        'category:Translation & Localization Services',
-        'skill:Front-End Development',
-        'skill:Google Chrome Extension',
-        'skill:Page Speed Optimization',
-        'skill:Responsive Desgin',
-        'skill:UI Animation',
-        'skill:Landing Page',
-        'skill:Template Markup',
-        'skill:Web Application',
-        'skill:Website',
-        'skill:Website Redesign',
-        'skill:Agile Software Development',
-        'skill:Blog',
-        'skill:Browser Extension',
-        'skill:Ecommerce Website',
-        'skill:JavaScript',
-        'skill:SQL',
-        'skill:TypeScript',
-        'skill:CSS',
-        'skill:CSS 3',
-        'skill:HTML',
-        'skill:HTML5',
-        'skill:Sass',
-        'skill:ECMAScript',
-        'skill:CoffeeScript',
-        'skill:Elm',
-        'skill:HAML',
-        'skill:Haxe',
-        'skill:Microsoft VBScript',
-        'skill:SCSS',
-        'skill:XHTML',
-        'skill:ReactJS',
-        'skill:NextJS',
-        'skill:SQLite',
-        'skill:Realm Database',
-        'skill:LevelDB',
-        'skill:PaperDb',
-        'skill:Firebase',
-        'skill:API',
-        'skill:Database',
-        'skill:Database Architecture',
-        'skill:Database Design',
-        'skill:Java',
-        'skill:Kotlin',
-        'skill:Scala',
-        'skill:PHP',
+        {
+            facetCode: CATEGORY_FACET_CODE,
+            facetName: ['en:Category', 'ar:التصنيف'],
+            facetValues: [
+                ['en:Web Development', 'ar:برمجة المواقع وتطبيقات الويب'],
+                ['en:Web & Mobile Design', 'ar:تصميم الويب والجوال'],
+                ['en:QA Testing', 'ar:اختبار ضمان الجودة'],
+                ['en:Desktop Application Development', 'ar:تطوير تطبيقات سطح المكتب'],
+                ['en:Mobile Development', 'ar:تطوير التطبيقات الجوالة'],
+                ['en:Language Tutoring & Interpretation', 'ar:الدروس اللغوية والترجمة'],
+                ['en:Translation & Localization Services', 'ar:الترجمة'],
+            ],
+        },
+        {
+            facetCode: SKILL_FACET_CODE,
+            facetName: ['en:Skills', 'ar:المهارات'],
+            facetValues: [
+                ['en:Front-End Development', 'ar:تطوير الواجهة الأمامية'],
+                ['en:Google Chrome Extension', 'ar:اكستينشن جوجل كروم'],
+                ['en:Page Speed Optimization', 'ar:تحسين سرعة الصفحة'],
+                ['en:Responsive Design', 'ar:التصميم المتجاوب'],
+                ['en:UI Animation', 'ar:انيميشن واجهة المستخدم'],
+                ['en:Landing Page', 'ar:صفحة الهبوط'],
+                ['en:Template Markup', 'ar:تهيئة القوالب'],
+                ['en:Web Application', 'ar:تطبيق الويب'],
+                ['en:Website', 'ar:موقع الويب'],
+                ['en:Website Redesign', 'ar:إعادة تصميم الموقع'],
+                ['en:Agile Software Development', 'ar:التطوير البرمجي الرشيق'],
+                ['en:Blog', 'ar:مدونة'],
+                ['en:Browser Extension', 'ar:ملحق المتصفح'],
+                ['en:Ecommerce Website', 'ar:موقع تجارة إلكترونية'],
+                ['en:JavaScript', 'ar:جافاسكريبت'],
+                ['en:SQL', 'ar:إس كيو إل'],
+                ['en:TypeScript', 'ar:تايب سكريبت'],
+                ['en:CSS', 'ar:سي إس إس'],
+                ['en:CSS 3', 'ar:سي إس إس 3'],
+                ['en:HTML', 'ar:إتش تي إم إل'],
+                ['en:HTML5', 'ar:إتش تي إم إل 5'],
+                ['en:Sass', 'ar:ساس'],
+                ['en:ECMAScript', 'ar:إيكما سكريبت'],
+                ['en:CoffeeScript', 'ar:كوفي سكريبت'],
+                ['en:Elm', 'ar:Elm'],
+                ['en:HAML', 'ar:HAML'],
+                ['en:Haxe', 'ar:Haxe'],
+                ['en:Microsoft VBScript', 'ar:مايكروسوفت في بي سكريبت'],
+                ['en:SCSS', 'ar:إس سي إس إس'],
+                ['en:XHTML', 'ar:إكس إتش تي إم إل'],
+                ['en:ReactJS', 'ar:رياكت جي إس'],
+                ['en:NextJS', 'ar:نيكست جي إس'],
+                ['en:SQLite', 'ar:إس كيو لايت'],
+                ['en:Realm Database', 'ar:قاعدة بيانات ريلم'],
+                ['en:LevelDB', 'ar:ليفل دي بي'],
+                ['en:PaperDb', 'ar:بيبر دي بي'],
+                ['en:Firebase', 'ar:فايربيز'],
+                ['en:API', 'ar:واجهة برمجة التطبيقات'],
+                ['en:Database', 'ar:قاعدة البيانات'],
+                ['en:Database Architecture', 'ar:هندسة قواعد البيانات'],
+                ['en:Database Design', 'ar:تصميم قواعد البيانات'],
+                ['en:Java', 'ar:جافا'],
+                ['en:Kotlin', 'ar:كوتلين'],
+                ['en:Scala', 'ar:سكالا'],
+                ['en:PHP', 'ar:بي إتش بي'],
+            ],
+        },
     ],
     collections: [
         // Web, Mobile, & Software Development
         {
-            name: 'Web, Mobile, & Software Development',
+            name: ['en:Web, Mobile, & Software Development'],
             filters: [
                 {
                     code: 'job-post-facet-value-filter',
@@ -92,7 +105,7 @@ export const initialData: InitialData = {
         },
         {
             parentName: 'Web, Mobile, & Software Development',
-            name: 'Web Development',
+            name: ['en:Web Development'],
             filters: [
                 {
                     code: 'job-post-facet-value-filter',
@@ -106,7 +119,7 @@ export const initialData: InitialData = {
         },
         {
             parentName: 'Web, Mobile, & Software Development',
-            name: 'Web & Mobile Design',
+            name: ['en:Web & Mobile Design'],
             filters: [
                 {
                     code: 'job-post-facet-value-filter',
@@ -120,7 +133,7 @@ export const initialData: InitialData = {
         },
         {
             parentName: 'Web, Mobile, & Software Development',
-            name: 'QA Testing',
+            name: ['en:QA Testing'],
             filters: [
                 {
                     code: 'job-post-facet-value-filter',
@@ -134,7 +147,7 @@ export const initialData: InitialData = {
         },
         {
             parentName: 'Web, Mobile, & Software Development',
-            name: 'Desktop Application Development',
+            name: ['en:Desktop Application Development'],
             filters: [
                 {
                     code: 'job-post-facet-value-filter',
@@ -148,7 +161,7 @@ export const initialData: InitialData = {
         },
         {
             parentName: 'Web, Mobile, & Software Development',
-            name: 'Mobile Development',
+            name: ['en:Mobile Development'],
             filters: [
                 {
                     code: 'job-post-facet-value-filter',
@@ -162,7 +175,7 @@ export const initialData: InitialData = {
         },
         // Translation
         {
-            name: 'Translation',
+            name: ['en:Translation'],
             filters: [
                 {
                     code: 'job-post-facet-value-filter',
@@ -177,7 +190,7 @@ export const initialData: InitialData = {
         },
         {
             parentName: 'Translation',
-            name: 'Language Tutoring & Interpretation',
+            name: ['en:Language Tutoring & Interpretation'],
             filters: [
                 {
                     code: 'job-post-facet-value-filter',
@@ -191,7 +204,7 @@ export const initialData: InitialData = {
         },
         {
             parentName: 'Translation',
-            name: 'Translation & Localization Services',
+            name: ['en:Translation & Localization Services'],
             filters: [
                 {
                     code: 'job-post-facet-value-filter',
@@ -204,5 +217,11 @@ export const initialData: InitialData = {
             inheritFilters: false,
         },
     ],
-    countries: [{ name: 'Egypt', code: 'EG', zone: 'Africa' }],
+    countries: [
+        {
+            name: 'Egypt',
+            code: 'EG',
+            zone: 'Africa',
+        },
+    ],
 };

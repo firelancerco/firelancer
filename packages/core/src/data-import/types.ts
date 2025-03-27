@@ -16,11 +16,15 @@ export interface FacetValueCollectionFilterDefinition {
 
 export type CollectionFilterDefinition = FacetValueCollectionFilterDefinition;
 
-export type FacetDefinition = `${string}:${string}`;
+export type FacetDefinition = {
+    facetCode: string;
+    facetName: Array<`${LanguageCode}:${string}`>;
+    facetValues: Array<Array<`${LanguageCode}:${string}`>>;
+};
 
 export interface CollectionDefinition {
-    name: string;
-    description?: string;
+    name: Array<`${LanguageCode}:${string}`>;
+    description?: Array<`${LanguageCode}:${string}`>;
     slug?: string;
     private?: boolean;
     filters?: CollectionFilterDefinition[];

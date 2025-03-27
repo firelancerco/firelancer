@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { normalizeString, notNullOrUndefined } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
+
 import { RequestContext, Translated } from '../../../common';
-import { ConfigurableOperation, ID } from '../../../common/shared-schema';
+import { ConfigurableOperation, ID, LanguageCode } from '../../../common/shared-schema';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
 import { User } from '../../../entity';
@@ -81,103 +83,18 @@ export class Populator {
 
     private async populateFactes(ctx: RequestContext, facets: FacetDefinition[]): Promise<ID[]> {
         const facetValueIds: ID[] = [];
+
         for (const facetDef of facets) {
-            const [facetName, valueName] = facetDef.split(':');
+            const { facetCode, facetName, facetValues } = facetDef;
+            const facetEntity = await this.getOrCreateFacet(ctx, facetCode, facetName);
 
-            let facetEntity: Facet;
-            const cachedFacet = this.facetMap.get(facetName);
-            if (cachedFacet) {
-                facetEntity = cachedFacet;
-            } else {
-                const existing = await this.facetService.findByCode(ctx, normalizeString(facetName, '-'));
-                if (existing) {
-                    facetEntity = existing;
-                } else {
-                    facetEntity = await this.facetService.create(ctx, {
-                        code: normalizeString(facetName, '-'),
-                        translations: [
-                            {
-                                languageCode: ctx.languageCode,
-                                name: facetName,
-                            },
-                        ],
-                    });
-                }
-                this.facetMap.set(facetName, facetEntity);
+            for (const facetValue of facetValues) {
+                const facetValueEntity = await this.getOrCreateFacetValue(ctx, facetEntity, facetName, facetValue);
+                facetValueIds.push(facetValueEntity.id);
             }
-
-            let facetValueEntity: FacetValue;
-            const facetValueMapKey = `${facetName}:${valueName}`;
-            const cachedFacetValue = this.facetValueMap.get(facetValueMapKey);
-            if (cachedFacetValue) {
-                facetValueEntity = cachedFacetValue;
-            } else {
-                const existing = facetEntity.values.find(v => v.name === valueName);
-                if (existing) {
-                    facetValueEntity = existing;
-                } else {
-                    facetValueEntity = await this.facetValueService.create(ctx, {
-                        facetId: facetEntity.id,
-                        code: normalizeString(valueName, '-'),
-                        translations: [
-                            {
-                                languageCode: ctx.languageCode,
-                                name: valueName,
-                            },
-                        ],
-                    });
-                }
-                this.facetValueMap.set(facetValueMapKey, facetValueEntity);
-            }
-            facetValueIds.push(facetValueEntity.id);
         }
 
         return facetValueIds;
-    }
-
-    private async populateCollections(ctx: RequestContext, collections?: CollectionDefinition[]) {
-        if (!collections) {
-            return;
-        }
-        const allFacetValues = await this.facetValueService.findAll(ctx);
-        const collectionMap = new Map<string, Collection>();
-        for (const collectionDef of collections) {
-            const parent = collectionDef.parentName && collectionMap.get(collectionDef.parentName);
-            const parentId = parent ? parent.id : undefined;
-            const { assets } = await this.assetImporter.getAssets(collectionDef.assetPaths || [], ctx);
-
-            let filters: ConfigurableOperation[] = [];
-            try {
-                filters = (collectionDef.filters || []).map(filter =>
-                    this.processFilterDefinition(filter, allFacetValues),
-                );
-            } catch (e) {
-                if (e && e instanceof Error) {
-                    Logger.error(e.message);
-                }
-            }
-
-            const collection = await this.collectionService.create(ctx, {
-                translations: [
-                    {
-                        languageCode: ctx.languageCode,
-                        name: collectionDef.name,
-                        description: collectionDef.description || '',
-                        slug: collectionDef.slug ?? collectionDef.name,
-                    },
-                ],
-                isPrivate: collectionDef.private || false,
-                parentId,
-                assetIds: assets.map(a => a.id.toString()),
-                featuredAssetId: assets.length ? assets[0].id.toString() : undefined,
-                filters,
-                inheritFilters: collectionDef.inheritFilters ?? true,
-            });
-            collectionMap.set(collectionDef.name, collection);
-        }
-        // Wait for the created collection operations to complete before running the reindex of the search index.
-        await new Promise(resolve => setTimeout(resolve, 50));
-        await this.searchService.reindex(ctx);
     }
 
     private async populateRoles(ctx: RequestContext, roles?: RoleDefinition[]) {
@@ -189,45 +106,222 @@ export class Populator {
         }
     }
 
+    private async populateCollections(ctx: RequestContext, collections?: CollectionDefinition[]) {
+        if (!collections?.length) {
+            return;
+        }
+
+        try {
+            const allFacetValues = await this.facetValueService.findAll(ctx);
+            const collectionMap = new Map<string, Collection>();
+
+            for (const collectionDef of collections) {
+                await this.processCollectionDefinition(ctx, collectionDef, allFacetValues, collectionMap);
+            }
+
+            // Short delay before reindexing
+            await this.delay(50);
+            await this.searchService.reindex(ctx);
+        } catch (error) {
+            Logger.error(`Error populating collections: ${error instanceof Error ? error.message : String(error)}`);
+            throw error;
+        }
+    }
+
+    private async processCollectionDefinition(
+        ctx: RequestContext,
+        collectionDef: CollectionDefinition,
+        allFacetValues: PaginatedList<Translated<FacetValue>>,
+        collectionMap: Map<string, Collection>,
+    ) {
+        const parent = collectionDef.parentName ? collectionMap.get(collectionDef.parentName) : undefined;
+        const assets = await this.getCollectionAssets(ctx, collectionDef.assetPaths);
+        const filters = await this.buildCollectionFilters(collectionDef.filters, allFacetValues);
+
+        const translations = this.buildCollectionTranslations(
+            ctx.languageCode,
+            collectionDef.name,
+            collectionDef.description,
+            collectionDef.slug,
+        );
+
+        const collection = await this.collectionService.create(ctx, {
+            translations,
+            isPrivate: collectionDef.private ?? false,
+            parentId: parent?.id,
+            assetIds: assets.map(a => a.id.toString()),
+            featuredAssetId: assets[0]?.id.toString(),
+            filters,
+            inheritFilters: collectionDef.inheritFilters ?? true,
+        });
+
+        collectionMap.set(this.getPrimaryCollectionName(collectionDef.name), collection);
+    }
+
+    private async getCollectionAssets(ctx: RequestContext, assetPaths?: string[]) {
+        if (!assetPaths?.length) {
+            return [];
+        }
+        return (await this.assetImporter.getAssets(assetPaths, ctx)).assets;
+    }
+
+    private async buildCollectionFilters(
+        filters: CollectionFilterDefinition[] = [],
+        allFacetValues: PaginatedList<Translated<FacetValue>>,
+    ): Promise<ConfigurableOperation[]> {
+        return filters.map(filter => {
+            try {
+                return this.processFilterDefinition(filter, allFacetValues);
+            } catch (error) {
+                Logger.error(`Error processing filter: ${error instanceof Error ? error.message : String(error)}`);
+                throw error;
+            }
+        });
+    }
+
+    private buildCollectionTranslations(
+        languageCode: LanguageCode,
+        nameTranslations: Array<`${LanguageCode}:${string}`>,
+        descriptionTranslations?: Array<`${LanguageCode}:${string}`>,
+        slug?: string,
+    ) {
+        const primaryName = this.getPrimaryTranslation(nameTranslations);
+        return [
+            {
+                languageCode,
+                name: primaryName,
+                description: descriptionTranslations ? this.getPrimaryTranslation(descriptionTranslations) : '',
+                slug: slug ?? primaryName,
+            },
+        ];
+    }
+
     private processFilterDefinition(
         filter: CollectionFilterDefinition,
         allFacetValues: PaginatedList<Translated<FacetValue>>,
     ): ConfigurableOperation {
-        switch (filter.code) {
-            case 'job-post-facet-value-filter': {
-                const facetValueIds = filter.args.facetValueNames
-                    .map(name =>
-                        allFacetValues.items.find(fv => {
-                            if (name.includes(':')) {
-                                const [facetName, valueName] = name.split(':');
-                                return (
-                                    (fv.name === valueName || fv.code === valueName) &&
-                                    (fv.facet.name === facetName || fv.facet.code === facetName)
-                                );
-                            } else {
-                                return fv.name === name || fv.code === name;
-                            }
-                        }),
-                    )
-                    .filter(notNullOrUndefined)
-                    .map(fv => fv.id);
-                return {
-                    code: filter.code,
-                    args: [
-                        {
-                            name: 'facetValueIds',
-                            value: JSON.stringify(facetValueIds),
-                        },
-                        {
-                            name: 'containsAny',
-                            value: filter.args.containsAny.toString(),
-                        },
-                    ],
-                };
-            }
-            default:
-                throw new Error(`Filter with code "${filter.code as string}" is not recognized.`);
+        if (filter.code !== 'job-post-facet-value-filter') {
+            throw new Error(`Filter with code "${filter.code}" is not recognized.`);
         }
+
+        const facetValueIds = filter.args.facetValueNames
+            .map(name => this.findMatchingFacetValue(name, allFacetValues))
+            .filter(notNullOrUndefined)
+            .map(fv => fv.id);
+
+        return {
+            code: filter.code,
+            args: [
+                {
+                    name: 'facetValueIds',
+                    value: JSON.stringify(facetValueIds),
+                },
+                {
+                    name: 'containsAny',
+                    value: filter.args.containsAny.toString(),
+                },
+            ],
+        };
+    }
+
+    private findMatchingFacetValue(
+        name: string,
+        allFacetValues: PaginatedList<Translated<FacetValue>>,
+    ): FacetValue | undefined {
+        if (name.includes(':')) {
+            const [facetName, valueName] = name.split(':');
+            return allFacetValues.items.find(
+                fv =>
+                    (fv.name === valueName || fv.code === valueName) &&
+                    (fv.facet.name === facetName || fv.facet.code === facetName),
+            );
+        }
+        return allFacetValues.items.find(fv => fv.name === name || fv.code === name);
+    }
+
+    private getPrimaryCollectionName(names: Array<`${LanguageCode}:${string}`>): string {
+        return this.getPrimaryTranslation(names);
+    }
+
+    private getPrimaryTranslation(translations: Array<`${LanguageCode}:${string}`>): string {
+        const primary = translations.find(t => t.startsWith('en:')) || translations[0];
+        return primary.split(':')[1];
+    }
+
+    private delay(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    private async getOrCreateFacet(
+        ctx: RequestContext,
+        facetCode: string,
+        facetName: Array<`${LanguageCode}:${string}`>,
+    ): Promise<Facet> {
+        // Check cache first
+        const cachedFacet = this.facetMap.get(facetCode);
+        if (cachedFacet) {
+            return cachedFacet;
+        }
+
+        // Try to find existing facet
+        const existingFacet = await this.facetService.findByCode(ctx, facetCode);
+        if (existingFacet) {
+            this.facetMap.set(facetCode, existingFacet);
+            return existingFacet;
+        }
+
+        // Create new facet if not found
+        const translations = this.parseTranslations(facetName);
+        const newFacet = await this.facetService.create(ctx, {
+            code: facetCode,
+            translations,
+        });
+
+        this.facetMap.set(facetCode, newFacet);
+        return newFacet;
+    }
+
+    private async getOrCreateFacetValue(
+        ctx: RequestContext,
+        facetEntity: Facet,
+        facetName: Array<`${LanguageCode}:${string}`>,
+        facetValue: Array<`${LanguageCode}:${string}`>,
+    ): Promise<FacetValue> {
+        const translations = this.parseTranslations(facetValue);
+        const primaryName = translations[0]?.name;
+        const facetValueMapKey = `${facetName[0]}:${primaryName}`;
+
+        // Check cache first
+        const cachedFacetValue = this.facetValueMap.get(facetValueMapKey);
+        if (cachedFacetValue) {
+            return cachedFacetValue;
+        }
+
+        // Try to find existing value
+        const existingValue = facetEntity.values.find(v => v.name === primaryName);
+        if (existingValue) {
+            this.facetValueMap.set(facetValueMapKey, existingValue);
+            return existingValue;
+        }
+
+        // Create new value if not found
+        const newFacetValue = await this.facetValueService.create(ctx, {
+            facetId: facetEntity.id,
+            code: normalizeString(primaryName, '-'),
+            translations,
+        });
+
+        this.facetValueMap.set(facetValueMapKey, newFacetValue);
+        return newFacetValue;
+    }
+
+    private parseTranslations(
+        translations: Array<`${LanguageCode}:${string}`>,
+    ): Array<{ languageCode: LanguageCode; name: string }> {
+        return translations.map(value => {
+            const [languageCode, name] = value.split(':') as [LanguageCode, string];
+            return { languageCode, name };
+        });
     }
 
     private async createRequestContext() {
