@@ -103,14 +103,12 @@ export class JobPostService {
         if (!jobPost.visibility) {
             throw new UserInputException('error.job-post-visibility-required');
         }
-
         if (!jobPost.budget) {
             throw new UserInputException('error.job-post-budget-required');
         }
         if (!jobPost.currencyCode) {
             throw new UserInputException('error.job-post-currencyCode-required');
         }
-
         if (!jobPost.facetValues?.length) {
             throw new UserInputException('error.job-post-facetValues-required');
         }
@@ -155,19 +153,19 @@ export class JobPostService {
         }
 
         if (skills.length < MIN_SKILLS) {
-            throw new UserInputException(`Minimum ${MIN_SKILLS} skills required`);
+            throw new UserInputException(`error.minimum-skills-required`, { count: MIN_SKILLS });
         }
 
         if (skills.length > MAX_SKILLS) {
-            throw new UserInputException(`Maximum ${MAX_SKILLS} skills allowed`);
+            throw new UserInputException(`error.maximum-skills-allowed`, { count: MAX_SKILLS });
         }
 
         if (!duration) {
-            throw new UserInputException('Duration must be specified');
+            throw new UserInputException('error.job-duration-required');
         }
 
         if (!experienceLevel) {
-            throw new UserInputException('Experience level required');
+            throw new UserInputException('error.experience-level-required');
         }
 
         return facetValues;
