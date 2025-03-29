@@ -1,3 +1,16 @@
+## 1.1.0 (2025-03-29)
+
+
+#### Fixes
+
+*
+    **core**
+fix bug where totalItems is not used([30fd60b](https://github.com/firelancerco/firelancer    /commit/30fd60b))
+#### Features
+
+*
+    **core**
+add filtering and sorting capabilities for job posts and facets with new operators and options([d3286a2](https://github.com/firelancerco/firelancer    /commit/d3286a2))
 ## <small>1.0.15 (2025-03-29)</small>
 
 
