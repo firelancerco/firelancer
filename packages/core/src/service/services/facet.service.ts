@@ -45,7 +45,7 @@ export class FacetService {
                 );
                 return {
                     items,
-                    totalItems: items.length,
+                    totalItems,
                 };
             });
     }
