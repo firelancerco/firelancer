@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { Ctx } from '../..';
 import { RequestContext } from '../../../common';
@@ -12,8 +12,9 @@ export class FacetController {
         private facetValueService: FacetValueService,
     ) {}
 
+    @UsePipes(new ValidationPipe({ whitelist: true }))
     @Get()
-    async facets(@Ctx() ctx: RequestContext, @Query() options: FacetListOptions) {
+    async facetsList(@Ctx() ctx: RequestContext, @Query() options: FacetListOptions) {
         return this.facetService.findAll(ctx, options, []);
     }
 
@@ -32,8 +33,9 @@ export class FacetController {
         return this.facetService.findByFacetValueId(ctx, id);
     }
 
+    @UsePipes(new ValidationPipe({ whitelist: true }))
     @Get(':id/facet-values')
-    async getValues(@Ctx() ctx: RequestContext, @Param('id') id: ID, @Query() options: FacetValueListOptions) {
+    async getValuesList(@Ctx() ctx: RequestContext, @Param('id') id: ID, @Query() options: FacetValueListOptions) {
         return this.facetValueService.findByFacetId(ctx, id, options);
     }
 }

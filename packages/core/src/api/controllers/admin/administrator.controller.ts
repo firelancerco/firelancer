@@ -22,7 +22,7 @@ export class AdministratorController {
 
     @Get()
     @Allow(Permission.ReadAdministrator)
-    async administrators(@Ctx() ctx: RequestContext) {
+    async administratorsList(@Ctx() ctx: RequestContext) {
         return this.administratorService.findAll(ctx);
     }
 

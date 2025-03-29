@@ -816,12 +816,16 @@ export class NumberRange {
 export class DateRange {
     @IsDate()
     end: Date;
+
     @IsDate()
     start: Date;
 }
 
 export class LocalizedString {
+    @IsEnum(LanguageCode)
     languageCode: LanguageCode;
+
+    @IsString()
     value: string;
 }
 
@@ -1058,7 +1062,10 @@ export class Customer {
 }
 
 export class Coordinate {
+    @IsNumber()
     x: number;
+
+    @IsNumber()
     y: number;
 }
 
@@ -1500,7 +1507,6 @@ export class AuthenticationInput {
 
 export class MutationAuthenticateArgs {
     @IsDefined()
-    @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
     @Type(() => AuthenticationInput)

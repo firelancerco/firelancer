@@ -35,6 +35,10 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
         }
 
         try {
+            if (!data.access_token && !data.id_token) {
+                return 'error.google-auth-token-required';
+            }
+
             const profile = await this.getGoogleProfile(data);
 
             if (!profile?.email) {

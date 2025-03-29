@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { RequestContext } from '../../../common/request-context';
 import { JobPostListOptions, Permission } from '../../../common/shared-schema';
@@ -11,8 +11,9 @@ export class JobPostController {
     constructor(private jobPostService: JobPostService) {}
     @Get()
     @Allow(Permission.Public)
-    async getJobPosts(@Ctx() ctx: RequestContext, @Query() options: JobPostListOptions) {
-        // Filter for posts that have a publioptionshedAt date (not null)
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    async jobPostsList(@Ctx() ctx: RequestContext, @Query() options: JobPostListOptions) {
+        // Filter for posts that have a publishedAt date (not null)
         const publishedFilter = { filter: { publishedAt: { isNull: false } } };
 
         const mergedFilter = options.filter

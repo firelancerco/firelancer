@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, Response, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 
@@ -92,18 +92,6 @@ export class ShopAuthController extends BaseAuthController {
         this.requireNativeAuthStrategy();
         await this.customerService.registerCustomerAccount(ctx, args.input);
         return { sucess: true };
-        // try {
-        // await this.customerService.registerCustomerAccount(ctx, args.input);
-        // return { sucess: true };
-        // } catch (error) {
-        //     if (error instanceof EmailAddressConflictException) {
-        //         // We do not want to reveal the email address conflict,
-        //         // otherwise account enumeration attacks become possible.
-        //         return { sucess: true };
-        //     }
-        //
-        //     throw error;
-        // }
     }
 
     @Throttle({ default: { ttl: 60000, limit: 20 } })
