@@ -71,11 +71,6 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
         }
     }
 
-    private errorResponse(message: string): string {
-        // Could add logging here if needed
-        return message;
-    }
-
     private async getGoogleProfile(data: GoogleAuthData): Promise<any | null> {
         if (data.access_token) {
             return this.fetchUserInfo(data.access_token);
