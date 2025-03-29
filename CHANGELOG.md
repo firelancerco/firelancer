@@ -1,3 +1,11 @@
+## <small>1.1.1 (2025-03-29)</small>
+
+
+#### Features
+
+*
+    **core**
+enhance validation and error handling across controllers and schemas([7e717ee](https://github.com/firelancerco/firelancer    /commit/7e717ee))
 ## 1.1.0 (2025-03-29)
 
 
