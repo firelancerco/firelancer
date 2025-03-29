@@ -499,3 +499,23 @@ export function unique<T>(arr: T[], byKey?: keyof T): T[] {
         return [...new Map(arr.map(item => [item[byKey], item])).values()];
     }
 }
+
+/**
+ * Converts a data object to a query string format
+ * @param data The data object to convert
+ * @returns Query string with the data parameters
+ */
+export function createQueryString(data: any, prefix = ''): string {
+    return Object.keys(data)
+        .map(key => {
+            const val = data[key];
+            const newKey = prefix ? `${prefix}[${key}]` : key;
+
+            if (val !== null && typeof val === 'object') {
+                return createQueryString(val, newKey);
+            }
+
+            return `${newKey}=${encodeURIComponent(val)}`;
+        })
+        .join('&');
+}

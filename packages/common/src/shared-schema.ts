@@ -126,6 +126,11 @@ export enum DeletionResult {
  */
 export type ConfigArgType = 'string' | 'int' | 'float' | 'boolean' | 'datetime' | 'ID';
 
+export enum SortOrder {
+    ASC = 'ASC',
+    DESC = 'DESC',
+}
+
 /**
  * @description
  * ISO 4217 currency code
@@ -770,6 +775,157 @@ export enum LanguageCode {
     /** Zulu */
     zu = 'zu',
 }
+
+export enum LogicalOperator {
+    AND = 'AND',
+    OR = 'OR',
+}
+
+export class NumberRange {
+    
+    end: number;
+    
+    start: number;
+}
+
+export class DateRange {
+    
+    end: Date;
+    
+    start: Date;
+}
+
+export class LocalizedString {
+    languageCode: LanguageCode;
+    value: string;
+}
+
+/** Operators for filtering on a String field */
+export class StringOperators {
+    
+    
+    contains?: string;
+
+    
+    
+    eq?: string;
+
+    
+    
+    in?: string;
+
+    
+    
+    isNull?: boolean;
+
+    
+    
+    notContains?: string;
+
+    
+    
+    notEq?: string;
+
+    
+    
+    
+    notIn?: Array<string>;
+
+    
+    
+    regex?: string;
+}
+
+/** Operators for filtering on a Int or Float field */
+export class NumberOperators {
+    
+    
+    between?: NumberRange;
+
+    
+    
+    eq?: number;
+
+    
+    
+    gt?: number;
+
+    
+    
+    gte?: number;
+
+    
+    
+    isNull?: boolean;
+
+    
+    
+    lt?: number;
+
+    
+    
+    lte?: number;
+}
+
+/** Operators for filtering on a Boolean field */
+export class BooleanOperators {
+    
+    
+    eq?: boolean;
+
+    
+    
+    isNull?: boolean;
+}
+
+/** Operators for filtering on a DateTime field */
+export class DateOperators {
+    
+    
+    after?: Date;
+
+    
+    
+    before?: Date;
+
+    
+    
+    between?: DateRange;
+
+    
+    
+    eq?: Date;
+
+    
+    
+    isNull?: boolean;
+}
+
+export class IdOperators {
+    
+    
+    eq?: string;
+
+    
+    
+    
+    in?: Array<string>;
+
+    
+    
+    isNull?: boolean;
+
+    
+    
+    notEq?: string;
+
+    
+    
+    
+    notIn?: Array<string>;
+}
+
+/* --------------- */
 
 export class AuthenticationMethod {
     
@@ -2209,6 +2365,56 @@ export class DeleteRolesMutation {
         result: DeletionResult;
         message?: string | null;
     }>;
+}
+
+export class JobPostSortParameter {
+    
+    
+    id?: SortOrder;
+    
+    
+    createdAt?: SortOrder;
+    
+    
+    updatedAt?: SortOrder;
+}
+
+export class JobPostFilterParameter {
+    
+    
+    _and?: Array<JobPostFilterParameter>;
+
+    
+    
+    _or?: Array<JobPostFilterParameter>;
+
+    
+    
+    id?: StringOperators;
+
+    
+    
+    facetValueId?: IdOperators;
+
+    
+    
+    createdAt?: DateOperators;
+
+    
+    
+    updatedAt?: DateOperators;
+}
+
+export class JobPostListOptions {
+    /** Takes n results, for use in pagination */take?: number | null;
+
+    /** Skips the first n results, for use in pagination */skip?: number | null;
+
+    /** Specifies which properties to sort the results by */sort?: JobPostSortParameter | null;
+
+    /** Allows the results to be filtered */filter?: JobPostFilterParameter | null;
+
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */filterOperator?: LogicalOperator;
 }
 
 export class GoogleAuthData {

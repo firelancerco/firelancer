@@ -5,6 +5,7 @@ import {
     Injector,
     RequestContext,
     User,
+    UserInputException,
 } from '@firelancerco/core';
 import axios from 'axios';
 import { OAuth2Client } from 'google-auth-library';
@@ -87,7 +88,9 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
             });
             return response.data;
         } catch (error: any) {
-            throw new Error(`Failed to fetch user info: ${error.response?.data?.error_description || error.message}`);
+            throw new UserInputException(`error.google-failed-to-fetch-user-info`, {
+                message: error.response?.data?.error_description || error.message,
+            });
         }
     }
 
@@ -96,7 +99,9 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
             const ticket = await this.client.verifyIdToken({ idToken, audience: this.clientId });
             return ticket.getPayload();
         } catch (error: any) {
-            throw new Error(`Failed to verify ID token: ${error.message}`);
+            throw new UserInputException(`error.google-failed-to-fetch-user-info`, {
+                message: error.response?.data?.error_description || error.message,
+            });
         }
     }
 }

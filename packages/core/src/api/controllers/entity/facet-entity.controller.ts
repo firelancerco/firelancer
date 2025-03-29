@@ -1,8 +1,8 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 
 import { Ctx } from '../..';
 import { RequestContext } from '../../../common';
-import { ID } from '../../../common/shared-schema';
+import { FacetListOptions, FacetValueListOptions, ID } from '../../../common/shared-schema';
 import { FacetService, FacetValueService } from '../../../service';
 
 @Controller('facets')
@@ -12,23 +12,28 @@ export class FacetController {
         private facetValueService: FacetValueService,
     ) {}
 
+    @Get()
+    async facets(@Ctx() ctx: RequestContext, @Query() options: FacetListOptions) {
+        return this.facetService.findAll(ctx, options, []);
+    }
+
     @Get(':id')
-    async facet(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
+    async facetById(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
         return this.facetService.findOne(ctx, id, []);
     }
 
-    @Get()
-    async facets(@Ctx() ctx: RequestContext) {
-        return this.facetService.findAll(ctx, undefined, []);
+    @Get('code/:code')
+    async facetByCode(@Ctx() ctx: RequestContext, @Param('code') code: string) {
+        return this.facetService.findByCode(ctx, code, []);
     }
 
-    @Get('value/:id')
+    @Get('facet-values/:id')
     async facetByFacetValueId(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
         return this.facetService.findByFacetValueId(ctx, id);
     }
 
-    @Get(':id/values')
-    async getValues(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
-        return this.facetValueService.findByFacetId(ctx, id);
+    @Get(':id/facet-values')
+    async getValues(@Ctx() ctx: RequestContext, @Param('id') id: ID, @Query() options: FacetValueListOptions) {
+        return this.facetValueService.findByFacetId(ctx, id, options);
     }
 }

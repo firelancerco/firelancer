@@ -1,19 +1,20 @@
+import { Type } from '@firelancerco/common/lib/shared-types';
+import { assertNever } from '@firelancerco/common/lib/shared-utils';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { DateUtils } from 'typeorm/util/DateUtils';
+
+import { FilterParameter, ListOperators, NullOptionals } from '../../../common';
 import { InternalServerException, UserInputException } from '../../../common/error/errors';
-import { assertNever } from '@firelancerco/common/lib/shared-utils';
 import {
     BooleanOperators,
     DateOperators,
     LogicalOperator,
     NumberOperators,
     StringOperators,
-    Type,
-} from '@firelancerco/common/lib/shared-types';
-import { FilterParameter, ListOperators, NullOptionals } from '../../../common';
+} from '../../../common/shared-schema';
 import { FirelancerEntity } from '../../../entity';
-import { getCalculatedColumns } from './get-calculated-columns';
 import { escapeCalculatedColumnExpression, getColumnMetadata } from './connection-utils';
+import { getCalculatedColumns } from './get-calculated-columns';
 
 export interface WhereGroup {
     operator: LogicalOperator;

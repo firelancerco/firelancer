@@ -45,7 +45,7 @@ export class FacetService {
                 );
                 return {
                     items,
-                    totalItems,
+                    totalItems: items.length,
                 };
             });
     }
@@ -72,10 +72,14 @@ export class FacetService {
         return this.translator.translate(facet, ctx, ['values', ['values', 'facet']]);
     }
 
-    async findByCode(ctx: RequestContext, facetCode: string): Promise<Facet | undefined> {
+    async findByCode(
+        ctx: RequestContext,
+        facetCode: string,
+        relations?: RelationPaths<Facet>,
+    ): Promise<Facet | undefined> {
         const facet = await this.connection.getRepository(ctx, Facet).findOne({
             where: { code: facetCode },
-            relations: ['values', 'values.facet'],
+            relations: relations ?? ['values', 'values.facet'],
         });
 
         if (!facet) {

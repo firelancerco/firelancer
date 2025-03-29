@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Patch, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { EntityNotFoundException, ForbiddenException, RequestContext } from '../../../common';
 import {
     CreateJobPostInput,
+    JobPostListOptions,
     MutationCreateJobPostArgs,
     MutationEditJobPostArgs,
     MutationPublishJobPostArgs,
@@ -88,8 +89,11 @@ export class ShopHiringController {
 
     @Get('job-posts')
     @Allow(Permission.Owner)
-    async jobPosts(@Ctx() ctx: RequestContext) {
+    async jobPosts(@Ctx() ctx: RequestContext, @Query() options: JobPostListOptions) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-        return this.jobPostService.findAll(ctx, { filter: { customerId: { eq: customer.id } } });
+        const customerFilter = { customerId: { eq: String(customer.id) } };
+        const mergedFilter = options.filter ? { _and: [options.filter, customerFilter] } : customerFilter;
+
+        return this.jobPostService.findAll(ctx, { ...options, filter: mergedFilter });
     }
 }

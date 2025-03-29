@@ -148,6 +148,11 @@ export enum DeletionResult {
  */
 export type ConfigArgType = 'string' | 'int' | 'float' | 'boolean' | 'datetime' | 'ID';
 
+export enum SortOrder {
+    ASC = 'ASC',
+    DESC = 'DESC',
+}
+
 /**
  * @description
  * ISO 4217 currency code
@@ -793,6 +798,171 @@ export enum LanguageCode {
     zu = 'zu',
 }
 
+export enum LogicalOperator {
+    AND = 'AND',
+    OR = 'OR',
+}
+
+export class NumberRange {
+    @IsNumber()
+    @Type(() => Number)
+    end: number;
+
+    @IsNumber()
+    @Type(() => Number)
+    start: number;
+}
+
+export class DateRange {
+    @IsDate()
+    end: Date;
+    @IsDate()
+    start: Date;
+}
+
+export class LocalizedString {
+    languageCode: LanguageCode;
+    value: string;
+}
+
+/** Operators for filtering on a String field */
+export class StringOperators {
+    @IsOptional()
+    @IsString()
+    contains?: string;
+
+    @IsOptional()
+    @IsString()
+    eq?: string;
+
+    @IsOptional()
+    @IsString()
+    in?: string;
+
+    @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
+    isNull?: boolean;
+
+    @IsOptional()
+    @IsString()
+    notContains?: string;
+
+    @IsOptional()
+    @IsString()
+    notEq?: string;
+
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    notIn?: Array<string>;
+
+    @IsOptional()
+    @IsString()
+    regex?: string;
+}
+
+/** Operators for filtering on a Int or Float field */
+export class NumberOperators {
+    @IsOptional()
+    @IsObject()
+    between?: NumberRange;
+
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    eq?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    gt?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    gte?: number;
+
+    @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
+    isNull?: boolean;
+
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    lt?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    lte?: number;
+}
+
+/** Operators for filtering on a Boolean field */
+export class BooleanOperators {
+    @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
+    eq?: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
+    isNull?: boolean;
+}
+
+/** Operators for filtering on a DateTime field */
+export class DateOperators {
+    @IsOptional()
+    @IsDate()
+    after?: Date;
+
+    @IsOptional()
+    @IsDate()
+    before?: Date;
+
+    @IsOptional()
+    @IsObject()
+    between?: DateRange;
+
+    @IsOptional()
+    @IsDate()
+    eq?: Date;
+
+    @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
+    isNull?: boolean;
+}
+
+export class IdOperators {
+    @IsOptional()
+    @IsString()
+    eq?: string;
+
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    in?: Array<string>;
+
+    @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
+    isNull?: boolean;
+
+    @IsOptional()
+    @IsString()
+    notEq?: string;
+
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    notIn?: Array<string>;
+}
+
+/* --------------- */
+
 export class AuthenticationMethod {
     @IsEntityId()
     id: ID;
@@ -856,6 +1026,7 @@ export class User {
     roles: Array<Role>;
 
     @IsBoolean()
+    @Type(() => Boolean)
     verified: boolean;
 }
 
@@ -1058,9 +1229,11 @@ export class Collection {
     filters: Array<ConfigurableOperation>;
 
     @IsBoolean()
+    @Type(() => Boolean)
     inheritFilters: boolean;
 
     @IsBoolean()
+    @Type(() => Boolean)
     isPrivate: boolean;
 
     @IsOptional()
@@ -1132,6 +1305,7 @@ export class Facet {
     code: string;
 
     @IsBoolean()
+    @Type(() => Boolean)
     isPrivate: boolean;
 
     @IsString()
@@ -1301,8 +1475,9 @@ export class MutationLoginArgs {
     @IsString()
     password: string;
 
-    @IsBoolean()
     @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
     rememberMe?: boolean;
 
     @IsString()
@@ -1331,8 +1506,9 @@ export class MutationAuthenticateArgs {
     @Type(() => AuthenticationInput)
     input: AuthenticationInput;
 
-    @IsBoolean()
     @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
     rememberMe?: boolean;
 }
 
@@ -1563,6 +1739,7 @@ export class File {
     buffer: Buffer;
 
     @IsNumber()
+    @Type(() => Number)
     size: number;
 }
 
@@ -1577,9 +1754,11 @@ export class CreateAssetInput {
 
 export class CoordinateInput {
     @IsNumber()
+    @Type(() => Number)
     x: number;
 
     @IsNumber()
+    @Type(() => Number)
     y: number;
 }
 
@@ -1908,12 +2087,14 @@ export class CreateCollectionInput {
     @Type(() => ConfigurableOperation)
     filters: Array<ConfigurableOperation>;
 
-    @IsBoolean()
     @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
     inheritFilters?: boolean;
 
-    @IsBoolean()
     @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
     isPrivate?: boolean;
 
     @IsOptional()
@@ -1975,12 +2156,14 @@ export class UpdateCollectionInput {
     @IsOptional()
     filters?: Array<ConfigurableOperation>;
 
-    @IsBoolean()
     @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
     inheritFilters?: boolean;
 
-    @IsBoolean()
     @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
     isPrivate?: boolean;
 
     @IsOptional()
@@ -1998,8 +2181,11 @@ export class MutationUpdateCollectionArgs {
 export class MoveCollectionInput {
     @IsEntityId()
     collectionId: ID;
+
     @IsNumber()
+    @Type(() => Number)
     index: number;
+
     @IsEntityId()
     parentId: ID;
 }
@@ -2013,6 +2199,7 @@ export class MutationMoveCollectionArgs {
 
 export class Success {
     @IsBoolean()
+    @Type(() => Boolean)
     success: boolean;
 }
 
@@ -2231,4 +2418,330 @@ export class DeleteRolesMutation {
         result: DeletionResult;
         message?: string | null;
     }>;
+}
+
+export class JobPostSortParameter {
+    @IsOptional()
+    @IsEnum(SortOrder)
+    id?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    createdAt?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    updatedAt?: SortOrder;
+}
+
+export class JobPostFilterParameter {
+    @IsOptional()
+    @IsObject()
+    @ValidateNested({ each: true })
+    @Type(() => JobPostFilterParameter)
+    _and?: Array<JobPostFilterParameter>;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested({ each: true })
+    @Type(() => JobPostFilterParameter)
+    _or?: Array<JobPostFilterParameter>;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    id?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    title?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    description?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => NumberOperators)
+    budget?: NumberOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => IdOperators)
+    facetValueId?: IdOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    createdAt?: DateOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    updatedAt?: DateOperators;
+}
+
+export class JobPostListOptions {
+    /** Takes n results, for use in pagination */
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    take?: number | null;
+
+    /** Skips the first n results, for use in pagination */
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    skip?: number | null;
+
+    /** Specifies which properties to sort the results by */
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => JobPostSortParameter)
+    sort?: JobPostSortParameter | null;
+
+    /** Allows the results to be filtered */
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => JobPostFilterParameter)
+    filter?: JobPostFilterParameter | null;
+
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */
+    @IsOptional()
+    @IsEnum(LogicalOperator)
+    filterOperator?: LogicalOperator;
+}
+
+export class FacetFilterParameter {
+    @IsOptional()
+    @IsObject()
+    @ValidateNested({ each: true })
+    @Type(() => FacetFilterParameter)
+    _and?: Array<FacetFilterParameter>;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested({ each: true })
+    @Type(() => FacetFilterParameter)
+    _or?: Array<FacetFilterParameter>;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    code?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    createdAt?: DateOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    id?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => BooleanOperators)
+    isPrivate?: BooleanOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    languageCode?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    name?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    updatedAt?: DateOperators;
+}
+
+export class FacetSortParameter {
+    @IsOptional()
+    @IsEnum(SortOrder)
+    code?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    createdAt?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    id?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    name?: SortOrder;
+    updatedAt?: SortOrder;
+}
+
+export class FacetListOptions {
+    /** Takes n results, for use in pagination */
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    take?: number | null;
+
+    /** Skips the first n results, for use in pagination */
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    skip?: number | null;
+
+    /** Specifies which properties to sort the results by */
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => FacetSortParameter)
+    sort?: FacetSortParameter | null;
+
+    /** Allows the results to be filtered */
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => FacetFilterParameter)
+    filter?: FacetFilterParameter | null;
+
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */
+    @IsOptional()
+    @IsEnum(LogicalOperator)
+    filterOperator?: LogicalOperator;
+}
+
+export class FacetValueFilterParameter {
+    @IsOptional()
+    @IsObject()
+    @ValidateNested({ each: true })
+    @Type(() => FacetValueFilterParameter)
+    _and?: Array<FacetValueFilterParameter>;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested({ each: true })
+    @Type(() => FacetValueFilterParameter)
+    _or?: Array<FacetValueFilterParameter>;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    code?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    createdAt?: DateOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    facetId?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    id?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    languageCode?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    name?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    updatedAt?: DateOperators;
+}
+
+export class FacetValueSortParameter {
+    @IsOptional()
+    @IsEnum(SortOrder)
+    id?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    code?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    facetId?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    name?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    updatedAt?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    createdAt?: SortOrder;
+}
+
+export class FacetValueListOptions {
+    /** Takes n results, for use in pagination */
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    take?: number | null;
+
+    /** Skips the first n results, for use in pagination */
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    skip?: number | null;
+
+    /** Specifies which properties to sort the results by */
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => FacetValueSortParameter)
+    sort?: FacetValueSortParameter | null;
+
+    /** Allows the results to be filtered */
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => FacetValueFilterParameter)
+    filter?: FacetValueFilterParameter | null;
+
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */
+    @IsOptional()
+    @IsEnum(LogicalOperator)
+    filterOperator?: LogicalOperator;
 }

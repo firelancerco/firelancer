@@ -1,17 +1,18 @@
+import { Type } from '@firelancerco/common/lib/shared-types';
 import { unique } from '@firelancerco/common/lib/shared-utils';
-import { LogicalOperator, Type } from '@firelancerco/common/lib/shared-types';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import {
     Brackets,
     FindOneOptions,
     FindOptionsWhere,
+    ObjectLiteral,
     Repository,
     SelectQueryBuilder,
     WhereExpressionBuilder,
-    ObjectLiteral,
 } from 'typeorm';
 import { BetterSqlite3Driver } from 'typeorm/driver/better-sqlite3/BetterSqlite3Driver';
 import { SqljsDriver } from 'typeorm/driver/sqljs/SqljsDriver';
+
 import {
     ApiType,
     FilterParameter,
@@ -21,6 +22,7 @@ import {
     SortParameter,
     UserInputException,
 } from '../../../common';
+import { LogicalOperator } from '../../../common/shared-schema';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
 import { FirelancerEntity } from '../../../entity';

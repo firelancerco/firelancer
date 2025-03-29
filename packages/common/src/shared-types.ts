@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-function-type */
-
-import { ID, LanguageCode } from './shared-schema';
+import { LanguageCode } from './shared-schema';
 
 export interface Type<T = any> extends Function {
     new (...args: any[]): T;
@@ -81,72 +80,6 @@ export function isWithinExpirationDate(date: Date): boolean {
 export function createDate(timeSpan: TimeSpan): Date {
     return new Date(Date.now() + timeSpan.milliseconds());
 }
-
-export type LocalizedString = {
-    languageCode: LanguageCode;
-    value: string;
-};
-
-export enum LogicalOperator {
-    AND = 'AND',
-    OR = 'OR',
-}
-
-/** Operators for filtering on a String field */
-export type StringOperators = {
-    contains?: string | ID;
-    eq?: string | ID;
-    in?: string | ID;
-    isNull?: boolean;
-    notContains?: string;
-    notEq?: string;
-    notIn?: Array<string>;
-    regex?: string;
-};
-
-/** Operators for filtering on a Int or Float field */
-export type NumberOperators = {
-    between?: NumberRange;
-    eq?: number;
-    gt?: number;
-    gte?: number;
-    isNull?: boolean;
-    lt?: number;
-    lte?: number;
-};
-
-export type NumberRange = {
-    end: number;
-    start: number;
-};
-
-/** Operators for filtering on a Boolean field */
-export type BooleanOperators = {
-    eq?: boolean;
-    isNull?: boolean;
-};
-
-/** Operators for filtering on a DateTime field */
-export type DateOperators = {
-    after?: Date;
-    before?: Date;
-    between?: DateRange;
-    eq?: Date;
-    isNull?: boolean;
-};
-
-export type DateRange = {
-    end: Date;
-    start: Date;
-};
-
-export type IdOperators = {
-    eq?: string;
-    in?: Array<string>;
-    isNull?: boolean;
-    notEq?: string;
-    notIn?: Array<string>;
-};
 
 export type TypedArray =
     | Uint8Array

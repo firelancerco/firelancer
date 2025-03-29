@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LocalizedString } from '@firelancerco/common/lib/shared-types';
 import { assertNever } from '@firelancerco/common/lib/shared-utils';
+
 import { InternalServerException } from './error/errors';
 import { InjectableStrategy } from './injectable-strategy';
 import { Injector } from './injector';
-import { ConfigArg, ConfigArgType, ID } from './shared-schema';
+import { ConfigArg, ConfigArgType, ID, LocalizedString } from './shared-schema';
 
 /**
  * @description

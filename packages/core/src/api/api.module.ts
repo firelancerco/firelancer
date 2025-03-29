@@ -40,7 +40,14 @@ export const adminEntityControllers = [];
         ServiceModule,
         CacheModule,
         ConnectionModule.forRoot(),
-        ThrottlerModule.forRoot({ throttlers: [{ ttl: 60000, limit: 50 }] }),
+        ThrottlerModule.forRoot({
+            throttlers: [
+                {
+                    ttl: 60000,
+                    limit: 50,
+                },
+            ],
+        }),
     ],
     providers: [
         {
@@ -80,6 +87,7 @@ export class ShopModule {}
         {
             provide: APP_PIPE,
             useValue: new ValidationPipe({
+                whitelist: true,
                 transform: true,
                 transformOptions: { enableImplicitConversion: true },
             }),
