@@ -782,16 +782,14 @@ export enum LogicalOperator {
 }
 
 export class NumberRange {
-    
     end: number;
-    
+
     start: number;
 }
 
 export class DateRange {
-    
     end: Date;
-    
+
     start: Date;
 }
 
@@ -802,221 +800,131 @@ export class LocalizedString {
 
 /** Operators for filtering on a String field */
 export class StringOperators {
-    
-    
     contains?: string;
 
-    
-    
     eq?: string;
 
-    
-    
     in?: string;
 
-    
-    
     isNull?: boolean;
 
-    
-    
     notContains?: string;
 
-    
-    
     notEq?: string;
 
-    
-    
-    
     notIn?: Array<string>;
 
-    
-    
     regex?: string;
 }
 
 /** Operators for filtering on a Int or Float field */
 export class NumberOperators {
-    
-    
     between?: NumberRange;
 
-    
-    
     eq?: number;
 
-    
-    
     gt?: number;
 
-    
-    
     gte?: number;
 
-    
-    
     isNull?: boolean;
 
-    
-    
     lt?: number;
 
-    
-    
     lte?: number;
 }
 
 /** Operators for filtering on a Boolean field */
 export class BooleanOperators {
-    
-    
     eq?: boolean;
 
-    
-    
     isNull?: boolean;
 }
 
 /** Operators for filtering on a DateTime field */
 export class DateOperators {
-    
-    
     after?: Date;
 
-    
-    
     before?: Date;
 
-    
-    
     between?: DateRange;
 
-    
-    
     eq?: Date;
 
-    
-    
     isNull?: boolean;
 }
 
 export class IdOperators {
-    
-    
     eq?: string;
 
-    
-    
-    
     in?: Array<string>;
 
-    
-    
     isNull?: boolean;
 
-    
-    
     notEq?: string;
 
-    
-    
-    
     notIn?: Array<string>;
 }
 
 /* --------------- */
 
 export class AuthenticationMethod {
-    
     id: ID;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
-    
     strategy?: string;
 
     user?: User;
 }
 
 export class Role {
-    
     id: ID;
 
-    
     code: string;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     description: string;
 
-    
     permissions: Array<Permission>;
 }
 
 export class User {
-    
     id: ID;
 
-    
-    
     authenticationMethods: Array<AuthenticationMethod>;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     identifier: string;
 
-    
-    
     lastLogin?: Date | null;
 
-    
-    
     roles: Array<Role>;
 
-    
     verified: boolean;
 }
 
 export class Customer {
-    
-    
     deletedAt: Date | null;
 
-    
-    
     title: string | null;
 
-    
     firstName: string;
 
-    
     lastName: string;
 
-    
-    
     phoneNumber: string | null;
 
-    
     emailAddress: string;
 
-    
-    
     user?: User;
 }
 
@@ -1026,200 +934,128 @@ export class Coordinate {
 }
 
 export class Asset {
-    
     id: ID;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     fileSize: number;
 
-    
-    
     focalPoint?: Coordinate;
 
-    
     height: number;
 
-    
     mimeType: string;
 
-    
     name: string;
 
-    
     preview: string;
 
-    
     source: string;
 
-    
     type: AssetType;
 
-    
     width: number;
 }
 
 export abstract class OrderableAsset {
-    
     id: ID;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     assetId: ID;
 
-    
     asset: Asset;
 
-    
     position: number;
 }
 
 export class JobPost {
-    
     id: ID;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
-    
     deletedAt: Date | null;
 
-    
-    
     publishedAt: Date | null;
 
-    
     customerId: ID;
 
-    
     customer: Customer;
 
-    
     title: string;
 
-    
     description: string;
 
-    
     visibility: JobPostVisibility;
 
-    
-    
     assets: JobPostAsset[];
 
-    
-    
     facetValues: FacetValue[];
 
-    
-    
     collections: Collection[];
 }
 
 export class JobPostAsset extends OrderableAsset {
-    
     assetId: ID;
 
-    
     asset: Asset;
 
-    
     position: number;
 
-    
     jobPostId: ID;
 
-    
     jobPost: JobPost;
 }
 
 export class CollectionBreadcrumb {
-    
     id: ID;
 
-    
     name: string;
 
-    
     slug: string;
 }
 
 export class Collection {
-    
     id: ID;
 
-    
-    
     assets: Array<Asset>;
 
-    
-    
     breadcrumbs: Array<CollectionBreadcrumb>;
 
-    
-    
     children?: Array<Collection>;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     description: string;
 
-    
-    
     featuredAsset?: Asset;
 
-    
-    
     filters: Array<ConfigurableOperation>;
 
-    
     inheritFilters: boolean;
 
-    
     isPrivate: boolean;
 
-    
-    
     languageCode?: LanguageCode;
 
-    
     name: string;
 
-    
-    
     parent?: Collection;
 
-    
-    
     parentId?: ID | null;
 
-    
     position: number;
 
-    
     slug: string;
 
-    
-    
     translations: Array<CollectionTranslation>;
 
     // TODO
@@ -1227,450 +1063,282 @@ export class Collection {
 }
 
 export class CollectionTranslation {
-    
     id: ID;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     description: string;
 
-    
     languageCode: LanguageCode;
 
-    
     name: string;
 
-    
     slug: string;
 }
 
 export class Facet {
-    
     id: ID;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     languageCode: LanguageCode;
 
-    
     code: string;
 
-    
     isPrivate: boolean;
 
-    
     name: string;
 
-    
-    
     translations: Array<FacetTranslation>;
 
-    
-    
     values: Array<FacetValue>;
 }
 
 export class FacetTranslation {
-    
     id: ID;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     name: string;
 
-    
     languageCode: LanguageCode;
 }
 
 export class FacetValue {
-    
     id: ID;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     code: string;
 
-    
     facetId: ID;
 
-    
     facet: Facet;
 
-    
     languageCode: LanguageCode;
 
-    
     name: string;
 
-    
-    
     translations: Array<FacetValueTranslation>;
 }
 
 export class FacetValueTranslation {
-    
     id: ID;
 
-    
     createdAt: Date;
 
-    
     updatedAt: Date;
 
-    
     languageCode: LanguageCode;
 
-    
     name: string;
 }
 
 export class CreateAdministratorInput {
-    
-    
-    
     emailAddress: string;
 
-    
-    
     firstName: string;
 
-    
-    
     lastName: string;
 
-    
-    
     password: string;
-    
+
     roleIds: Array<ID>;
 }
 
 export class UpdateAdministratorInput {
-    
     id: ID;
 
-    
-    
     emailAddress?: string;
 
-    
-    
     firstName?: string;
 
-    
-    
     lastName?: string;
 
-    
-    
     password?: string;
 
-    
-    
     roleIds?: Array<ID>;
 }
 
 export class UpdateActiveAdministratorInput {
-    
-    
     emailAddress?: string;
 
-    
-    
     firstName?: string;
 
-    
-    
     lastName?: string;
 
-    
-    
     password?: string;
 }
 
 export class CurrentUserRole {
-    
     code: string;
 
-    
     description: string;
 }
 
 export class CurrentUser {
-    
     id: ID;
 
-    
     identifier: string;
 
-    
-    
     roles: Array<CurrentUserRole>;
 
-    
     permissions: Array<Permission>;
 }
 
 export class MutationLoginArgs {
-    
     password: string;
 
-    
-    
     rememberMe?: boolean;
 
-    
     username: string;
 }
 
 export class NativeAuthInput {
-    
     password: string;
 
-    
     username: string;
 }
 
 export class AuthenticationInput {
-    
-    
     native?: NativeAuthInput;
 }
 
 export class MutationAuthenticateArgs {
-    
-    
-    
-    
-    
     input: AuthenticationInput;
 
-    
-    
     rememberMe?: boolean;
 }
 
 export class CreateCustomerInput {
-    
     emailAddress: string;
 
-    
     customerType: CustomerType;
 
-    
     firstName: string;
 
-    
     lastName: string;
 
-    
-    
     phoneNumber?: string;
 
-    
-    
     title?: string;
 }
 
 export class UpdateCustomerInput {
-    
     id: ID;
 
-    
-    
     emailAddress?: string;
 
-    
-    
     firstName?: string;
 
-    
-    
     lastName?: string;
 
-    
-    
     phoneNumber?: string;
 
-    
-    
     title?: string;
 }
 
 export class RegisterCustomerInput {
-    
-    
     emailAddress: string;
 
-    
     customerType: CustomerType;
 
-    
-    
     firstName?: string;
 
-    
-    
     lastName?: string;
 
-    
-    
     password?: string;
 
-    
-    
     phoneNumber?: string;
 
-    
-    
     title?: string;
 }
 
 export class CreateRoleInput {
-    
     code: string;
 
-    
     description: string;
 
-    
     permissions: Array<Permission>;
 }
 
 export class UpdateRoleInput {
-    
     id: ID;
 
-    
-    
     code?: string;
 
-    
-    
     description?: string;
 
-    
-    
     permissions?: Array<Permission>;
 }
 
 export class MutationRegisterCustomerAccountArgs {
-    
-    
-    
-    
-    
     input: RegisterCustomerInput;
 }
 
 export class MutationVerifyCustomerAccountArgs {
-    
-    
     password?: string;
 
-    
     token: string;
 }
 
 export class MutationRefreshCustomerVerificationArgs {
-    
-    
     emailAddress: string;
 }
 
 export class MutationRequestPasswordResetArgs {
-    
-    
     emailAddress: string;
 }
 
 export class MutationResetPasswordArgs {
-    
     password: string;
 
-    
     token: string;
 }
 
 export class MutationUpdateCustomerPasswordArgs {
-    
     currentPassword: string;
 
-    
     newPassword: string;
 }
 
 export class MutationRequestUpdateCustomerEmailAddressArgs {
-    
-    
     newEmailAddress: string;
 
-    
     password: string;
 }
 
 export class MutationUpdateCustomerEmailAddressArgs {
-    
     token: string;
 }
 
 export class MutationCreateAdministratorArgs {
-    
-    
-    
-    
-    
     input: CreateAdministratorInput;
 }
 
 export class MutationUpdateAdministratorArgs {
-    
-    
-    
-    
-    
     input: UpdateAdministratorInput;
 }
 
 export class MutationUpdateActiveAdministratorArgs {
-    
-    
-    
-    
-    
     input: UpdateActiveAdministratorInput;
 }
 
 export class MutationAssignRoleToAdministratorArgs {
-    
     administratorId: ID;
 
-    
     roleId: ID;
 }
 
 export class MutationDeleteAdministratorArgs {
-    
     id: ID;
 }
 
@@ -1679,496 +1347,288 @@ export class MutationDeleteAdministratorsArgs {
 }
 
 export class QueryAdministratorArgs {
-    
     id: ID;
 }
 
 export class File {
-    
     originalname: string;
 
-    
     mimetype: string;
 
-    
-    
-    
-    
     buffer: Buffer;
 
-    
     size: number;
 }
 
 export class CreateAssetInput {
-    
-    
-    
-    
-    
     file: File;
 }
 
 export class CoordinateInput {
-    
     x: number;
 
-    
     y: number;
 }
 
 export class UpdateAssetInput {
-    
     id: ID;
 
-    
-    
-    
-    
-    
     focalPoint?: CoordinateInput;
 
-    
-    
     name?: string;
 
-    
-    
     tags?: string;
 }
 
 export class CreateJobPostInput {
-    
     customerId: ID;
 
-    
-    
     title?: string;
 
-    
-    
     description?: string;
 
-    
-    
     visibility?: JobPostVisibility;
 
-    
-    
     currencyCode?: CurrencyCode;
 
-    
-    
-    
     budget?: number;
 
-    
-    
     assetIds?: Array<ID>;
 
-    
-    
     facetValueIds?: Array<ID>;
 }
 
 export class UpdateJobPostInput {
-    
     id: ID;
 
-    
-    
     title?: string;
 
-    
-    
     description?: string;
 
-    
-    
     visibility?: JobPostVisibility;
 
-    
-    
     currencyCode?: CurrencyCode;
 
-    
-    
-    
     budget?: number;
 
-    
-    
     assetIds?: Array<ID>;
 
-    
-    
     facetValueIds?: Array<ID>;
 }
 
 export class PublishJobPostInput {
-    
     id: ID;
 }
 
 export class MutationCreateJobPostArgs {
-    
     title: string;
 
-    
-    
     description: string;
 
-    
-    
     visibility: JobPostVisibility;
 
-    
-    
     currencyCode: CurrencyCode;
 
-    
-    
-    
-    
     budget: number;
 
-    
-    
     facetValueIds?: Array<ID>;
 }
 
 export class MutationPublishJobPostArgs {
-    
     id: ID;
 }
 
 export class MutationEditJobPostArgs {
-    
     id: ID;
 
-    
-    
     title?: string;
 
-    
-    
     description?: string;
 
-    
-    
     visibility?: JobPostVisibility;
 
-    
-    
     currencyCode?: CurrencyCode;
 
-    
-    
-    
-    
     budget?: number;
 
-    
-    
     assetIds?: Array<ID>;
 
-    
-    
     facetValueIds?: Array<ID>;
 }
 
 export class FacetValueTranslationInput {
-    
-    
     id?: ID;
 
-    
     languageCode: LanguageCode;
 
-    
-    
     name?: string;
 }
 
 export class CreateFacetValueInput {
-    
     code: string;
 
-    
     facetId: ID;
 
-    
-    
-    
     translations: Array<FacetValueTranslationInput>;
 }
 
 export class UpdateFacetValueInput {
-    
     id: ID;
 
-    
-    
     code?: string;
 
-    
-    
-    
-    
     translations?: Array<FacetValueTranslationInput>;
 }
 
 export class CreateFacetValueWithFacetInput {
-    
     code: string;
 
-    
     name: string;
 }
 
 export class FacetTranslationInput {
-    
-    
     id?: ID;
 
-    
     languageCode: LanguageCode;
 
-    
-    
     name?: string;
 }
 
 export class CreateFacetInput {
-    
     code: string;
 
-    
-    
-    
     translations: Array<FacetTranslationInput>;
 
-    
-    
-    
-    
     values?: CreateFacetValueWithFacetInput[];
 }
 
 export class UpdateFacetInput {
-    
     id: ID;
 
-    
-    
     code?: string;
 
-    
-    
-    
     translations: Array<FacetTranslationInput>;
 }
 
 export class CreateBalanceEntryInput {
-    
-    
-    
     customer: Customer;
-    
+
     type: BalanceEntryType;
-    
-    
-    
+
     reviewDays?: number;
-    
+
     currencyCode: CurrencyCode;
-    
-    
+
     credit: number;
-    
-    
+
     debit: number;
-    
-    
+
     description?: string;
-    
+
     metadata?: Record<string, string>;
 }
 
 export class ConfigArg {
-    
     name: string;
-    
+
     value: string;
 }
 
 export class ConfigurableOperation {
-    
     code: string;
-    
+
     args: Array<ConfigArg>;
 }
 
 export class CreateCollectionTranslationInput {
-    
     languageCode: LanguageCode;
 
-    
     name: string;
 
-    
     slug: string;
 
-    
     description: string;
 }
 
 export class CreateCollectionInput {
-    
-    
-    
     translations: Array<CreateCollectionTranslationInput>;
 
-    
-    
     featuredAssetId?: ID;
 
-    
-    
     assetIds?: Array<ID>;
 
-    
-    
-    
     filters: Array<ConfigurableOperation>;
 
-    
-    
     inheritFilters?: boolean;
 
-    
-    
     isPrivate?: boolean;
 
-    
-    
     parentId?: ID;
 }
 
 export class MutationCreateCollectionArgs {
-    
-    
-    
-    
-    
     input: CreateCollectionInput;
 }
 
 export class UpdateCollectionTranslationInput {
-    
-    
     id?: ID;
 
-    
     languageCode: LanguageCode;
 
-    
-    
     name?: string;
 
-    
-    
     slug?: string;
 
-    
-    
     description?: string;
 }
 
 export class UpdateCollectionInput {
-    
     id: ID;
 
-    
-    
-    
-    
     translations?: Array<UpdateCollectionTranslationInput>;
 
-    
-    
     featuredAssetId?: ID;
 
-    
-    
     assetIds?: Array<ID>;
 
-    
-    
-    
-    
     filters?: Array<ConfigurableOperation>;
 
-    
-    
     inheritFilters?: boolean;
 
-    
-    
     isPrivate?: boolean;
 
-    
-    
     parentId?: ID;
 }
 
 export class MutationUpdateCollectionArgs {
-    
-    
-    
     input: UpdateCollectionInput;
 }
 
 export class MoveCollectionInput {
-    
     collectionId: ID;
-    
+
     index: number;
-    
+
     parentId: ID;
 }
 
 export class MutationMoveCollectionArgs {
-    
-    
-    
     input: MoveCollectionInput;
 }
 
 export class Success {
-    
     success: boolean;
 }
 
 export class GetCurrentUserQuery {
-    
-    
-    
-    
     me?: CurrentUser | null;
 }
 
 export class AttemptLoginMutation {
-    
-    
-    
     login: CurrentUser;
 }
 
 export class LogOutMutation {
-    
-    
-    
     logout: Success;
 }
 
@@ -2368,53 +1828,132 @@ export class DeleteRolesMutation {
 }
 
 export class JobPostSortParameter {
-    
-    
     id?: SortOrder;
-    
-    
+
     createdAt?: SortOrder;
-    
-    
+
     updatedAt?: SortOrder;
 }
 
 export class JobPostFilterParameter {
-    
-    
     _and?: Array<JobPostFilterParameter>;
 
-    
-    
     _or?: Array<JobPostFilterParameter>;
 
-    
-    
     id?: StringOperators;
 
-    
-    
+    title?: StringOperators;
+
+    description?: StringOperators;
+
+    budget?: NumberOperators;
+
     facetValueId?: IdOperators;
 
-    
-    
     createdAt?: DateOperators;
 
-    
-    
     updatedAt?: DateOperators;
 }
 
 export class JobPostListOptions {
-    /** Takes n results, for use in pagination */take?: number | null;
+    /** Takes n results, for use in pagination */ take?: number | null;
 
-    /** Skips the first n results, for use in pagination */skip?: number | null;
+    /** Skips the first n results, for use in pagination */ skip?: number | null;
 
-    /** Specifies which properties to sort the results by */sort?: JobPostSortParameter | null;
+    /** Specifies which properties to sort the results by */ sort?: JobPostSortParameter | null;
 
-    /** Allows the results to be filtered */filter?: JobPostFilterParameter | null;
+    /** Allows the results to be filtered */ filter?: JobPostFilterParameter | null;
 
-    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */filterOperator?: LogicalOperator;
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */ filterOperator?: LogicalOperator;
+}
+
+export class FacetFilterParameter {
+    _and?: Array<FacetFilterParameter>;
+
+    _or?: Array<FacetFilterParameter>;
+
+    code?: StringOperators;
+
+    createdAt?: DateOperators;
+
+    id?: StringOperators;
+
+    isPrivate?: BooleanOperators;
+
+    languageCode?: StringOperators;
+
+    name?: StringOperators;
+
+    updatedAt?: DateOperators;
+}
+
+export class FacetSortParameter {
+    code?: SortOrder;
+
+    createdAt?: SortOrder;
+
+    id?: SortOrder;
+
+    name?: SortOrder;
+    updatedAt?: SortOrder;
+}
+
+export class FacetListOptions {
+    /** Takes n results, for use in pagination */ take?: number | null;
+
+    /** Skips the first n results, for use in pagination */ skip?: number | null;
+
+    /** Specifies which properties to sort the results by */ sort?: FacetSortParameter | null;
+
+    /** Allows the results to be filtered */ filter?: FacetFilterParameter | null;
+
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */ filterOperator?: LogicalOperator;
+}
+
+export class FacetValueFilterParameter {
+    _and?: Array<FacetValueFilterParameter>;
+
+    _or?: Array<FacetValueFilterParameter>;
+
+    code?: StringOperators;
+
+    createdAt?: DateOperators;
+
+    facetId?: StringOperators;
+
+    id?: StringOperators;
+
+    languageCode?: StringOperators;
+
+    name?: StringOperators;
+
+    updatedAt?: DateOperators;
+}
+
+export class FacetValueSortParameter {
+    id?: SortOrder;
+
+    code?: SortOrder;
+
+    facetId?: SortOrder;
+
+    name?: SortOrder;
+
+    updatedAt?: SortOrder;
+
+    createdAt?: SortOrder;
+}
+
+export class FacetValueListOptions {
+    /** Takes n results, for use in pagination */ take?: number | null;
+
+    /** Skips the first n results, for use in pagination */ skip?: number | null;
+
+    /** Specifies which properties to sort the results by */ sort?: FacetValueSortParameter | null;
+
+    /** Allows the results to be filtered */ filter?: FacetValueFilterParameter | null;
+
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */ filterOperator?: LogicalOperator;
 }
 
 export class GoogleAuthData {
