@@ -2570,6 +2570,12 @@ export class JobPostFilterParameter {
     @IsObject()
     @ValidateNested()
     @Type(() => DateOperators)
+    publishedAt?: DateOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
     updatedAt?: DateOperators;
 }
 

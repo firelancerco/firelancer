@@ -1902,6 +1902,8 @@ export class JobPostFilterParameter {
 
     createdAt?: DateOperators;
 
+    publishedAt?: DateOperators;
+
     updatedAt?: DateOperators;
 }
 
