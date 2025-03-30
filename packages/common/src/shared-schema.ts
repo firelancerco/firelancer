@@ -1866,12 +1866,19 @@ export class CreateJobPostInput {
     
     
     
+    
     budget?: number;
 
     
     
+    
+    
+    
     assetIds?: Array<ID>;
 
+    
+    
+    
     
     
     facetValueIds?: Array<ID>;
@@ -1900,12 +1907,19 @@ export class UpdateJobPostInput {
     
     
     
+    
     budget?: number;
 
     
     
+    
+    
+    
     assetIds?: Array<ID>;
 
+    
+    
+    
     
     
     facetValueIds?: Array<ID>;
@@ -1936,8 +1950,12 @@ export class MutationCreateJobPostArgs {
     
     
     
+    
     budget: number;
 
+    
+    
+    
     
     
     facetValueIds?: Array<ID>;
@@ -1972,12 +1990,19 @@ export class MutationEditJobPostArgs {
     
     
     
+    
     budget?: number;
 
     
     
+    
+    
+    
     assetIds?: Array<ID>;
 
+    
+    
+    
     
     
     facetValueIds?: Array<ID>;
@@ -2537,6 +2562,12 @@ export class JobPostFilterParameter {
     
     
     facetValueId?: IdOperators;
+
+    
+    
+    
+    
+    visibility: StringOperators;
 
     
     

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Buffer } from 'buffer';
-import { Exclude, Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
+    ArrayMaxSize,
     IsArray,
     IsBoolean,
     IsDate,
@@ -16,6 +17,7 @@ import {
     IsOptional,
     IsPositive,
     IsString,
+    MaxLength,
     Min,
     ValidateNested,
 } from 'class-validator';
@@ -1891,12 +1893,18 @@ export class CreateJobPostInput {
     @Type(() => Number)
     budget?: number;
 
+    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
+    @IsArray()
+    @MaxLength(30)
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
 
+    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
+    @IsArray()
     @IsEntityId({ each: true })
+    @ArrayMaxSize(30)
     facetValueIds?: Array<ID>;
 }
 
@@ -1926,12 +1934,18 @@ export class UpdateJobPostInput {
     @Type(() => Number)
     budget?: number;
 
+    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
+    @IsArray()
+    @MaxLength(30)
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
 
+    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
+    @IsArray()
     @IsEntityId({ each: true })
+    @ArrayMaxSize(30)
     facetValueIds?: Array<ID>;
 }
 
@@ -1963,8 +1977,11 @@ export class MutationCreateJobPostArgs {
     @Type(() => Number)
     budget: number;
 
+    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
+    @IsArray()
     @IsEntityId({ each: true })
+    @ArrayMaxSize(30)
     facetValueIds?: Array<ID>;
 }
 
@@ -2000,12 +2017,18 @@ export class MutationEditJobPostArgs {
     @Type(() => Number)
     budget?: number;
 
+    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
+    @IsArray()
+    @MaxLength(30)
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
 
+    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
+    @IsArray()
     @IsEntityId({ each: true })
+    @ArrayMaxSize(30)
     facetValueIds?: Array<ID>;
 }
 
