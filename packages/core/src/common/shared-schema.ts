@@ -1888,6 +1888,7 @@ export class CreateJobPostInput {
     @IsOptional()
     @IsInt()
     @IsPositive()
+    @Type(() => Number)
     budget?: number;
 
     @IsOptional()
@@ -1922,6 +1923,7 @@ export class UpdateJobPostInput {
     @IsInt()
     @IsPositive()
     @Min(5)
+    @Type(() => Number)
     budget?: number;
 
     @IsOptional()
@@ -1958,6 +1960,7 @@ export class MutationCreateJobPostArgs {
     @IsInt()
     @IsPositive()
     @Min(5)
+    @Type(() => Number)
     budget: number;
 
     @IsOptional()
@@ -1994,6 +1997,7 @@ export class MutationEditJobPostArgs {
     @IsInt()
     @IsPositive()
     @Min(5)
+    @Type(() => Number)
     budget?: number;
 
     @IsOptional()
@@ -2559,6 +2563,12 @@ export class JobPostFilterParameter {
     @ValidateNested()
     @Type(() => IdOperators)
     facetValueId?: IdOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    visibility: StringOperators;
 
     @IsOptional()
     @IsObject()

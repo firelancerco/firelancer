@@ -38,7 +38,7 @@ export class ShopHiringController {
 
     @Transaction()
     @Post('job-posts/create')
-    @Allow(Permission.Owner, Permission.PublishJobPost)
+    @Allow(Permission.PublishJobPost)
     @UseInterceptors(FilesInterceptor('files'))
     async createJobPost(
         @Ctx() ctx: RequestContext,
@@ -58,7 +58,7 @@ export class ShopHiringController {
 
     @Transaction()
     @Post('job-posts/publish')
-    @Allow(Permission.Owner, Permission.PublishJobPost)
+    @Allow(Permission.PublishJobPost)
     async publishJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationPublishJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, args.id);
@@ -73,7 +73,7 @@ export class ShopHiringController {
 
     @Transaction()
     @Patch('job-posts/edit')
-    @Allow(Permission.Owner)
+    @Allow(Permission.PublishJobPost)
     @UseInterceptors(FilesInterceptor('files'))
     async editJobPost(
         @Ctx() ctx: RequestContext,
@@ -99,7 +99,7 @@ export class ShopHiringController {
     }
 
     @Get('job-posts')
-    @Allow(Permission.Owner)
+    @Allow(Permission.PublishJobPost)
     @UsePipes(new ValidationPipe({ whitelist: true }))
     async jobPostsList(@Ctx() ctx: RequestContext, @Query() options: JobPostListOptions) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
