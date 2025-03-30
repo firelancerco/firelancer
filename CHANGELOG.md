@@ -1,3 +1,13 @@
+## <small>1.1.2 (2025-03-30)</small>
+
+
+#### Features
+
+*
+    **core**
+add publishedAt filter parameter to JobPostFilterParameter schema([3cea834](https://github.com/firelancerco/firelancer    /commit/3cea834))*
+    **core**
+introduce configurable operations and enhance collection management with new schemas and services([8cd9708](https://github.com/firelancerco/firelancer    /commit/8cd9708))
 ## <small>1.1.1 (2025-03-29)</small>
 
 

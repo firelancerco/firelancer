@@ -1,6 +1,6 @@
 {
     "name": "@firelancerco/asset-server-plugin",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "files": [
@@ -16,8 +16,8 @@
         "access": "restricted"
     },
     "dependencies": {
-        "@firelancerco/common": "^1.1.1",
-        "@firelancerco/core": "^1.1.1",
+        "@firelancerco/common": "^1.1.2",
+        "@firelancerco/core": "^1.1.2",
         "express": "^4.21.2",
         "file-type": "^19.6.0",
         "fs-extra": "^11.2.0",
