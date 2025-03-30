@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Buffer } from 'buffer';
-import { Type } from 'class-transformer';
+import { Exclude, Type } from 'class-transformer';
 import {
     IsArray,
     IsBoolean,
@@ -965,6 +965,63 @@ export class IdOperators {
     notIn?: Array<string>;
 }
 
+export class ConfigArgInput {
+    @IsString()
+    name: string;
+
+    @IsString()
+    value: string;
+}
+
+export class ConfigurableOperationInput {
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ConfigArgInput)
+    arguments: Array<ConfigArgInput>;
+
+    @IsString()
+    code: string;
+}
+
+export class ConfigArgDefinition {
+    @IsOptional()
+    @IsString()
+    defaultValue?: string;
+
+    @IsOptional()
+    @IsString()
+    description?: string;
+
+    @IsOptional()
+    @IsString()
+    label?: string;
+
+    @IsBoolean()
+    list: boolean;
+
+    @IsString()
+    name: string;
+
+    @IsBoolean()
+    required: boolean;
+
+    @IsString()
+    type: string;
+}
+
+export class ConfigurableOperationDefinition {
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ConfigArgDefinition)
+    args: Array<ConfigArgDefinition>;
+
+    @IsString()
+    code: string;
+
+    @IsString()
+    description: string;
+}
+
 /* --------------- */
 
 export class AuthenticationMethod {
@@ -1208,11 +1265,12 @@ export class Collection {
 
     @ValidateNested({ each: true })
     @Type(() => Asset)
-    assets: Array<Asset>;
+    assets: Array<CollectionAsset>;
 
+    @IsOptional()
     @ValidateNested({ each: true })
     @Type(() => CollectionBreadcrumb)
-    breadcrumbs: Array<CollectionBreadcrumb>;
+    breadcrumbs?: Array<CollectionBreadcrumb>;
 
     @ValidateNested({ each: true })
     @Type(() => Collection)
@@ -1251,6 +1309,7 @@ export class Collection {
     name: string;
 
     @IsOptional()
+    @ValidateNested()
     @Type(() => Collection)
     parent?: Collection;
 
@@ -1259,6 +1318,7 @@ export class Collection {
     parentId?: ID | null;
 
     @IsInt()
+    @ValidateNested()
     position: number;
 
     @IsString()
@@ -1270,6 +1330,23 @@ export class Collection {
 
     // TODO
     // jobPosts: JobPostList;
+}
+
+export class CollectionAsset extends OrderableAsset {
+    @IsEntityId()
+    assetId: ID;
+
+    @Type(() => Asset)
+    asset: Asset;
+
+    @IsInt()
+    position: number;
+
+    @IsEntityId()
+    collectionId: ID;
+
+    @Type(() => Collection)
+    collection: Collection;
 }
 
 export class CollectionTranslation {
@@ -2750,4 +2827,156 @@ export class FacetValueListOptions {
     @IsOptional()
     @IsEnum(LogicalOperator)
     filterOperator?: LogicalOperator;
+}
+
+export class CollectionFilterParameter {
+    @IsOptional()
+    @IsObject()
+    @ValidateNested({ each: true })
+    @Type(() => FacetValueFilterParameter)
+    _and?: Array<CollectionFilterParameter>;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested({ each: true })
+    @Type(() => FacetValueFilterParameter)
+    _or?: Array<CollectionFilterParameter>;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    createdAt?: DateOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    description?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    id?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => BooleanOperators)
+    inheritFilters?: BooleanOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => BooleanOperators)
+    isPrivate?: BooleanOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    languageCode?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    name?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    parentId?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => NumberOperators)
+    position?: NumberOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => StringOperators)
+    slug?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    updatedAt?: DateOperators;
+}
+
+export class CollectionSortParameter {
+    @IsOptional()
+    @IsEnum(SortOrder)
+    createdAt?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    description?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    id?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    name?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    parentId?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    position?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    slug?: SortOrder;
+
+    @IsOptional()
+    @IsEnum(SortOrder)
+    updatedAt?: SortOrder;
+}
+
+export class CollectionListOptions {
+    /** Takes n results, for use in pagination */
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    take?: number | null;
+
+    /** Skips the first n results, for use in pagination */
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    skip?: number | null;
+
+    /** Specifies which properties to sort the results by */
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => CollectionSortParameter)
+    sort?: CollectionSortParameter | null;
+
+    /** Allows the results to be filtered */
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => CollectionFilterParameter)
+    filter?: CollectionFilterParameter | null;
+
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */
+    @IsOptional()
+    @IsEnum(LogicalOperator)
+    filterOperator?: LogicalOperator;
+
+    @IsOptional()
+    @IsBoolean()
+    @Type(() => Boolean)
+    topLevelOnly?: boolean;
 }

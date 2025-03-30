@@ -1,16 +1,15 @@
 import { Controller, Get, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { RequestContext } from '../../../common/request-context';
-import { JobPostListOptions, Permission } from '../../../common/shared-schema';
+import { JobPostListOptions } from '../../../common/shared-schema';
 import { JobPostService } from '../../../service';
-import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';
 
 @Controller('job-posts')
 export class JobPostController {
     constructor(private jobPostService: JobPostService) {}
+
     @Get()
-    @Allow(Permission.Public)
     @UsePipes(new ValidationPipe({ whitelist: true }))
     async jobPostsList(@Ctx() ctx: RequestContext, @Query() options: JobPostListOptions) {
         // Filter for posts that have a publishedAt date (not null)

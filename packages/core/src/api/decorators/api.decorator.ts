@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { getApiType } from '../../common/get-api-type';
+import { Request } from 'express';
 
 /**
  * @description
@@ -20,6 +21,9 @@ import { getApiType } from '../../common/get-api-type';
  * ```
  */
 export const Api = createParamDecorator((data, ctx: ExecutionContext) => {
-    const info = ctx.getArgByIndex(3);
-    return getApiType(info);
+    const request = ctx.switchToHttp().getRequest<Request>();
+    if (!request) {
+        throw new Error('No request object found in execution context');
+    }
+    return getApiType(request);
 });

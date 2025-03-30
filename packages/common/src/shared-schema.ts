@@ -795,6 +795,7 @@ export class DateRange {
 
 export class LocalizedString {
     languageCode: LanguageCode;
+
     value: string;
 }
 
@@ -866,6 +867,42 @@ export class IdOperators {
     notIn?: Array<string>;
 }
 
+export class ConfigArgInput {
+    name: string;
+
+    value: string;
+}
+
+export class ConfigurableOperationInput {
+    arguments: Array<ConfigArgInput>;
+
+    code: string;
+}
+
+export class ConfigArgDefinition {
+    defaultValue?: string;
+
+    description?: string;
+
+    label?: string;
+
+    list: boolean;
+
+    name: string;
+
+    required: boolean;
+
+    type: string;
+}
+
+export class ConfigurableOperationDefinition {
+    args: Array<ConfigArgDefinition>;
+
+    code: string;
+
+    description: string;
+}
+
 /* --------------- */
 
 export class AuthenticationMethod {
@@ -930,6 +967,7 @@ export class Customer {
 
 export class Coordinate {
     x: number;
+
     y: number;
 }
 
@@ -1024,9 +1062,9 @@ export class CollectionBreadcrumb {
 export class Collection {
     id: ID;
 
-    assets: Array<Asset>;
+    assets: Array<CollectionAsset>;
 
-    breadcrumbs: Array<CollectionBreadcrumb>;
+    breadcrumbs?: Array<CollectionBreadcrumb>;
 
     children?: Array<Collection>;
 
@@ -1060,6 +1098,18 @@ export class Collection {
 
     // TODO
     // jobPosts: JobPostList;
+}
+
+export class CollectionAsset extends OrderableAsset {
+    assetId: ID;
+
+    asset: Asset;
+
+    position: number;
+
+    collectionId: ID;
+
+    collection: Collection;
 }
 
 export class CollectionTranslation {
@@ -1954,6 +2004,66 @@ export class FacetValueListOptions {
     /** Allows the results to be filtered */ filter?: FacetValueFilterParameter | null;
 
     /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */ filterOperator?: LogicalOperator;
+}
+
+export class CollectionFilterParameter {
+    _and?: Array<CollectionFilterParameter>;
+
+    _or?: Array<CollectionFilterParameter>;
+
+    createdAt?: DateOperators;
+
+    description?: StringOperators;
+
+    id?: StringOperators;
+
+    inheritFilters?: BooleanOperators;
+
+    isPrivate?: BooleanOperators;
+
+    languageCode?: StringOperators;
+
+    name?: StringOperators;
+
+    parentId?: StringOperators;
+
+    position?: NumberOperators;
+
+    slug?: StringOperators;
+
+    updatedAt?: DateOperators;
+}
+
+export class CollectionSortParameter {
+    createdAt?: SortOrder;
+
+    description?: SortOrder;
+
+    id?: SortOrder;
+
+    name?: SortOrder;
+
+    parentId?: SortOrder;
+
+    position?: SortOrder;
+
+    slug?: SortOrder;
+
+    updatedAt?: SortOrder;
+}
+
+export class CollectionListOptions {
+    /** Takes n results, for use in pagination */ take?: number | null;
+
+    /** Skips the first n results, for use in pagination */ skip?: number | null;
+
+    /** Specifies which properties to sort the results by */ sort?: CollectionSortParameter | null;
+
+    /** Allows the results to be filtered */ filter?: CollectionFilterParameter | null;
+
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */ filterOperator?: LogicalOperator;
+
+    topLevelOnly?: boolean;
 }
 
 export class GoogleAuthData {

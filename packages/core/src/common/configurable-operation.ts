@@ -1,10 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { assertNever } from '@firelancerco/common/lib/shared-utils';
 
+import { DEFAULT_LANGUAGE_CODE } from './constants';
 import { InternalServerException } from './error/errors';
 import { InjectableStrategy } from './injectable-strategy';
 import { Injector } from './injector';
-import { ConfigArg, ConfigArgType, ID, LocalizedString } from './shared-schema';
+import { RequestContext } from './request-context';
+import {
+    ConfigArg,
+    ConfigArgDefinition,
+    ConfigArgType,
+    ConfigurableOperationDefinition,
+    ID,
+    LanguageCode,
+    LocalizedString,
+} from './shared-schema';
 
 /**
  * @description
@@ -285,6 +295,30 @@ export class ConfigurableOperationDef<T extends ConfigArgs = ConfigArgs> {
 
     /**
      * @description
+     * Convert a ConfigurableOperationDef into a ConfigurableOperationDefinition object, typically
+     * so that it can be sent via the API.
+     */
+    toConfigurableType(ctx: RequestContext): ConfigurableOperationDefinition {
+        return {
+            code: this.code,
+            description: localizeString(this.description, ctx.languageCode),
+            args: Object.entries(this.args).map(
+                ([name, arg]) =>
+                    ({
+                        name,
+                        type: arg.type,
+                        list: arg.list ?? false,
+                        required: arg.required ?? true,
+                        defaultValue: arg.defaultValue,
+                        label: arg.label && localizeString(arg.label, ctx.languageCode),
+                        description: arg.description && localizeString(arg.description, ctx.languageCode),
+                    }) as Required<ConfigArgDefinition>,
+            ),
+        };
+    }
+
+    /**
+     * @description
      * Coverts an array of ConfigArgs into a hash object:
      *
      * from:
@@ -306,6 +340,17 @@ export class ConfigurableOperationDef<T extends ConfigArgs = ConfigArgs> {
         }
         return output;
     }
+}
+
+function localizeString(stringArray: LocalizedStringArray, languageCode: LanguageCode): string {
+    let match = stringArray.find(x => x.languageCode === languageCode);
+    if (!match) {
+        match = stringArray.find(x => x.languageCode === DEFAULT_LANGUAGE_CODE);
+    }
+    if (!match) {
+        match = stringArray[0];
+    }
+    return match.value;
 }
 
 function coerceValueToType<T extends ConfigArgs>(

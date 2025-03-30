@@ -28,11 +28,19 @@ export const combineWithAndArg: ConfigArgDef<'boolean'> = {
             languageCode: LanguageCode.en,
             value: 'Combination mode',
         },
+        {
+            languageCode: LanguageCode.ar,
+            value: 'وضع الدمج',
+        },
     ],
     description: [
         {
             languageCode: LanguageCode.en,
             value: 'If this filter is being combined with other filters, do all conditions need to be satisfied (AND), or just one or the other (OR)?',
+        },
+        {
+            languageCode: LanguageCode.ar,
+            value: 'إذا كان هذا الفلتر يُستخدم مع فلاتر أخرى، فهل يجب استيفاء جميع الشروط (AND)، أم يكفي تحقق أحدها فقط (OR)؟',
         },
     ],
     defaultValue: true,
@@ -49,6 +57,10 @@ export const jobPostFacetValueCollectionFilter = new CollectionFilter({
             languageCode: LanguageCode.en,
             value: 'Filter by facet values',
         },
+        {
+            languageCode: LanguageCode.ar,
+            value: 'التصفية حسب قيم السمات',
+        },
     ],
     args: {
         facetValueIds: {
@@ -59,6 +71,10 @@ export const jobPostFacetValueCollectionFilter = new CollectionFilter({
                     languageCode: LanguageCode.en,
                     value: 'Facet values',
                 },
+                {
+                    languageCode: LanguageCode.ar,
+                    value: 'قيم السمات',
+                },
             ],
         },
         containsAny: {
@@ -68,11 +84,19 @@ export const jobPostFacetValueCollectionFilter = new CollectionFilter({
                     languageCode: LanguageCode.en,
                     value: 'Contains any',
                 },
+                {
+                    languageCode: LanguageCode.ar,
+                    value: 'يحتوي على أي',
+                },
             ],
             description: [
                 {
                     languageCode: LanguageCode.en,
                     value: 'If checked, job posts must have at least one of the selected facet values. If not checked, the job post must have all selected values.',
+                },
+                {
+                    languageCode: LanguageCode.ar,
+                    value: 'إذا تم التحديد، يجب أن تحتوي المشاريع على سمة واحدة على الأقل من السمات المحددة. إذا لم يتم التحديد، يجب أن يحتوي المشروع على جميع السمات المحددة.',
                 },
             ],
         },
@@ -128,6 +152,10 @@ export const jobPostIdCollectionFilter = new CollectionFilter({
             languageCode: LanguageCode.en,
             value: 'Manually select job posts',
         },
+        {
+            languageCode: LanguageCode.ar,
+            value: 'تحديد المشاريع يدوياً',
+        },
     ],
     args: {
         jobPostIds: {
@@ -137,6 +165,10 @@ export const jobPostIdCollectionFilter = new CollectionFilter({
                 {
                     languageCode: LanguageCode.en,
                     value: 'Job Posts',
+                },
+                {
+                    languageCode: LanguageCode.ar,
+                    value: 'المشاريع',
                 },
             ],
         },

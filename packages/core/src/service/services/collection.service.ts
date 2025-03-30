@@ -16,6 +16,7 @@ import {
 } from '../../common';
 import {
     ConfigurableOperation,
+    ConfigurableOperationDefinition,
     CreateCollectionInput,
     ID,
     JobState,
@@ -728,5 +729,13 @@ export class CollectionService implements OnModuleInit {
         }
 
         return relationName;
+    }
+
+    /**
+     * @description
+     * Returns all configured CollectionFilters, as specified by the {@link CatalogOptions}.
+     */
+    getAvailableFilters(ctx: RequestContext): ConfigurableOperationDefinition[] {
+        return this.configService.catalogOptions.collectionFilters.map(f => f.toConfigurableType(ctx));
     }
 }
