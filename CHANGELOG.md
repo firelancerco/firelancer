@@ -1,3 +1,13 @@
+## <small>1.1.3 (2025-03-30)</small>
+
+
+#### Features
+
+*
+    **core**
+add validation and transformation for assetIds and facetValueIds in job post schemas([23649f8](https://github.com/firelancerco/firelancer    /commit/23649f8))*
+    **core**
+enhance collection and job post management with new endpoints and validation improvements([38f45c1](https://github.com/firelancerco/firelancer    /commit/38f45c1))
 ## <small>1.1.2 (2025-03-30)</small>
 
 
