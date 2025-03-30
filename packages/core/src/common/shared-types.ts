@@ -2,7 +2,14 @@ import { Type } from '@firelancerco/common/lib/shared-types';
 import { Request, Response } from 'express';
 import { FirelancerEntity } from '../entity';
 import { LocaleString } from './locale-types';
-import { BooleanOperators, DateOperators, LogicalOperator, NumberOperators, StringOperators } from './shared-schema';
+import {
+    BooleanOperators,
+    DateOperators,
+    IdOperators,
+    LogicalOperator,
+    NumberOperators,
+    StringOperators,
+} from './shared-schema';
 
 export type MiddlewareHandler = Type<unknown> | ((req: Request, res: Response, next: () => void) => void);
 
@@ -93,7 +100,7 @@ export type FilterParameter<T extends FirelancerEntity> = {
     [K in PrimitiveFields<T>]?: NonNullable<T[K]> extends string | LocaleString ? StringOperators
         : NonNullable<T[K]> extends number ? NumberOperators
             : NonNullable<T[K]> extends boolean ? BooleanOperators
-                : NonNullable<T[K]> extends Date ? DateOperators : StringOperators;
+                : NonNullable<T[K]> extends Date ? DateOperators : IdOperators;
 } & {
     _and?: Array<FilterParameter<T>>;
     _or?: Array<FilterParameter<T>>;

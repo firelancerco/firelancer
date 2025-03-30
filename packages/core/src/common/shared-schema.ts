@@ -2533,8 +2533,8 @@ export class JobPostFilterParameter {
     @IsOptional()
     @IsObject()
     @ValidateNested()
-    @Type(() => StringOperators)
-    id?: StringOperators;
+    @Type(() => IdOperators)
+    id?: IdOperators;
 
     @IsOptional()
     @IsObject()
@@ -2640,8 +2640,8 @@ export class FacetFilterParameter {
     @IsOptional()
     @IsObject()
     @ValidateNested()
-    @Type(() => StringOperators)
-    id?: StringOperators;
+    @Type(() => IdOperators)
+    id?: IdOperators;
 
     @IsOptional()
     @IsObject()
@@ -2748,14 +2748,14 @@ export class FacetValueFilterParameter {
     @IsOptional()
     @IsObject()
     @ValidateNested()
-    @Type(() => StringOperators)
-    facetId?: StringOperators;
+    @Type(() => IdOperators)
+    facetId?: IdOperators;
 
     @IsOptional()
     @IsObject()
     @ValidateNested()
-    @Type(() => StringOperators)
-    id?: StringOperators;
+    @Type(() => IdOperators)
+    id?: IdOperators;
 
     @IsOptional()
     @IsObject()
@@ -2863,8 +2863,8 @@ export class CollectionFilterParameter {
     @IsOptional()
     @IsObject()
     @ValidateNested()
-    @Type(() => StringOperators)
-    id?: StringOperators;
+    @Type(() => IdOperators)
+    id?: IdOperators;
 
     @IsOptional()
     @IsObject()
@@ -2893,8 +2893,8 @@ export class CollectionFilterParameter {
     @IsOptional()
     @IsObject()
     @ValidateNested()
-    @Type(() => StringOperators)
-    parentId?: StringOperators;
+    @Type(() => IdOperators)
+    parentId?: IdOperators;
 
     @IsOptional()
     @IsObject()
