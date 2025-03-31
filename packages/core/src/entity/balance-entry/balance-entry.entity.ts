@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import date from 'date-fns';
 import { Check, Column, DeepPartial, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Calculated, UserInputException } from '../../common';
@@ -11,7 +12,6 @@ import { Money } from '../money.decorator';
  * @description
  * Balance Entry
  */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 @Entity()
 @Check('"balance" = COALESCE("prevBalance", 0) + "credit" - "debit"')
 @Check('"prevSettledAt" < "settledAt"')

@@ -2139,27 +2139,32 @@ export class UpdateFacetInput {
 }
 
 export class CreateBalanceEntryInput {
-    @IsObject()
-    @ValidateNested()
-    @Type(() => Customer)
-    customer: Customer;
+    @IsEntityId()
+    customerId: ID;
+
     @IsEnum(BalanceEntryType)
     type: BalanceEntryType;
+
     @IsInt()
     @IsPositive()
     @IsOptional()
     reviewDays?: number;
+
     @IsEnum(CurrencyCode)
     currencyCode: CurrencyCode;
+
     @IsInt()
     @IsPositive()
     credit: number;
+
     @IsInt()
     @IsPositive()
     debit: number;
+
     @IsString()
     @IsOptional()
     description?: string;
+
     @IsOptional()
     metadata?: Record<string, string>;
 }
@@ -2167,6 +2172,7 @@ export class CreateBalanceEntryInput {
 export class ConfigArg {
     @IsString()
     name: string;
+
     @IsString()
     value: string;
 }
