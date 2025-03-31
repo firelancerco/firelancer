@@ -3,6 +3,7 @@ import { Buffer } from 'buffer';
 import { Transform, Type } from 'class-transformer';
 import {
     ArrayMaxSize,
+    ArrayMinSize,
     IsArray,
     IsBoolean,
     IsDate,
@@ -22,6 +23,12 @@ import {
     ValidateNested,
 } from 'class-validator';
 import { IsEntityId } from './entity-id-validator';
+import {
+    MAX_ASSETS_ARRAY_SIZE,
+    MAX_FACETS_ARRAY_SIZE,
+    MIN_ASSETS_ARRAY_SIZE,
+    MIN_FACETS_ARRAY_SIZE,
+} from '@firelancerco/common/lib/shared-constants';
 
 export type ID = string | number;
 
@@ -1893,18 +1900,18 @@ export class CreateJobPostInput {
     @Type(() => Number)
     budget?: number;
 
-    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
     @IsArray()
-    @MaxLength(30)
+    @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
 
-    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
     @IsArray()
+    @ArrayMaxSize(MAX_FACETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_FACETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
-    @ArrayMaxSize(30)
     facetValueIds?: Array<ID>;
 }
 
@@ -1934,18 +1941,18 @@ export class UpdateJobPostInput {
     @Type(() => Number)
     budget?: number;
 
-    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
     @IsArray()
-    @MaxLength(30)
+    @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
 
-    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
     @IsArray()
+    @ArrayMaxSize(MAX_FACETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_FACETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
-    @ArrayMaxSize(30)
     facetValueIds?: Array<ID>;
 }
 
@@ -1960,37 +1967,39 @@ export class MutationCreateJobPostArgs {
 
     @IsOptional()
     @IsString()
-    description: string;
+    description?: string;
 
     @IsOptional()
     @IsEnum(JobPostVisibility)
-    visibility: JobPostVisibility;
+    visibility?: JobPostVisibility;
 
     @IsOptional()
     @IsEnum(CurrencyCode)
-    currencyCode: CurrencyCode;
+    currencyCode?: CurrencyCode;
 
     @IsOptional()
     @IsInt()
     @IsPositive()
     @Min(5)
     @Type(() => Number)
-    budget: number;
+    budget?: number;
 
-    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
     @IsArray()
+    @ArrayMaxSize(MAX_FACETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_FACETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
-    @ArrayMaxSize(30)
     facetValueIds?: Array<ID>;
+
+    @IsOptional()
+    @IsArray()
+    @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
+    @IsEntityId({ each: true })
+    assetIds?: Array<ID>;
 }
 
-export class MutationPublishJobPostArgs {
-    @IsEntityId()
-    id: ID;
-}
-
-export class MutationEditJobPostArgs {
+export class MutationUpdateJobPostArgs {
     @IsEntityId()
     id: ID;
 
@@ -2017,19 +2026,24 @@ export class MutationEditJobPostArgs {
     @Type(() => Number)
     budget?: number;
 
-    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
     @IsArray()
-    @MaxLength(30)
+    @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
 
-    @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
     @IsOptional()
     @IsArray()
+    @ArrayMaxSize(MAX_FACETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_FACETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
-    @ArrayMaxSize(30)
     facetValueIds?: Array<ID>;
+}
+
+export class MutationPublishJobPostArgs {
+    @IsEntityId()
+    id: ID;
 }
 
 export class FacetValueTranslationInput {
@@ -2189,6 +2203,9 @@ export class CreateCollectionInput {
     featuredAssetId?: ID;
 
     @IsOptional()
+    @IsArray()
+    @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
 
@@ -2257,6 +2274,9 @@ export class UpdateCollectionInput {
     featuredAssetId?: ID;
 
     @IsOptional()
+    @IsArray()
+    @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
     assetIds?: Array<ID>;
 

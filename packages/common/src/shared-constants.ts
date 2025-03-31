@@ -8,14 +8,24 @@ export const SUPER_ADMIN_ROLE_CODE = '__super_admin_role__';
 export const SUPER_ADMIN_ROLE_DESCRIPTION = 'SuperAdmin';
 export const SUPER_ADMIN_USER_IDENTIFIER = 'superadmin';
 export const SUPER_ADMIN_USER_PASSWORD = 'superadmin';
+
 export const BUYER_ROLE_CODE = '__buyer_role__';
 export const SELLER_ROLE_CODE = '__seller_role__';
 export const BUYER_ROLE_DESCRIPTION = 'Buyer';
 export const SELLER_ROLE_DESCRIPTION = 'Seller';
+
 export const DEFAULT_AUTH_TOKEN_HEADER_KEY = 'firelancer-auth-token';
 export const DEFAULT_COOKIE_NAME = 'session';
+
 export const ROOT_COLLECTION_NAME = '__root_collection__';
+
 export const SKILL_FACET_CODE = '__skill_facet__';
 export const CATEGORY_FACET_CODE = '__category_facet__';
 export const DURATION_FACET_CODE = '__duration_facet__';
 export const EXPERIENCE_LEVEL_FACET_CODE = '__experience_level_facet__';
+
+export const MAX_ASSETS_ARRAY_SIZE = 15;
+export const MIN_ASSETS_ARRAY_SIZE = 0;
+
+export const MAX_FACETS_ARRAY_SIZE = 30;
+export const MIN_FACETS_ARRAY_SIZE = 3;

@@ -1873,10 +1873,8 @@ export class CreateJobPostInput {
     
     
     
-    
     assetIds?: Array<ID>;
 
-    
     
     
     
@@ -1914,10 +1912,8 @@ export class UpdateJobPostInput {
     
     
     
-    
     assetIds?: Array<ID>;
 
-    
     
     
     
@@ -1957,16 +1953,16 @@ export class MutationCreateJobPostArgs {
     
     
     
-    
     facetValueIds?: Array<ID>;
-}
 
-export class MutationPublishJobPostArgs {
     
-    id: ID;
+    
+    
+    
+    assetIds?: Array<ID>;
 }
 
-export class MutationEditJobPostArgs {
+export class MutationUpdateJobPostArgs {
     
     id: ID;
 
@@ -1997,15 +1993,18 @@ export class MutationEditJobPostArgs {
     
     
     
-    
     assetIds?: Array<ID>;
 
     
     
     
     
-    
     facetValueIds?: Array<ID>;
+}
+
+export class MutationPublishJobPostArgs {
+    
+    id: ID;
 }
 
 export class FacetValueTranslationInput {

@@ -11,6 +11,7 @@ import { ServiceModule } from '../service/service.module';
 import { AdministratorController } from './controllers/admin/administrator.controller';
 import { AdminAuthController } from './controllers/admin/auth.controller';
 import { RoleController } from './controllers/admin/roles.controller';
+import { AssetController } from './controllers/entity/asset.controller';
 import { CollectionController } from './controllers/entity/collection.controller';
 import { FacetController } from './controllers/entity/facet-entity.controller';
 import { JobPostController } from './controllers/entity/job-post-entity.controller';
@@ -21,7 +22,7 @@ const { apiOptions } = getConfig();
 
 const adminResolvers = [AdminAuthController, AdministratorController, RoleController];
 const shopControllers = [ShopAuthController, ShopHiringController];
-export const entityControllers = [FacetController, JobPostController, CollectionController];
+export const entityControllers = [FacetController, JobPostController, CollectionController, AssetController];
 export const adminEntityControllers = [];
 
 /**
