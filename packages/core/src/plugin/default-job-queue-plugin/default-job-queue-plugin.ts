@@ -1,7 +1,8 @@
 import { Type } from '@firelancerco/common/lib/shared-types';
+
 import { Job } from '../../job-queue/job';
 import { BackoffStrategy } from '../../job-queue/polling-job-queue-strategy';
-import { FirelancerPlugin } from '../../plugin';
+import { FirelancerPlugin } from '../firelancer-plugin';
 import { PluginCommonModule } from '../plugin-common.module';
 import { SqlJobBufferStorageStrategy } from './config/strategies/sql-job-buffer-storage-strategy';
 import { SqlJobQueueStrategy } from './config/strategies/sql-job-queue-strategy';

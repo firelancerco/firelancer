@@ -19,6 +19,7 @@ import { JobQueueStrategy } from './strategies/job-queue/job-queue-strategy';
 import { FirelancerLogger } from './strategies/logger/firelancer-logger';
 import { SessionCacheStrategy } from './strategies/session-cache/session-cache-strategy';
 import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
+import { CacheStrategy } from './strategies/system/cache-strategy';
 
 /**
  * @description
@@ -414,6 +415,12 @@ export interface SystemOptions {
      * @default []
      */
     errorHandlers?: ErrorHandlerStrategy[];
+    /**
+     * @description
+     * Defines the underlying method used to store cache key-value pairs which powers the {@link CacheService}.
+     * @default InMemoryCacheStrategy
+     */
+    cacheStrategy?: CacheStrategy;
 }
 
 /**

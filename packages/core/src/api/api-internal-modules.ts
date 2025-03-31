@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD, RouterModule } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
-import { CacheModule } from '../cache';
+import { CacheModule } from '../cache/cache.module';
 import { ConfigurableOperationCodec, IdCodecService } from '../common';
 import { getConfig } from '../config/config-helpers';
 import { ConfigModule } from '../config/config.module';

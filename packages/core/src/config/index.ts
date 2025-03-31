@@ -35,3 +35,4 @@ export * from './strategies/logger/default/typeorm-logger';
 export * from './strategies/session-cache/session-cache-strategy';
 export * from './strategies/session-cache/default/in-memory-session-cache-strategy';
 export * from './strategies/system/error-handler-strategy';
+export * from './strategies/system/cache-strategy';

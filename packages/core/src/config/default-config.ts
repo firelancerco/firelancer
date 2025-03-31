@@ -20,6 +20,7 @@ import { AutoIncrementIdStrategy } from './strategies/entity/default/auto-increm
 import { DefaultMoneyStrategy } from './strategies/entity/default/default-money-strategy';
 import { DefaultLogger } from './strategies/logger/default/default-logger';
 import { InMemorySessionCacheStrategy } from './strategies/session-cache/default/in-memory-session-cache-strategy';
+import { InMemoryCacheStrategy } from './strategies/system/default/in-memory-cache-strategy';
 
 /**
  * @description
@@ -89,6 +90,7 @@ export const defaultConfig: RuntimeFirelancerConfig = {
     },
     systemOptions: {
         errorHandlers: [],
+        cacheStrategy: new InMemoryCacheStrategy({ cacheSize: 10_000 }),
     },
     plugins: [],
     entityOptions: {

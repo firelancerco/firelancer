@@ -2,7 +2,7 @@ import path from 'path';
 import { AdminUiPlugin } from '@firelancerco/admin-ui-plugin';
 import { GoogleAuthPlugin } from '@firelancerco/google-auth-plugin';
 import { AssetServerPlugin } from '@firelancerco/asset-server-plugin';
-import { DefaultJobQueuePlugin, FirelancerConfig } from '@firelancerco/core';
+import { DefaultCachePlugin, DefaultJobQueuePlugin, FirelancerConfig } from '@firelancerco/core';
 import {
     emailAddressChangeHandler,
     EmailPlugin,
@@ -10,6 +10,7 @@ import {
     FileBasedTemplateLoader,
     passwordResetHandler,
 } from '@firelancerco/email-plugin';
+import { DefaultCacheTtlProvider } from '@firelancerco/core/dist/cache/cache-ttl-provider';
 
 const serverPort = Number(process.env.PORT) || 3000;
 const serverHost = process.env.HOST || 'localhost';
@@ -119,6 +120,10 @@ export const config: FirelancerConfig = {
                 },
                 logging: true,
             },
+        }),
+        DefaultCachePlugin.init({
+            cacheSize: 1000,
+            cacheTtlProvider: new DefaultCacheTtlProvider(),
         }),
     ],
 };
