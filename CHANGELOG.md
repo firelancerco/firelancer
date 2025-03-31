@@ -1,3 +1,11 @@
+## <small>1.1.4 (2025-03-31)</small>
+
+
+#### Features
+
+*
+    **core**
+introduce AssetController and enhance job post schemas with asset and facet validation([e112b49](https://github.com/firelancerco/firelancer    /commit/e112b49))
 ## <small>1.1.3 (2025-03-30)</small>
 
 
