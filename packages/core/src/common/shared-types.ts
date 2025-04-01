@@ -1,6 +1,6 @@
 import { Type } from '@firelancerco/common/lib/shared-types';
 import { Request, Response } from 'express';
-import { FirelancerEntity } from '../entity';
+import { Collection, FirelancerEntity } from '../entity';
 import { LocaleString } from './locale-types';
 import {
     BooleanOperators,
@@ -43,6 +43,14 @@ export interface SoftDeletable {
  */
 export interface Draftable {
     publishedAt: Date | null;
+}
+
+/**
+ * @description
+ * Entities which can be collected should implement this interface.
+ */
+export interface Collectable {
+    collections: Collection[];
 }
 
 /**

@@ -1,6 +1,6 @@
 import { Column, DeepPartial, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
-import { Draftable, SoftDeletable } from '../../common';
+import { Collectable, Draftable, SoftDeletable } from '../../common';
 import { CurrencyCode, ID, JobPostVisibility } from '../../common/shared-schema';
 import { FirelancerEntity } from '../base/base.entity';
 import { Collection } from '../collection/collection.entity';
@@ -14,7 +14,7 @@ import { JobPostAsset } from './job-post-asset.entity';
  * Job Post
  */
 @Entity()
-export class JobPost extends FirelancerEntity implements SoftDeletable, Draftable {
+export class JobPost extends FirelancerEntity implements Collectable, SoftDeletable, Draftable {
     constructor(input?: DeepPartial<JobPost>) {
         super(input);
     }
