@@ -200,7 +200,7 @@ export class Populator {
         filter: CollectionFilterDefinition,
         allFacetValues: PaginatedList<Translated<FacetValue>>,
     ): ConfigurableOperation {
-        if (filter.code !== 'job-post-facet-value-filter') {
+        if (filter.code !== 'job-post:facet-value-filter') {
             throw new Error(`Filter with code "${filter.code}" is not recognized.`);
         }
 

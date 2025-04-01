@@ -55,10 +55,6 @@ export class Collection extends FirelancerEntity implements Translatable, Ordera
     @Column({ default: true })
     inheritFilters: boolean;
 
-    @ManyToMany(() => JobPost, jobPost => jobPost.collections)
-    @JoinTable()
-    jobPosts: JobPost[];
-
     @TreeChildren()
     children: Collection[];
 
@@ -74,4 +70,12 @@ export class Collection extends FirelancerEntity implements Translatable, Ordera
 
     @OneToMany(() => CollectionAsset, collectionAsset => collectionAsset.collection)
     assets: CollectionAsset[];
+
+    /**
+     * @description
+     * A collection can have many job posts.
+     */
+    @ManyToMany(() => JobPost, jobPost => jobPost.collections)
+    @JoinTable()
+    jobPosts: JobPost[];
 }

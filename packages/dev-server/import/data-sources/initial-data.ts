@@ -87,7 +87,7 @@ export const initialData: InitialData = {
             name: ['en:Web, Mobile, & Software Development'],
             filters: [
                 {
-                    code: 'job-post-facet-value-filter',
+                    code: 'job-post:facet-value-filter',
                     args: {
                         facetValueNames: [
                             'Web Development',
@@ -108,7 +108,7 @@ export const initialData: InitialData = {
             name: ['en:Web Development'],
             filters: [
                 {
-                    code: 'job-post-facet-value-filter',
+                    code: 'job-post:facet-value-filter',
                     args: {
                         facetValueNames: ['Web Development'],
                         containsAny: false,
@@ -122,7 +122,7 @@ export const initialData: InitialData = {
             name: ['en:Web & Mobile Design'],
             filters: [
                 {
-                    code: 'job-post-facet-value-filter',
+                    code: 'job-post:facet-value-filter',
                     args: {
                         facetValueNames: ['Web & Mobile Design'],
                         containsAny: false,
@@ -136,7 +136,7 @@ export const initialData: InitialData = {
             name: ['en:QA Testing'],
             filters: [
                 {
-                    code: 'job-post-facet-value-filter',
+                    code: 'job-post:facet-value-filter',
                     args: {
                         facetValueNames: ['QA Testing'],
                         containsAny: false,
@@ -150,7 +150,7 @@ export const initialData: InitialData = {
             name: ['en:Desktop Application Development'],
             filters: [
                 {
-                    code: 'job-post-facet-value-filter',
+                    code: 'job-post:facet-value-filter',
                     args: {
                         facetValueNames: ['Desktop Application Development'],
                         containsAny: false,
@@ -164,7 +164,7 @@ export const initialData: InitialData = {
             name: ['en:Mobile Development'],
             filters: [
                 {
-                    code: 'job-post-facet-value-filter',
+                    code: 'job-post:facet-value-filter',
                     args: {
                         facetValueNames: ['Mobile Development'],
                         containsAny: false,
@@ -178,7 +178,7 @@ export const initialData: InitialData = {
             name: ['en:Translation'],
             filters: [
                 {
-                    code: 'job-post-facet-value-filter',
+                    code: 'job-post:facet-value-filter',
                     args: {
                         facetValueNames: ['Language Tutoring & Interpretation', 'Translation & Localization Services'],
                         containsAny: true,
@@ -193,7 +193,7 @@ export const initialData: InitialData = {
             name: ['en:Language Tutoring & Interpretation'],
             filters: [
                 {
-                    code: 'job-post-facet-value-filter',
+                    code: 'job-post:facet-value-filter',
                     args: {
                         facetValueNames: ['Language Tutoring & Interpretation'],
                         containsAny: false,
@@ -207,7 +207,7 @@ export const initialData: InitialData = {
             name: ['en:Translation & Localization Services'],
             filters: [
                 {
-                    code: 'job-post-facet-value-filter',
+                    code: 'job-post:facet-value-filter',
                     args: {
                         facetValueNames: ['Translation & Localization Services'],
                         containsAny: false,

@@ -47,11 +47,12 @@ export const combineWithAndArg: ConfigArgDef<'boolean'> = {
 };
 
 /**
+ * @description
  * Filters for JobPosts having the given facetValueIds
  */
 export const jobPostFacetValueCollectionFilter = new CollectionFilter({
     entityType: JobPost,
-    code: 'job-post-facet-value-filter',
+    code: 'job-post:facet-value-filter',
     description: [
         {
             languageCode: LanguageCode.en,
@@ -144,9 +145,13 @@ export const jobPostFacetValueCollectionFilter = new CollectionFilter({
     },
 });
 
+/**
+ * @description
+ * Filters for JobPosts having the given IDs
+ */
 export const jobPostIdCollectionFilter = new CollectionFilter({
     entityType: JobPost,
-    code: 'job-post-id-filter',
+    code: 'job-post:id-filter',
     description: [
         {
             languageCode: LanguageCode.en,
