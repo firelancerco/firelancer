@@ -1,3 +1,11 @@
+## <small>1.1.6 (2025-04-02)</small>
+
+
+#### Features
+
+*
+    **common**
+add job post, balance entry inputs with optional fields and search functionality([95746ed](https://github.com/firelancerco/firelancer    /commit/95746ed))
 ## <small>1.1.5 (2025-04-02)</small>
 
 
