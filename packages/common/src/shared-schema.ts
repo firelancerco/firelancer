@@ -1873,8 +1873,10 @@ export class CreateJobPostInput {
     
     
     
+    
     assetIds?: Array<ID>;
 
+    
     
     
     
@@ -1912,8 +1914,10 @@ export class UpdateJobPostInput {
     
     
     
+    
     assetIds?: Array<ID>;
 
+    
     
     
     
@@ -1932,29 +1936,31 @@ export class MutationCreateJobPostArgs {
 
     
     
-    description: string;
+    description?: string;
 
     
     
-    visibility: JobPostVisibility;
+    visibility?: JobPostVisibility;
 
     
     
-    currencyCode: CurrencyCode;
+    currencyCode?: CurrencyCode;
 
     
     
     
     
     
-    budget: number;
+    budget?: number;
 
+    
     
     
     
     
     facetValueIds?: Array<ID>;
 
+    
     
     
     
@@ -1993,8 +1999,10 @@ export class MutationUpdateJobPostArgs {
     
     
     
+    
     assetIds?: Array<ID>;
 
+    
     
     
     
@@ -2101,26 +2109,31 @@ export class UpdateFacetInput {
 
 export class CreateBalanceEntryInput {
     
-    
-    
-    customer: Customer;
+    customerId: ID;
+
     
     type: BalanceEntryType;
+
     
     
     
     reviewDays?: number;
+
     
     currencyCode: CurrencyCode;
+
     
     
     credit: number;
+
     
     
     debit: number;
+
     
     
     description?: string;
+
     
     metadata?: Record<string, string>;
 }
@@ -2128,6 +2141,7 @@ export class CreateBalanceEntryInput {
 export class ConfigArg {
     
     name: string;
+
     
     value: string;
 }
@@ -2163,6 +2177,9 @@ export class CreateCollectionInput {
     
     featuredAssetId?: ID;
 
+    
+    
+    
     
     
     assetIds?: Array<ID>;
@@ -2231,6 +2248,9 @@ export class UpdateCollectionInput {
     
     featuredAssetId?: ID;
 
+    
+    
+    
     
     
     assetIds?: Array<ID>;
@@ -2566,7 +2586,7 @@ export class JobPostFilterParameter {
     
     
     
-    visibility: StringOperators;
+    visibility?: StringOperators;
 
     
     
@@ -2909,6 +2929,137 @@ export class CollectionListOptions {
     
     
     topLevelOnly?: boolean;
+}
+
+export enum SearchIndex {
+    JobPost = 'JobPost',
+    Profile = 'Profile',
+}
+
+/**
+ * Used to construct boolean expressions for filtering search results
+ * by FacetValue ID. Examples:
+ *
+ * * ID=1 OR ID=2: `{ facetValueFilters: [{ or: [1,2] }] }`
+ * * ID=1 AND ID=2: `{ facetValueFilters: [{ and: 1 }, { and: 2 }] }`
+ * * ID=1 AND (ID=2 OR ID=3): `{ facetValueFilters: [{ and: 1 }, { or: [2,3] }] }`
+ */
+export class FacetValueFilterInput {
+    
+    
+    
+    and?: ID;
+
+    
+    
+    
+    or?: Array<ID>;
+}
+
+// Sort parameter classes
+export class BaseSearchResultSortParameter {}
+
+export class JobPostSearchResultSortParameter extends BaseSearchResultSortParameter {
+    
+    
+    title?: SortOrder;
+}
+
+export class ProfileSearchResultSortParameter extends BaseSearchResultSortParameter {}
+
+// Base classes for search functionality
+export class BaseSearchResult {
+    
+    Id: ID;
+
+    
+    collectionIds: Array<ID>;
+
+    
+    facetIds: Array<ID>;
+
+    
+    facetValueIds: Array<ID>;
+
+    
+    score: number;
+}
+
+export class JobPostSearchResult extends BaseSearchResult {
+    
+    title: string;
+
+    
+    description: string;
+
+    
+    currencyCode: string;
+
+    
+    budget: number;
+}
+
+export class ProfileSearchResult extends BaseSearchResult {}
+
+// Search input types
+export class BaseSearchInput {
+    
+    index: SearchIndex;
+
+    
+    
+    collectionId?: ID;
+
+    
+    
+    collectionSlug?: string;
+
+    
+    
+    
+    
+    facetValueFilters?: Array<FacetValueFilterInput>;
+
+    
+    
+    skip?: number;
+
+    
+    
+    take?: number;
+
+    
+    
+    term?: string;
+}
+
+export class JobPostSearchInput extends BaseSearchInput {
+    
+    
+    
+    sort?: JobPostSearchResultSortParameter;
+}
+
+export class ProfileSearchInput extends BaseSearchInput {
+    
+    
+    
+    sort?: ProfileSearchResultSortParameter;
+}
+
+// Search result types
+export class SearchResult {
+    
+    index: SearchIndex;
+
+    
+    result: ProfileSearchResult[] | JobPostSearchResult[];
+}
+
+export class SearchInput {
+    
+    
+    search: JobPostSearchInput | ProfileSearchInput;
 }
 
 export class GoogleAuthData {
