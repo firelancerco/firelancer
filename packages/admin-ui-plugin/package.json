@@ -1,6 +1,6 @@
 {
     "name": "@firelancerco/admin-ui-plugin",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "files": [
@@ -22,9 +22,9 @@
         "fs-extra": "^11.2.0"
     },
     "devDependencies": {
-        "@firelancerco/admin-ui": "^1.1.4",
-        "@firelancerco/common": "^1.1.4",
-        "@firelancerco/core": "^1.1.4",
+        "@firelancerco/admin-ui": "^1.1.5",
+        "@firelancerco/common": "^1.1.5",
+        "@firelancerco/core": "^1.1.5",
         "@types/express": "^5.0.0",
         "@types/fs-extra": "^11.0.4",
         "express": "^4.21.2",

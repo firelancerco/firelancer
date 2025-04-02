@@ -1,3 +1,16 @@
+## <small>1.1.5 (2025-04-02)</small>
+
+
+#### Fixes
+
+*
+    **core**
+add cacheStrategy to ConfigModule([4548226](https://github.com/firelancerco/firelancer    /commit/4548226))
+#### Features
+
+*
+    **core**
+implement caching mechanism with CacheService, CacheStrategy, and DefaultCachePlugin for improved performance([5e76f35](https://github.com/firelancerco/firelancer    /commit/5e76f35))
 ## <small>1.1.4 (2025-03-31)</small>
 
 
