@@ -2617,7 +2617,7 @@ export class JobPostFilterParameter {
     @IsObject()
     @ValidateNested()
     @Type(() => StringOperators)
-    visibility: StringOperators;
+    visibility?: StringOperators;
 
     @IsOptional()
     @IsObject()
@@ -3044,4 +3044,144 @@ export class CollectionListOptions {
     @IsBoolean()
     @Type(() => Boolean)
     topLevelOnly?: boolean;
+}
+
+export enum SearchIndex {
+    JobPost = 'JobPost',
+    Profile = 'Profile',
+}
+
+/**
+ * Used to construct boolean expressions for filtering search results
+ * by FacetValue ID. Examples:
+ *
+ * * ID=1 OR ID=2: `{ facetValueFilters: [{ or: [1,2] }] }`
+ * * ID=1 AND ID=2: `{ facetValueFilters: [{ and: 1 }, { and: 2 }] }`
+ * * ID=1 AND (ID=2 OR ID=3): `{ facetValueFilters: [{ and: 1 }, { or: [2,3] }] }`
+ */
+export class FacetValueFilterInput {
+    @IsOptional()
+    @IsArray()
+    @IsEntityId({ each: true })
+    and?: ID;
+
+    @IsOptional()
+    @IsArray()
+    @IsEntityId({ each: true })
+    or?: Array<ID>;
+}
+
+// Sort parameter classes
+export class BaseSearchResultSortParameter {}
+
+export class JobPostSearchResultSortParameter extends BaseSearchResultSortParameter {
+    @IsOptional()
+    @IsEnum(SortOrder)
+    title?: SortOrder;
+}
+
+export class ProfileSearchResultSortParameter extends BaseSearchResultSortParameter {}
+
+// Base classes for search functionality
+export class BaseSearchResult {
+    @IsEntityId()
+    Id: ID;
+
+    @IsEntityId({ each: true })
+    collectionIds: Array<ID>;
+
+    @IsEntityId({ each: true })
+    facetIds: Array<ID>;
+
+    @IsEntityId({ each: true })
+    facetValueIds: Array<ID>;
+
+    @IsNumber()
+    score: number;
+}
+
+export class JobPostSearchResult extends BaseSearchResult {
+    @IsString()
+    title: string;
+
+    @IsString()
+    description: string;
+
+    @IsString()
+    currencyCode: string;
+
+    @IsNumber()
+    budget: number;
+}
+
+export class ProfileSearchResult extends BaseSearchResult {}
+
+// Search input types
+export class BaseSearchInput {
+    @IsEnum(SearchIndex)
+    index: SearchIndex;
+
+    @IsOptional()
+    @IsEntityId()
+    collectionId?: ID;
+
+    @IsOptional()
+    @IsString()
+    collectionSlug?: string;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested({ each: true })
+    @Type(() => FacetValueFilterInput)
+    facetValueFilters?: Array<FacetValueFilterInput>;
+
+    @IsOptional()
+    @IsNumber()
+    skip?: number;
+
+    @IsOptional()
+    @IsNumber()
+    take?: number;
+
+    @IsOptional()
+    @IsString()
+    term?: string;
+}
+
+export class JobPostSearchInput extends BaseSearchInput {
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => JobPostSearchResultSortParameter)
+    sort?: JobPostSearchResultSortParameter;
+}
+
+export class ProfileSearchInput extends BaseSearchInput {
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => ProfileSearchResultSortParameter)
+    sort?: ProfileSearchResultSortParameter;
+}
+
+// Search result types
+export class SearchResult {
+    @IsEnum(SearchIndex)
+    index: SearchIndex;
+
+    @IsArray()
+    result: ProfileSearchResult[] | JobPostSearchResult[];
+}
+
+export class SearchInput {
+    @ValidateNested()
+    @Type(() => BaseSearchInput, {
+        discriminator: {
+            property: 'index',
+            subTypes: [
+                { value: JobPostSearchInput, name: SearchIndex.JobPost },
+                { value: ProfileSearchInput, name: SearchIndex.Profile },
+            ],
+        },
+        keepDiscriminatorProperty: true,
+    })
+    search: JobPostSearchInput | ProfileSearchInput;
 }
