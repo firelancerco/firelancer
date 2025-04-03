@@ -74,6 +74,7 @@ export class JobPost extends FirelancerEntity implements Collectable, SoftDeleta
             WHEN "jobpost"."publishedAt" IS NOT NULL AND "jobpost"."closedAt" IS NOT NULL THEN 'CLOSED'
         END`,
     })
+    // TODO: should not return undefined
     get status(): JobPostStatus | undefined {
         if (!this.publishedAt) {
             return JobPostStatus.DRAFT;

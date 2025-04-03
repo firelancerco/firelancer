@@ -1,41 +1,32 @@
 import { Controller, Get, Param, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 
-import { Ctx } from '../..';
 import { RequestContext } from '../../../common';
-import { FacetListOptions, FacetValueListOptions, ID } from '../../../common/shared-schema';
-import { FacetService, FacetValueService } from '../../../service';
+import { FacetListOptions, ID } from '../../../common/shared-schema';
+import { FacetService } from '../../../service';
+import { Ctx } from '../../decorators/request-context.decorator';
 
 @Controller('facets')
 export class FacetController {
-    constructor(
-        private facetService: FacetService,
-        private facetValueService: FacetValueService,
-    ) {}
+    constructor(private facetService: FacetService) {}
 
-    @UsePipes(new ValidationPipe({ whitelist: true }))
     @Get()
-    async facetsList(@Ctx() ctx: RequestContext, @Query() options: FacetListOptions) {
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    async getFacetsList(@Ctx() ctx: RequestContext, @Query() options: FacetListOptions) {
         return this.facetService.findAll(ctx, options, []);
     }
 
     @Get(':id')
-    async facetById(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
-        return this.facetService.findOne(ctx, id, []);
+    async getFacet(@Ctx() ctx: RequestContext, @Param() params: { id: ID }) {
+        return this.facetService.findOne(ctx, params.id, []);
     }
 
     @Get('code/:code')
-    async facetByCode(@Ctx() ctx: RequestContext, @Param('code') code: string) {
-        return this.facetService.findByCode(ctx, code, []);
+    async getFacetByCode(@Ctx() ctx: RequestContext, @Param() params: { code: string }) {
+        return this.facetService.findByCode(ctx, params.code, []);
     }
 
-    @Get('facet-values/:id')
-    async facetByFacetValueId(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
-        return this.facetService.findByFacetValueId(ctx, id);
-    }
-
-    @UsePipes(new ValidationPipe({ whitelist: true }))
-    @Get(':id/facet-values')
-    async getValuesList(@Ctx() ctx: RequestContext, @Param('id') id: ID, @Query() options: FacetValueListOptions) {
-        return this.facetValueService.findByFacetId(ctx, id, options);
+    @Get('facet-values/:facetValueId')
+    async getFacetByFacetValueId(@Ctx() ctx: RequestContext, @Param() params: { facetValueId: ID }) {
+        return this.facetService.findByFacetValueId(ctx, params.facetValueId);
     }
 }

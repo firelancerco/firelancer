@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { EntityNotFoundException, ForbiddenException, RequestContext } from '../../../common';
 import {
@@ -64,11 +64,42 @@ export class ShopHiringController {
     @Get('job-posts')
     @Allow(Permission.PublishJobPost)
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    async jobPostsList(@Ctx() ctx: RequestContext, @Query() options: JobPostListOptions) {
+    async getJobPostsList(@Ctx() ctx: RequestContext, @Query() options: JobPostListOptions) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const customerFilter = { customerId: { eq: String(customer.id) } };
         const mergedFilter = options.filter ? { _and: [options.filter, customerFilter] } : customerFilter;
 
         return this.jobPostService.findAll(ctx, { ...options, filter: mergedFilter });
+    }
+
+    @Get('job-posts/:id')
+    @Allow(Permission.PublishJobPost)
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    async getJobPost(@Ctx() ctx: RequestContext, @Param() params: { id: string }) {
+        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+        const jobPost = await this.jobPostService.findOne(ctx, params.id);
+        if (!jobPost) {
+            throw new EntityNotFoundException('JobPost', params.id);
+        }
+        if (jobPost.customerId !== customer.id) {
+            throw new ForbiddenException();
+        }
+        return jobPost;
+    }
+
+    @Delete('job-posts/:id')
+    @Allow(Permission.PublishJobPost)
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    async deleteJobPost(@Ctx() ctx: RequestContext, @Param() params: { id: string }) {
+        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+        const jobPost = await this.jobPostService.findOne(ctx, params.id);
+        if (!jobPost) {
+            throw new EntityNotFoundException('JobPost', params.id);
+        }
+        if (jobPost.customerId !== customer.id) {
+            throw new ForbiddenException();
+        }
+        await this.jobPostService.softDelete(ctx, params.id);
+        return { success: true };
     }
 }

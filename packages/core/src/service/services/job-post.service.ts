@@ -14,7 +14,13 @@ import { IsNull } from 'typeorm';
 
 import { RelationPaths } from '../../api';
 import { ListQueryOptions, RequestContext, UserInputException } from '../../common';
-import { CreateJobPostInput, ID, PublishJobPostInput, UpdateJobPostInput } from '../../common/shared-schema';
+import {
+    CreateJobPostInput,
+    ID,
+    JobPostStatus,
+    PublishJobPostInput,
+    UpdateJobPostInput,
+} from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { FacetValue, JobPost } from '../../entity';
 import { EventBus, JobPostEvent } from '../../event-bus';
@@ -157,6 +163,12 @@ export class JobPostService {
         const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, jobPostId, {
             relations: ['facetValues'],
         });
+
+        // TODO: Remove this once we have a proper way to delete JobPosts.
+        if (jobPost.status !== JobPostStatus.DRAFT) {
+            throw new UserInputException('error.job-post-not-draft');
+        }
+
         jobPost.deletedAt = new Date();
         await this.connection.getRepository(ctx, JobPost).save(jobPost, { reload: false });
         await this.eventBus.publish(new JobPostEvent(ctx, jobPost, 'deleted', jobPostId));
