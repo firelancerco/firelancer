@@ -192,8 +192,16 @@ export class JobPostService {
             throw new UserInputException('error.invalid-category-required');
         }
 
-        // TODO: Validate experience level
-        // TODO: Validate job duration
-        // TODO: Validate job scope
+        if (!jobPost.requiredExperienceLevel) {
+            throw new UserInputException('error.invalid-experience-level-required');
+        }
+
+        if (!jobPost.requiredJobDuration) {
+            throw new UserInputException('error.invalid-job-duration-required');
+        }
+
+        if (!jobPost.requiredJobScope) {
+            throw new UserInputException('error.invalid-job-scope-required');
+        }
     }
 }
