@@ -19,9 +19,6 @@ export class Customer extends FirelancerEntity implements SoftDeletable {
     @Column({ type: 'timestamp', nullable: true })
     deletedAt: Date | null;
 
-    @Column({ type: 'varchar', nullable: true })
-    title: string | null;
-
     @Column()
     firstName: string;
 

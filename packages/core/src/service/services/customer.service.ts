@@ -221,7 +221,6 @@ export class CustomerService {
             {
                 emailAddress: input.emailAddress,
                 customerType: input.customerType,
-                title: input.title || '',
                 firstName: input.firstName || '',
                 lastName: input.lastName || '',
                 phoneNumber: input.phoneNumber || '',

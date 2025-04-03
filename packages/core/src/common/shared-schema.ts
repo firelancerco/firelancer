@@ -16,10 +16,12 @@ import {
     IsNumber,
     IsObject,
     IsOptional,
+    IsPhoneNumber,
     IsPositive,
     IsString,
     MaxLength,
     Min,
+    MinLength,
     ValidateNested,
 } from 'class-validator';
 import { IsEntityId } from './entity-id-validator';
@@ -1111,13 +1113,14 @@ export class User {
     @IsDate()
     lastLogin?: Date | null;
 
-    @ValidateNested({ each: true })
-    @Type(() => Role)
-    roles: Array<Role>;
-
     @IsBoolean()
     @Type(() => Boolean)
     verified: boolean;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => Role)
+    roles?: Array<Role>;
 }
 
 export class Customer {
@@ -1125,22 +1128,24 @@ export class Customer {
     @IsDate()
     deletedAt: Date | null;
 
-    @IsOptional()
     @IsString()
-    title: string | null;
-
-    @IsString()
+    @MinLength(2)
+    @MaxLength(50)
     firstName: string;
 
     @IsString()
+    @MinLength(2)
+    @MaxLength(50)
     lastName: string;
+
+    @IsString()
+    @IsEmail()
+    emailAddress: string;
 
     @IsOptional()
     @IsString()
+    @IsPhoneNumber()
     phoneNumber: string | null;
-
-    @IsString()
-    emailAddress: string;
 
     @IsOptional()
     @Type(() => User)
@@ -1536,6 +1541,8 @@ export class CollectionTranslation {
     slug: string;
 }
 
+/* --------------- */
+
 export class CreateAdministratorInput {
     @IsString()
     @IsNotEmpty()
@@ -1543,11 +1550,13 @@ export class CreateAdministratorInput {
     emailAddress: string;
 
     @IsString()
-    @IsNotEmpty()
+    @MinLength(2)
+    @MaxLength(50)
     firstName: string;
 
     @IsString()
-    @IsNotEmpty()
+    @MinLength(2)
+    @MaxLength(50)
     lastName: string;
 
     @IsString()
@@ -1564,14 +1573,19 @@ export class UpdateAdministratorInput {
 
     @IsString()
     @IsOptional()
+    @IsEmail()
     emailAddress?: string;
 
     @IsString()
     @IsOptional()
+    @MinLength(2)
+    @MaxLength(50)
     firstName?: string;
 
     @IsString()
     @IsOptional()
+    @MinLength(2)
+    @MaxLength(50)
     lastName?: string;
 
     @IsString()
@@ -1586,14 +1600,19 @@ export class UpdateAdministratorInput {
 export class UpdateActiveAdministratorInput {
     @IsString()
     @IsOptional()
+    @IsEmail()
     emailAddress?: string;
 
     @IsString()
     @IsOptional()
+    @MinLength(2)
+    @MaxLength(50)
     firstName?: string;
 
     @IsString()
     @IsOptional()
+    @MinLength(2)
+    @MaxLength(50)
     lastName?: string;
 
     @IsString()
@@ -1666,24 +1685,26 @@ export class MutationAuthenticateArgs {
 
 export class CreateCustomerInput {
     @IsString()
+    @IsEmail()
     emailAddress: string;
 
     @IsEnum(CustomerType)
     customerType: CustomerType;
 
     @IsString()
+    @MinLength(2)
+    @MaxLength(50)
     firstName: string;
 
     @IsString()
+    @MinLength(2)
+    @MaxLength(50)
     lastName: string;
 
     @IsString()
     @IsOptional()
+    @IsPhoneNumber()
     phoneNumber?: string;
-
-    @IsString()
-    @IsOptional()
-    title?: string;
 }
 
 export class UpdateCustomerInput {
@@ -1692,23 +1713,25 @@ export class UpdateCustomerInput {
 
     @IsString()
     @IsOptional()
+    @IsEmail()
     emailAddress?: string;
 
     @IsString()
     @IsOptional()
+    @MinLength(2)
+    @MaxLength(50)
     firstName?: string;
 
     @IsString()
     @IsOptional()
+    @MinLength(2)
+    @MaxLength(50)
     lastName?: string;
 
     @IsString()
     @IsOptional()
+    @IsPhoneNumber()
     phoneNumber?: string;
-
-    @IsString()
-    @IsOptional()
-    title?: string;
 }
 
 export class RegisterCustomerInput {
@@ -1721,10 +1744,14 @@ export class RegisterCustomerInput {
 
     @IsString()
     @IsOptional()
+    @MinLength(2)
+    @MaxLength(50)
     firstName?: string;
 
     @IsString()
     @IsOptional()
+    @MinLength(2)
+    @MaxLength(50)
     lastName?: string;
 
     @IsString()
@@ -1733,11 +1760,8 @@ export class RegisterCustomerInput {
 
     @IsString()
     @IsOptional()
+    @IsPhoneNumber()
     phoneNumber?: string;
-
-    @IsString()
-    @IsOptional()
-    title?: string;
 }
 
 export class CreateRoleInput {
@@ -1930,8 +1954,8 @@ export class UpdateAssetInput {
     name?: string;
 
     @IsOptional()
-    @IsString()
-    tags?: string;
+    @IsString({ each: true })
+    tags?: Array<string>;
 }
 
 export class CreateJobPostInput {

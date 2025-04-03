@@ -1082,11 +1082,12 @@ export class User {
 
     
     
-    roles: Array<Role>;
+    verified: boolean;
 
     
     
-    verified: boolean;
+    
+    roles?: Array<Role>;
 }
 
 export class Customer {
@@ -1096,20 +1097,22 @@ export class Customer {
 
     
     
-    title: string | null;
-
     
     firstName: string;
 
+    
+    
     
     lastName: string;
 
     
     
-    phoneNumber: string | null;
+    emailAddress: string;
 
     
-    emailAddress: string;
+    
+    
+    phoneNumber: string | null;
 
     
     
@@ -1505,6 +1508,8 @@ export class CollectionTranslation {
     slug: string;
 }
 
+/* --------------- */
+
 export class CreateAdministratorInput {
     
     
@@ -1513,8 +1518,10 @@ export class CreateAdministratorInput {
 
     
     
+    
     firstName: string;
 
+    
     
     
     lastName: string;
@@ -1533,12 +1540,17 @@ export class UpdateAdministratorInput {
 
     
     
+    
     emailAddress?: string;
 
     
     
+    
+    
     firstName?: string;
 
+    
+    
     
     
     lastName?: string;
@@ -1555,12 +1567,17 @@ export class UpdateAdministratorInput {
 export class UpdateActiveAdministratorInput {
     
     
+    
     emailAddress?: string;
 
     
     
+    
+    
     firstName?: string;
 
+    
+    
     
     
     lastName?: string;
@@ -1635,24 +1652,26 @@ export class MutationAuthenticateArgs {
 
 export class CreateCustomerInput {
     
+    
     emailAddress: string;
 
     
     customerType: CustomerType;
 
     
+    
+    
     firstName: string;
 
+    
+    
     
     lastName: string;
 
     
     
+    
     phoneNumber?: string;
-
-    
-    
-    title?: string;
 }
 
 export class UpdateCustomerInput {
@@ -1661,23 +1680,25 @@ export class UpdateCustomerInput {
 
     
     
+    
     emailAddress?: string;
 
+    
+    
     
     
     firstName?: string;
 
     
     
+    
+    
     lastName?: string;
 
     
     
+    
     phoneNumber?: string;
-
-    
-    
-    title?: string;
 }
 
 export class RegisterCustomerInput {
@@ -1690,8 +1711,12 @@ export class RegisterCustomerInput {
 
     
     
+    
+    
     firstName?: string;
 
+    
+    
     
     
     lastName?: string;
@@ -1702,11 +1727,8 @@ export class RegisterCustomerInput {
 
     
     
+    
     phoneNumber?: string;
-
-    
-    
-    title?: string;
 }
 
 export class CreateRoleInput {
@@ -1900,7 +1922,7 @@ export class UpdateAssetInput {
 
     
     
-    tags?: string;
+    tags?: Array<string>;
 }
 
 export class CreateJobPostInput {
