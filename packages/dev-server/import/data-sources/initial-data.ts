@@ -1,5 +1,11 @@
 import { InitialData, LanguageCode, Permission } from '@firelancerco/core';
-import { CATEGORY_FACET_CODE, SKILL_FACET_CODE } from '@firelancerco/common/lib/shared-constants';
+import {
+    CATEGORY_FACET_CODE,
+    DURATION_FACET_CODE,
+    EXPERIENCE_LEVEL_FACET_CODE,
+    SCOPE_FACET_CODE,
+    SKILL_FACET_CODE,
+} from '@firelancerco/common/lib/shared-constants';
 
 export const initialData: InitialData = {
     defaultLanguage: LanguageCode.en,
@@ -78,6 +84,34 @@ export const initialData: InitialData = {
                 ['en:Kotlin', 'ar:كوتلين'],
                 ['en:Scala', 'ar:سكالا'],
                 ['en:PHP', 'ar:بي إتش بي'],
+            ],
+        },
+        {
+            facetCode: DURATION_FACET_CODE,
+            facetName: ['en:Project Duration', 'ar:مدة المشروع'],
+            facetValues: [
+                ['en:More than 6 months', 'ar:أكثر من 6 أشهر'],
+                ['en:3 to 6 months', 'ar:3 إلى 6 أشهر'],
+                ['en:1 to 3 months', 'ar:1 إلى 3 أشهر'],
+                ['en:Less than 1 month', 'ar:أقل من 1 شهر'],
+            ],
+        },
+        {
+            facetCode: SCOPE_FACET_CODE,
+            facetName: ['en:Project Scope', 'ar:حجم المشروع'],
+            facetValues: [
+                ['en:Large', 'ar:كبير'],
+                ['en:Medium', 'ar:متوسط'],
+                ['en:Small', 'ar:صغير'],
+            ],
+        },
+        {
+            facetCode: EXPERIENCE_LEVEL_FACET_CODE,
+            facetName: ['en:Experience Level', 'ar:مستوى الخبرة'],
+            facetValues: [
+                ['en:Entry', 'ar:مبتدئ'],
+                ['en:Intermediate', 'ar:متوسط'],
+                ['en:Expert', 'ar:خبير'],
             ],
         },
     ],
