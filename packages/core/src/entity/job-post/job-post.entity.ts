@@ -67,12 +67,13 @@ export class JobPost extends FirelancerEntity implements Collectable, SoftDeleta
     budget: number | null;
 
     @Calculated({
-        relations: ['publishedAt', 'closedAt'],
-        expression: `CASE 
-            WHEN "jobpost"."publishedAt" IS NULL THEN 'DRAFT'
-            WHEN "jobpost"."publishedAt" IS NOT NULL AND "jobpost"."closedAt" IS NULL THEN 'ACTIVE'
-            WHEN "jobpost"."publishedAt" IS NOT NULL AND "jobpost"."closedAt" IS NOT NULL THEN 'CLOSED'
-        END`,
+        expression: `
+            CASE 
+                WHEN publishedAt IS NULL THEN 'DRAFT'
+                WHEN publishedAt IS NOT NULL AND closedAt IS NULL THEN 'ACTIVE'
+                WHEN publishedAt IS NOT NULL AND closedAt IS NOT NULL THEN 'CLOSED'
+            END
+        `,
     })
     // TODO: should not return undefined
     get status(): JobPostStatus | undefined {

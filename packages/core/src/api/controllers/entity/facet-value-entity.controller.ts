@@ -24,16 +24,24 @@ export class FacetValueController {
     }
 
     @Get('facet/:facetId')
-    async getFacetValuesListByFacetId(@Ctx() ctx: RequestContext, @Param() params: { facetId: ID }) {
-        return this.facetValueService.findByFacetId(ctx, params.facetId);
+    async getFacetValuesListByFacetId(
+        @Ctx() ctx: RequestContext,
+        @Query() options: FacetValueListOptions,
+        @Param() params: { facetId: ID },
+    ) {
+        return this.facetValueService.findByFacetId(ctx, params.facetId, options);
     }
 
     @Get('facet-code/:facetCode')
-    async getFacetValuesListByFacetCode(@Ctx() ctx: RequestContext, @Param() params: { facetCode: string }) {
+    async getFacetValuesListByFacetCode(
+        @Ctx() ctx: RequestContext,
+        @Query() options: FacetValueListOptions,
+        @Param() params: { facetCode: string },
+    ) {
         const facet = await this.facetService.findByCode(ctx, params.facetCode, []);
         if (!facet) {
             throw new EntityNotFoundException('Facet', params.facetCode);
         }
-        return this.facetValueService.findByFacetId(ctx, facet.id);
+        return this.facetValueService.findByFacetId(ctx, facet.id, options);
     }
 }
