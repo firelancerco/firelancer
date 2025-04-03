@@ -1,3 +1,19 @@
+## <small>1.1.7 (2025-04-03)</small>
+
+
+#### Features
+
+*
+    **common**
+update shared-schema([043b589](https://github.com/firelancerco/firelancer    /commit/043b589))*
+    **core**
+add FacetValueController and integrate it into the entityControllers; refactor FacetController methods for consistency([7a742ee](https://github.com/firelancerco/firelancer    /commit/7a742ee))*
+    **core**
+enhance job post entity with closedAt field, update job post status logic, and introduce entity hydration for improved data handling([b0a3f9d](https://github.com/firelancerco/firelancer    /commit/b0a3f9d))*
+    **core**
+implement validation for required experience level, job duration, and job scope in job post service([7931b46](https://github.com/firelancerco/firelancer    /commit/7931b46))*
+    **core**
+refactor job post sorting parameters to use enum for closedAt and publishedAt fields, and enhance job post status calculation logic([ab3911f](https://github.com/firelancerco/firelancer    /commit/ab3911f))
 ## <small>1.1.6 (2025-04-02)</small>
 
 
