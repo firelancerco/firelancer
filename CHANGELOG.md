@@ -1,3 +1,11 @@
+## <small>1.1.8 (2025-04-03)</small>
+
+
+#### Features
+
+*
+    **core**
+enhance FacetValueController to accept query options for fetching facet values by ID and code; refactor balance entry and job post status calculations for improved readability([4ebb682](https://github.com/firelancerco/firelancer    /commit/4ebb682))
 ## <small>1.1.7 (2025-04-03)</small>
 
 
