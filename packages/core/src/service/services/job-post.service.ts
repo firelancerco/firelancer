@@ -2,6 +2,9 @@ import {
     CATEGORY_FACET_CODE,
     DURATION_FACET_CODE,
     EXPERIENCE_LEVEL_FACET_CODE,
+    PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
+    PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET,
+    PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
     SKILL_FACET_CODE,
 } from '@firelancerco/common/lib/shared-constants';
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
@@ -19,18 +22,11 @@ import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-build
 import { patchEntity } from '../helpers/utils/patch-entity';
 import { AssetService } from './asset.service';
 import { FacetValueService } from './facet-value.service';
+import { EntityHydrator } from '../../service/helpers/entity-hydrator/entity-hydrator.service';
 
 @Injectable()
 export class JobPostService {
     private readonly relations = ['assets', 'facetValues', 'facetValues.facet'];
-
-    private readonly PUBLISH_CONSTRAINTS = {
-        MIN_SKILLS: 1,
-        MAX_SKILLS: 15,
-        MIN_CATEGORIES: 1,
-        MAX_CATEGORIES: 2,
-        MIN_BUDGET: 5,
-    } as const;
 
     constructor(
         private connection: TransactionalConnection,
@@ -38,6 +34,7 @@ export class JobPostService {
         private facetValueService: FacetValueService,
         private eventBus: EventBus,
         private listQueryBuilder: ListQueryBuilder,
+        private entityHydrator: EntityHydrator,
     ) {}
 
     async findAll(
@@ -139,70 +136,6 @@ export class JobPostService {
         return assertFound(this.findOne(ctx, updatedJobPost.id));
     }
 
-    private async validatePublishable(ctx: RequestContext, jobPost: JobPost): Promise<void> {
-        const requiredFields: Array<{ field: keyof JobPost; error: string }> = [
-            { field: 'title', error: 'error.job-post-title-required' },
-            { field: 'description', error: 'error.job-post-description-required' },
-            { field: 'visibility', error: 'error.job-post-visibility-required' },
-            { field: 'budget', error: 'error.job-post-budget-required' },
-            { field: 'currencyCode', error: 'error.job-post-currencyCode-required' },
-        ];
-
-        for (const { field, error } of requiredFields) {
-            if (!jobPost[field]) {
-                throw new UserInputException(error);
-            }
-        }
-
-        // Validate budget minimum
-        if (jobPost.budget && jobPost.budget < this.PUBLISH_CONSTRAINTS.MIN_BUDGET) {
-            throw new UserInputException('error.job-post-budget-too-low', {
-                min: this.PUBLISH_CONSTRAINTS.MIN_BUDGET,
-            });
-        }
-
-        // Validate facets
-        if (!jobPost.facetValues) {
-            throw new UserInputException('error.job-post-facet-values-required');
-        }
-
-        await this.validateFacetConstraints(
-            ctx,
-            jobPost.facetValues.map(fv => fv.id),
-        );
-    }
-
-    private async validateFacetConstraints(ctx: RequestContext, facetValueIds: ID[]): Promise<void> {
-        const facetValues = await this.facetValueService.findByIds(ctx, unique(facetValueIds) || []);
-
-        const categories = this.getFacetValues(facetValues, CATEGORY_FACET_CODE);
-        const skills = this.getFacetValues(facetValues, SKILL_FACET_CODE);
-
-        if (
-            categories.length < this.PUBLISH_CONSTRAINTS.MIN_CATEGORIES ||
-            categories.length > this.PUBLISH_CONSTRAINTS.MAX_CATEGORIES
-        ) {
-            throw new UserInputException('error.invalid-categories-count', {
-                min: this.PUBLISH_CONSTRAINTS.MIN_CATEGORIES,
-                max: this.PUBLISH_CONSTRAINTS.MAX_CATEGORIES,
-            });
-        }
-
-        if (
-            skills.length < this.PUBLISH_CONSTRAINTS.MIN_SKILLS ||
-            skills.length > this.PUBLISH_CONSTRAINTS.MAX_SKILLS
-        ) {
-            throw new UserInputException('error.invalid-skills-count', {
-                min: this.PUBLISH_CONSTRAINTS.MIN_SKILLS,
-                max: this.PUBLISH_CONSTRAINTS.MAX_SKILLS,
-            });
-        }
-    }
-
-    private getFacetValues(facetValues: Array<FacetValue>, facetCode: string): Array<FacetValue> {
-        return facetValues.filter(fv => fv.facet.code === facetCode);
-    }
-
     async update(ctx: RequestContext, input: UpdateJobPostInput): Promise<JobPost> {
         const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
             relations: ['facetValues'],
@@ -218,5 +151,49 @@ export class JobPostService {
         await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
         await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'updated', input));
         return assertFound(this.findOne(ctx, updatedJobPost.id));
+    }
+
+    private async validatePublishable(ctx: RequestContext, jobPost: JobPost): Promise<void> {
+        await this.entityHydrator.hydrate(ctx, jobPost, {
+            relations: ['facetValues' as never, 'facetValues.facet' as never],
+        });
+
+        const requiredFields: Array<{ field: keyof JobPost; error: string }> = [
+            { field: 'title', error: 'error.job-post-title-required' },
+            { field: 'description', error: 'error.job-post-description-required' },
+            { field: 'visibility', error: 'error.job-post-visibility-required' },
+            { field: 'budget', error: 'error.job-post-budget-required' },
+            { field: 'currencyCode', error: 'error.job-post-currencyCode-required' },
+        ];
+
+        for (const { field, error } of requiredFields) {
+            if (!jobPost[field]) {
+                throw new UserInputException(error);
+            }
+        }
+
+        if (jobPost.budget && jobPost.budget < PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET) {
+            throw new UserInputException('error.job-post-budget-too-low', {
+                min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET,
+            });
+        }
+
+        if (
+            jobPost.requiredSkills.length < PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS ||
+            jobPost.requiredSkills.length > PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS
+        ) {
+            throw new UserInputException('error.invalid-skills-count', {
+                min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
+                max: PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
+            });
+        }
+
+        if (!jobPost.requiredCategory) {
+            throw new UserInputException('error.invalid-category-required');
+        }
+
+        // TODO: Validate experience level
+        // TODO: Validate job duration
+        // TODO: Validate job scope
     }
 }

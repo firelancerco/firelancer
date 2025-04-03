@@ -6,6 +6,7 @@ import { ConnectionModule } from '../connection/connection.module';
 import { EventBusModule } from '../event-bus/event-bus.module';
 import { JobQueueModule } from '../job-queue/job-queue.module';
 import { ConfigArgService } from './helpers/config-arg/config-arg.service';
+import { EntityHydrator } from './helpers/entity-hydrator/entity-hydrator.service';
 import { ExternalAuthenticationService } from './helpers/external-authentication/external-authentication.service';
 import { ListQueryBuilder } from './helpers/list-query-builder/list-query-builder';
 import { LocaleStringHydrator } from './helpers/locale-string-hydrator/locale-string-hydrator';
@@ -61,6 +62,7 @@ const helpers = [
     VerificationTokenGenerator,
     LocaleStringHydrator,
     ExternalAuthenticationService,
+    EntityHydrator,
 ];
 
 /**

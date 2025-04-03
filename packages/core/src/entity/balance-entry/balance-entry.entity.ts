@@ -75,7 +75,15 @@ export class BalanceEntry extends FirelancerEntity {
     @Column('simple-json', { nullable: true })
     metadata: any;
 
-    @Calculated()
+    @Calculated({
+        expression: `
+        CASE
+            WHEN "balance" IS NOT NULL AND "settledAt" IS NOT NULL THEN 'SETTLED'
+            WHEN "balance" IS NULL AND "settledAt" IS NULL THEN 'PENDING'
+            WHEN "rejectedAt" IS NOT NULL THEN 'REJECTED'
+        END
+        `,
+    })
     get status(): BalanceEntryStatus | undefined {
         if (this.balance !== null && this.settledAt !== null) {
             return BalanceEntryStatus.SETTLED;

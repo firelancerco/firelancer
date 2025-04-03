@@ -106,6 +106,15 @@ export enum JobPostVisibility {
     INVITE_ONLY = 'INVITE_ONLY',
 }
 
+export enum JobPostStatus {
+    /**  Job is saved but not published. */
+    DRAFT = 'DRAFT',
+    /** Job is published and open for proposals. */
+    ACTIVE = 'ACTIVE',
+    /** Job is closed and no longer accepting bids (may reopen later) */
+    CLOSED = 'CLOSED',
+}
+
 export enum AssetType {
     BINARY = 'BINARY',
     IMAGE = 'IMAGE',
@@ -120,8 +129,11 @@ export enum BalanceEntryType {
 }
 
 export enum BalanceEntryStatus {
+    /** The balance entry is pending settlement */
     PENDING = 'PENDING',
+    /** The balance entry has been settled */
     SETTLED = 'SETTLED',
+    /** The balance entry has been rejected */
     REJECTED = 'REJECTED',
 }
 
@@ -1033,6 +1045,14 @@ export class ConfigurableOperationDefinition {
 
 /* --------------- */
 
+export class Coordinate {
+    @IsNumber()
+    x: number;
+
+    @IsNumber()
+    y: number;
+}
+
 export class AuthenticationMethod {
     @IsEntityId()
     id: ID;
@@ -1127,12 +1147,106 @@ export class Customer {
     user?: User;
 }
 
-export class Coordinate {
-    @IsNumber()
-    x: number;
+export class FacetTranslation {
+    @IsEntityId()
+    id: ID;
 
-    @IsNumber()
-    y: number;
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
+    updatedAt: Date;
+
+    @IsString()
+    name: string;
+
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
+}
+
+export class Facet {
+    @IsEntityId()
+    id: ID;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
+    updatedAt: Date;
+
+    @IsString()
+    code: string;
+
+    @IsBoolean()
+    @Type(() => Boolean)
+    isPrivate: boolean;
+
+    @IsOptional()
+    @IsEnum(LanguageCode)
+    languageCode?: LanguageCode;
+
+    @IsOptional()
+    @IsString()
+    name?: string;
+
+    @ValidateNested({ each: true })
+    @Type(() => FacetTranslation)
+    translations: Array<FacetTranslation>;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => FacetValue)
+    values?: Array<FacetValue>;
+}
+
+export class FacetValue {
+    @IsEntityId()
+    id: ID;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
+    updatedAt: Date;
+
+    @IsString()
+    code: string;
+
+    @IsEntityId()
+    facetId: ID;
+
+    @IsOptional()
+    @Type(() => Facet)
+    facet?: Facet;
+
+    @IsOptional()
+    @IsEnum(LanguageCode)
+    languageCode?: LanguageCode;
+
+    @IsOptional()
+    @IsString()
+    name?: string;
+
+    @ValidateNested({ each: true })
+    @Type(() => FacetValueTranslation)
+    translations: Array<FacetValueTranslation>;
+}
+
+export class FacetValueTranslation {
+    @IsEntityId()
+    id: ID;
+
+    @IsDate()
+    createdAt: Date;
+
+    @IsDate()
+    updatedAt: Date;
+
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
+
+    @IsString()
+    name: string;
 }
 
 export class Asset {
@@ -1187,8 +1301,9 @@ export abstract class OrderableAsset {
     @IsEntityId()
     assetId: ID;
 
+    @IsOptional()
     @Type(() => Asset)
-    asset: Asset;
+    asset?: Asset;
 
     @IsInt()
     position: number;
@@ -1197,6 +1312,13 @@ export abstract class OrderableAsset {
 export class JobPost {
     @IsEntityId()
     id: ID;
+
+    @IsEntityId()
+    customerId: ID;
+
+    @IsOptional()
+    @Type(() => Customer)
+    customer?: Customer;
 
     @IsDate()
     createdAt: Date;
@@ -1212,40 +1334,70 @@ export class JobPost {
     @IsDate()
     publishedAt: Date | null;
 
-    @IsEntityId()
-    customerId: ID;
+    @IsOptional()
+    @IsDate()
+    closedAt: Date | null;
 
-    @Type(() => Customer)
-    customer: Customer;
-
+    @IsOptional()
     @IsString()
-    title: string;
+    title: string | null;
 
+    @IsOptional()
     @IsString()
-    description: string;
+    description: string | null;
 
+    @IsOptional()
     @IsEnum(JobPostVisibility)
-    visibility: JobPostVisibility;
+    visibility: JobPostVisibility | null;
 
+    @IsOptional()
     @ValidateNested({ each: true })
     @Type(() => JobPostAsset)
-    assets: JobPostAsset[];
+    assets?: JobPostAsset[];
 
+    @IsOptional()
     @ValidateNested({ each: true })
     @Type(() => FacetValue)
-    facetValues: FacetValue[];
+    requiredSkills: FacetValue[];
 
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => FacetValue)
+    requiredCategory: FacetValue | null;
+
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => FacetValue)
+    requiredExperienceLevel: FacetValue | null;
+
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => FacetValue)
+    requiredJobDuration: FacetValue | null;
+
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => FacetValue)
+    requiredJobScope: FacetValue | null;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => FacetValue)
+    facetValues?: FacetValue[];
+
+    @IsOptional()
     @ValidateNested({ each: true })
     @Type(() => Collection)
-    collections: Collection[];
+    collections?: Collection[];
 }
 
 export class JobPostAsset extends OrderableAsset {
     @IsEntityId()
     assetId: ID;
 
+    @IsOptional()
     @Type(() => Asset)
-    asset: Asset;
+    asset?: Asset;
 
     @IsInt()
     position: number;
@@ -1253,8 +1405,9 @@ export class JobPostAsset extends OrderableAsset {
     @IsEntityId()
     jobPostId: ID;
 
+    @IsOptional()
     @Type(() => JobPost)
-    jobPost: JobPost;
+    jobPost?: JobPost;
 }
 
 export class CollectionBreadcrumb {
@@ -1274,13 +1427,14 @@ export class Collection {
 
     @ValidateNested({ each: true })
     @Type(() => Asset)
-    assets: Array<CollectionAsset>;
+    assets?: Array<CollectionAsset>;
 
     @IsOptional()
     @ValidateNested({ each: true })
     @Type(() => CollectionBreadcrumb)
     breadcrumbs?: Array<CollectionBreadcrumb>;
 
+    @IsOptional()
     @ValidateNested({ each: true })
     @Type(() => Collection)
     children?: Array<Collection>;
@@ -1314,8 +1468,9 @@ export class Collection {
     @IsEnum(LanguageCode)
     languageCode?: LanguageCode;
 
+    @IsOptional()
     @IsString()
-    name: string;
+    name?: string;
 
     @IsOptional()
     @ValidateNested()
@@ -1381,102 +1536,6 @@ export class CollectionTranslation {
     slug: string;
 }
 
-export class Facet {
-    @IsEntityId()
-    id: ID;
-
-    @IsDate()
-    createdAt: Date;
-
-    @IsDate()
-    updatedAt: Date;
-
-    @IsEnum(LanguageCode)
-    languageCode: LanguageCode;
-
-    @IsString()
-    code: string;
-
-    @IsBoolean()
-    @Type(() => Boolean)
-    isPrivate: boolean;
-
-    @IsString()
-    name: string;
-
-    @ValidateNested({ each: true })
-    @Type(() => FacetTranslation)
-    translations: Array<FacetTranslation>;
-
-    @ValidateNested({ each: true })
-    @Type(() => FacetValue)
-    values: Array<FacetValue>;
-}
-
-export class FacetTranslation {
-    @IsEntityId()
-    id: ID;
-
-    @IsDate()
-    createdAt: Date;
-
-    @IsDate()
-    updatedAt: Date;
-
-    @IsString()
-    name: string;
-
-    @IsEnum(LanguageCode)
-    languageCode: LanguageCode;
-}
-
-export class FacetValue {
-    @IsEntityId()
-    id: ID;
-
-    @IsDate()
-    createdAt: Date;
-
-    @IsDate()
-    updatedAt: Date;
-
-    @IsString()
-    code: string;
-
-    @IsEntityId()
-    facetId: ID;
-
-    @Type(() => Facet)
-    facet: Facet;
-
-    @IsEnum(LanguageCode)
-    languageCode: LanguageCode;
-
-    @IsString()
-    name: string;
-
-    @ValidateNested({ each: true })
-    @Type(() => FacetValueTranslation)
-    translations: Array<FacetValueTranslation>;
-}
-
-export class FacetValueTranslation {
-    @IsEntityId()
-    id: ID;
-
-    @IsDate()
-    createdAt: Date;
-
-    @IsDate()
-    updatedAt: Date;
-
-    @IsEnum(LanguageCode)
-    languageCode: LanguageCode;
-
-    @IsString()
-    name: string;
-}
-
 export class CreateAdministratorInput {
     @IsString()
     @IsNotEmpty()
@@ -1494,6 +1553,7 @@ export class CreateAdministratorInput {
     @IsString()
     @IsNotEmpty()
     password: string;
+
     @IsEntityId({ each: true })
     roleIds: Array<ID>;
 }
@@ -2562,6 +2622,18 @@ export class JobPostSortParameter {
     id?: SortOrder;
 
     @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    closedAt?: DateOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    publishedAt?: DateOperators;
+
+    @IsOptional()
     @IsEnum(SortOrder)
     createdAt?: SortOrder;
 
@@ -2622,14 +2694,26 @@ export class JobPostFilterParameter {
     @IsOptional()
     @IsObject()
     @ValidateNested()
+    @Type(() => StringOperators)
+    status?: StringOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
     @Type(() => DateOperators)
-    createdAt?: DateOperators;
+    closedAt?: DateOperators;
 
     @IsOptional()
     @IsObject()
     @ValidateNested()
     @Type(() => DateOperators)
     publishedAt?: DateOperators;
+
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DateOperators)
+    createdAt?: DateOperators;
 
     @IsOptional()
     @IsObject()

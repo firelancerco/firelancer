@@ -29,7 +29,7 @@ export class FacetValue extends FirelancerEntity {
     facetId: ID;
 
     @Index()
-    @ManyToOne(() => Facet, group => group.values, { eager: true, onDelete: 'CASCADE' })
+    @ManyToOne(() => Facet, group => group.values, { onDelete: 'CASCADE' })
     facet: Facet;
 
     @ManyToMany(() => JobPost, jobPost => jobPost.facetValues)
