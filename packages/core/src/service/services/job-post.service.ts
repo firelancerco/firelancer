@@ -153,6 +153,15 @@ export class JobPostService {
         return assertFound(this.findOne(ctx, updatedJobPost.id));
     }
 
+    async softDelete(ctx: RequestContext, jobPostId: ID) {
+        const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, jobPostId, {
+            relations: ['facetValues'],
+        });
+        jobPost.deletedAt = new Date();
+        await this.connection.getRepository(ctx, JobPost).save(jobPost, { reload: false });
+        await this.eventBus.publish(new JobPostEvent(ctx, jobPost, 'deleted', jobPostId));
+    }
+
     private async validatePublishable(ctx: RequestContext, jobPost: JobPost): Promise<void> {
         await this.entityHydrator.hydrate(ctx, jobPost, {
             relations: ['facetValues' as never, 'facetValues.facet' as never],

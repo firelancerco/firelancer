@@ -2622,16 +2622,12 @@ export class JobPostSortParameter {
     id?: SortOrder;
 
     @IsOptional()
-    @IsObject()
-    @ValidateNested()
-    @Type(() => DateOperators)
-    closedAt?: DateOperators;
+    @IsEnum(SortOrder)
+    closedAt?: SortOrder;
 
     @IsOptional()
-    @IsObject()
-    @ValidateNested()
-    @Type(() => DateOperators)
-    publishedAt?: DateOperators;
+    @IsEnum(SortOrder)
+    publishedAt?: SortOrder;
 
     @IsOptional()
     @IsEnum(SortOrder)
