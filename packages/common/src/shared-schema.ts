@@ -75,6 +75,15 @@ export enum JobPostVisibility {
     INVITE_ONLY = 'INVITE_ONLY',
 }
 
+export enum JobPostStatus {
+    /**  Job is saved but not published. */
+    DRAFT = 'DRAFT',
+    /** Job is published and open for proposals. */
+    ACTIVE = 'ACTIVE',
+    /** Job is closed and no longer accepting bids (may reopen later) */
+    CLOSED = 'CLOSED',
+}
+
 export enum AssetType {
     BINARY = 'BINARY',
     IMAGE = 'IMAGE',
@@ -89,8 +98,11 @@ export enum BalanceEntryType {
 }
 
 export enum BalanceEntryStatus {
+    /** The balance entry is pending settlement */
     PENDING = 'PENDING',
+    /** The balance entry has been settled */
     SETTLED = 'SETTLED',
+    /** The balance entry has been rejected */
     REJECTED = 'REJECTED',
 }
 
@@ -1002,6 +1014,14 @@ export class ConfigurableOperationDefinition {
 
 /* --------------- */
 
+export class Coordinate {
+    
+    x: number;
+
+    
+    y: number;
+}
+
 export class AuthenticationMethod {
     
     id: ID;
@@ -1096,12 +1116,106 @@ export class Customer {
     user?: User;
 }
 
-export class Coordinate {
+export class FacetTranslation {
     
-    x: number;
+    id: ID;
 
     
-    y: number;
+    createdAt: Date;
+
+    
+    updatedAt: Date;
+
+    
+    name: string;
+
+    
+    languageCode: LanguageCode;
+}
+
+export class Facet {
+    
+    id: ID;
+
+    
+    createdAt: Date;
+
+    
+    updatedAt: Date;
+
+    
+    code: string;
+
+    
+    
+    isPrivate: boolean;
+
+    
+    
+    languageCode?: LanguageCode;
+
+    
+    
+    name?: string;
+
+    
+    
+    translations: Array<FacetTranslation>;
+
+    
+    
+    
+    values?: Array<FacetValue>;
+}
+
+export class FacetValue {
+    
+    id: ID;
+
+    
+    createdAt: Date;
+
+    
+    updatedAt: Date;
+
+    
+    code: string;
+
+    
+    facetId: ID;
+
+    
+    
+    facet?: Facet;
+
+    
+    
+    languageCode?: LanguageCode;
+
+    
+    
+    name?: string;
+
+    
+    
+    translations: Array<FacetValueTranslation>;
+}
+
+export class FacetValueTranslation {
+    
+    id: ID;
+
+    
+    createdAt: Date;
+
+    
+    updatedAt: Date;
+
+    
+    languageCode: LanguageCode;
+
+    
+    name: string;
 }
 
 export class Asset {
@@ -1157,7 +1271,8 @@ export abstract class OrderableAsset {
     assetId: ID;
 
     
-    asset: Asset;
+    
+    asset?: Asset;
 
     
     position: number;
@@ -1166,6 +1281,13 @@ export abstract class OrderableAsset {
 export class JobPost {
     
     id: ID;
+
+    
+    customerId: ID;
+
+    
+    
+    customer?: Customer;
 
     
     createdAt: Date;
@@ -1182,31 +1304,60 @@ export class JobPost {
     publishedAt: Date | null;
 
     
-    customerId: ID;
-
     
-    customer: Customer;
-
-    
-    title: string;
-
-    
-    description: string;
-
-    
-    visibility: JobPostVisibility;
+    closedAt: Date | null;
 
     
     
-    assets: JobPostAsset[];
+    title: string | null;
 
     
     
-    facetValues: FacetValue[];
+    description: string | null;
 
     
     
-    collections: Collection[];
+    visibility: JobPostVisibility | null;
+
+    
+    
+    
+    assets?: JobPostAsset[];
+
+    
+    
+    
+    requiredSkills: FacetValue[];
+
+    
+    
+    
+    requiredCategory: FacetValue | null;
+
+    
+    
+    
+    requiredExperienceLevel: FacetValue | null;
+
+    
+    
+    
+    requiredJobDuration: FacetValue | null;
+
+    
+    
+    
+    requiredJobScope: FacetValue | null;
+
+    
+    
+    
+    facetValues?: FacetValue[];
+
+    
+    
+    
+    collections?: Collection[];
 }
 
 export class JobPostAsset extends OrderableAsset {
@@ -1214,7 +1365,8 @@ export class JobPostAsset extends OrderableAsset {
     assetId: ID;
 
     
-    asset: Asset;
+    
+    asset?: Asset;
 
     
     position: number;
@@ -1223,7 +1375,8 @@ export class JobPostAsset extends OrderableAsset {
     jobPostId: ID;
 
     
-    jobPost: JobPost;
+    
+    jobPost?: JobPost;
 }
 
 export class CollectionBreadcrumb {
@@ -1243,13 +1396,14 @@ export class Collection {
 
     
     
-    assets: Array<CollectionAsset>;
+    assets?: Array<CollectionAsset>;
 
     
     
     
     breadcrumbs?: Array<CollectionBreadcrumb>;
 
+    
     
     
     children?: Array<Collection>;
@@ -1284,7 +1438,8 @@ export class Collection {
     languageCode?: LanguageCode;
 
     
-    name: string;
+    
+    name?: string;
 
     
     
@@ -1350,102 +1505,6 @@ export class CollectionTranslation {
     slug: string;
 }
 
-export class Facet {
-    
-    id: ID;
-
-    
-    createdAt: Date;
-
-    
-    updatedAt: Date;
-
-    
-    languageCode: LanguageCode;
-
-    
-    code: string;
-
-    
-    
-    isPrivate: boolean;
-
-    
-    name: string;
-
-    
-    
-    translations: Array<FacetTranslation>;
-
-    
-    
-    values: Array<FacetValue>;
-}
-
-export class FacetTranslation {
-    
-    id: ID;
-
-    
-    createdAt: Date;
-
-    
-    updatedAt: Date;
-
-    
-    name: string;
-
-    
-    languageCode: LanguageCode;
-}
-
-export class FacetValue {
-    
-    id: ID;
-
-    
-    createdAt: Date;
-
-    
-    updatedAt: Date;
-
-    
-    code: string;
-
-    
-    facetId: ID;
-
-    
-    facet: Facet;
-
-    
-    languageCode: LanguageCode;
-
-    
-    name: string;
-
-    
-    
-    translations: Array<FacetValueTranslation>;
-}
-
-export class FacetValueTranslation {
-    
-    id: ID;
-
-    
-    createdAt: Date;
-
-    
-    updatedAt: Date;
-
-    
-    languageCode: LanguageCode;
-
-    
-    name: string;
-}
-
 export class CreateAdministratorInput {
     
     
@@ -1463,6 +1522,7 @@ export class CreateAdministratorInput {
     
     
     password: string;
+
     
     roleIds: Array<ID>;
 }
@@ -2532,6 +2592,14 @@ export class JobPostSortParameter {
 
     
     
+    closedAt?: SortOrder;
+
+    
+    
+    publishedAt?: SortOrder;
+
+    
+    
     createdAt?: SortOrder;
 
     
@@ -2592,13 +2660,25 @@ export class JobPostFilterParameter {
     
     
     
-    createdAt?: DateOperators;
+    status?: StringOperators;
+
+    
+    
+    
+    
+    closedAt?: DateOperators;
 
     
     
     
     
     publishedAt?: DateOperators;
+
+    
+    
+    
+    
+    createdAt?: DateOperators;
 
     
     
