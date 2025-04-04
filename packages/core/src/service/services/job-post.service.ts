@@ -29,6 +29,7 @@ import { patchEntity } from '../helpers/utils/patch-entity';
 import { AssetService } from './asset.service';
 import { FacetValueService } from './facet-value.service';
 import { EntityHydrator } from '../../service/helpers/entity-hydrator/entity-hydrator.service';
+import { TranslatorService } from '../../service/helpers/translator/translator.service';
 
 @Injectable()
 export class JobPostService {
@@ -41,6 +42,7 @@ export class JobPostService {
         private eventBus: EventBus,
         private listQueryBuilder: ListQueryBuilder,
         private entityHydrator: EntityHydrator,
+        private translator: TranslatorService,
     ) {}
 
     async findAll(
@@ -58,7 +60,9 @@ export class JobPostService {
             })
             .getManyAndCount()
             .then(async ([items, totalItems]) => ({
-                items,
+                items: items.map(item =>
+                    this.translator.translate(item as any, ctx, ['facetValues', ['facetValues', 'facet']]),
+                ),
                 totalItems,
             }));
     }
@@ -84,7 +88,7 @@ export class JobPostService {
                     deletedAt: IsNull(),
                 },
             })
-            .then(result => result ?? undefined);
+            .then(result => this.translator.translate(result as any, ctx, ['facetValues', ['facetValues', 'facet']]));
     }
 
     /**
@@ -113,7 +117,12 @@ export class JobPostService {
         }
 
         return qb.getManyAndCount().then(([items, totalItems]) => {
-            return { items, totalItems };
+            return {
+                items: items.map(item =>
+                    this.translator.translate(item as any, ctx, ['facetValues', ['facetValues', 'facet']]),
+                ),
+                totalItems,
+            };
         });
     }
 

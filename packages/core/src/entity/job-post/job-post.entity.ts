@@ -57,7 +57,8 @@ export class JobPost extends FirelancerEntity implements Collectable, SoftDeleta
     @Money({ nullable: true })
     budget: number | null;
 
-    @Column('varchar') state: JobPostState;
+    // @Column('varchar')
+    state: JobPostState;
 
     @Calculated({
         expression: `
