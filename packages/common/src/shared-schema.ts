@@ -1962,8 +1962,23 @@ export class CreateJobPostInput {
     
     
     
+    requiredSkillIds?: Array<ID>;
+
     
-    facetValueIds?: Array<ID>;
+    
+    requiredCategoryId?: ID;
+
+    
+    
+    requiredExperienceLevelId?: ID;
+
+    
+    
+    requiredJobDurationId?: ID;
+
+    
+    
+    requiredJobScopeId?: ID;
 }
 
 export class UpdateJobPostInput {
@@ -2003,8 +2018,23 @@ export class UpdateJobPostInput {
     
     
     
+    requiredSkillIds?: Array<ID>;
+
     
-    facetValueIds?: Array<ID>;
+    
+    requiredCategoryId?: ID;
+
+    
+    
+    requiredExperienceLevelId?: ID;
+
+    
+    
+    requiredJobDurationId?: ID;
+
+    
+    
+    requiredJobScopeId?: ID;
 }
 
 export class PublishJobPostInput {
@@ -2039,8 +2069,23 @@ export class MutationCreateJobPostArgs {
     
     
     
+    requiredSkillIds?: Array<ID>;
+
     
-    facetValueIds?: Array<ID>;
+    
+    requiredCategoryId?: ID;
+
+    
+    
+    requiredExperienceLevelId?: ID;
+
+    
+    
+    requiredJobDurationId?: ID;
+
+    
+    
+    requiredJobScopeId?: ID;
 
     
     
@@ -2088,8 +2133,23 @@ export class MutationUpdateJobPostArgs {
     
     
     
+    requiredSkillIds?: Array<ID>;
+
     
-    facetValueIds?: Array<ID>;
+    
+    requiredCategoryId?: ID;
+
+    
+    
+    requiredExperienceLevelId?: ID;
+
+    
+    
+    requiredJobDurationId?: ID;
+
+    
+    
+    requiredJobScopeId?: ID;
 }
 
 export class MutationPublishJobPostArgs {

@@ -25,7 +25,7 @@ export const DURATION_FACET_CODE = '__duration_facet__';
 export const EXPERIENCE_LEVEL_FACET_CODE = '__experience_level_facet__';
 export const SCOPE_FACET_CODE = '__scope_facet__';
 
-export const PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS = 1;
+export const PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS = 3;
 export const PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS = 15;
 export const PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET = 5;
 

@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+    MAX_ASSETS_ARRAY_SIZE,
+    MIN_ASSETS_ARRAY_SIZE,
+    PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
+    PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
+} from '@firelancerco/common/lib/shared-constants';
 import { Buffer } from 'buffer';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
     ArrayMaxSize,
     ArrayMinSize,
@@ -24,13 +30,8 @@ import {
     MinLength,
     ValidateNested,
 } from 'class-validator';
+
 import { IsEntityId } from './entity-id-validator';
-import {
-    MAX_ASSETS_ARRAY_SIZE,
-    MAX_FACETS_ARRAY_SIZE,
-    MIN_ASSETS_ARRAY_SIZE,
-    MIN_FACETS_ARRAY_SIZE,
-} from '@firelancerco/common/lib/shared-constants';
 
 export type ID = string | number;
 
@@ -1992,11 +1993,26 @@ export class CreateJobPostInput {
     assetIds?: Array<ID>;
 
     @IsOptional()
-    @IsArray()
-    @ArrayMaxSize(MAX_FACETS_ARRAY_SIZE)
-    @ArrayMinSize(MIN_FACETS_ARRAY_SIZE)
+    @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
+    @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
     @IsEntityId({ each: true })
-    facetValueIds?: Array<ID>;
+    requiredSkillIds?: Array<ID>;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredCategoryId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredExperienceLevelId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobDurationId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobScopeId?: ID;
 }
 
 export class UpdateJobPostInput {
@@ -2033,11 +2049,26 @@ export class UpdateJobPostInput {
     assetIds?: Array<ID>;
 
     @IsOptional()
-    @IsArray()
-    @ArrayMaxSize(MAX_FACETS_ARRAY_SIZE)
-    @ArrayMinSize(MIN_FACETS_ARRAY_SIZE)
+    @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
+    @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
     @IsEntityId({ each: true })
-    facetValueIds?: Array<ID>;
+    requiredSkillIds?: Array<ID>;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredCategoryId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredExperienceLevelId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobDurationId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobScopeId?: ID;
 }
 
 export class PublishJobPostInput {
@@ -2069,11 +2100,26 @@ export class MutationCreateJobPostArgs {
     budget?: number;
 
     @IsOptional()
-    @IsArray()
-    @ArrayMaxSize(MAX_FACETS_ARRAY_SIZE)
-    @ArrayMinSize(MIN_FACETS_ARRAY_SIZE)
+    @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
+    @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
     @IsEntityId({ each: true })
-    facetValueIds?: Array<ID>;
+    requiredSkillIds?: Array<ID>;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredCategoryId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredExperienceLevelId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobDurationId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobScopeId?: ID;
 
     @IsOptional()
     @IsArray()
@@ -2118,11 +2164,26 @@ export class MutationUpdateJobPostArgs {
     assetIds?: Array<ID>;
 
     @IsOptional()
-    @IsArray()
-    @ArrayMaxSize(MAX_FACETS_ARRAY_SIZE)
-    @ArrayMinSize(MIN_FACETS_ARRAY_SIZE)
+    @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
+    @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
     @IsEntityId({ each: true })
-    facetValueIds?: Array<ID>;
+    requiredSkillIds?: Array<ID>;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredCategoryId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredExperienceLevelId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobDurationId?: ID;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobScopeId?: ID;
 }
 
 export class MutationPublishJobPostArgs {

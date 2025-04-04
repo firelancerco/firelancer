@@ -5,6 +5,7 @@ import {
     PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
     PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET,
     PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
+    SCOPE_FACET_CODE,
     SKILL_FACET_CODE,
 } from '@firelancerco/common/lib/shared-constants';
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
@@ -13,7 +14,7 @@ import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
 
 import { RelationPaths } from '../../api';
-import { ListQueryOptions, RequestContext, UserInputException } from '../../common';
+import { InternalServerException, ListQueryOptions, RequestContext, UserInputException } from '../../common';
 import {
     CreateJobPostInput,
     ID,
@@ -30,6 +31,14 @@ import { AssetService } from './asset.service';
 import { FacetValueService } from './facet-value.service';
 import { EntityHydrator } from '../../service/helpers/entity-hydrator/entity-hydrator.service';
 import { TranslatorService } from '../../service/helpers/translator/translator.service';
+
+export interface JobPostFacetValuesInput {
+    requiredSkillIds?: ID[] | null;
+    requiredCategoryId?: ID | null;
+    requiredExperienceLevelId?: ID | null;
+    requiredJobDurationId?: ID | null;
+    requiredJobScopeId?: ID | null;
+}
 
 @Injectable()
 export class JobPostService {
@@ -127,39 +136,37 @@ export class JobPostService {
     }
 
     async create(ctx: RequestContext, input: CreateJobPostInput): Promise<JobPost> {
-        const { facetValueIds, assetIds, ...rest } = input;
+        const { assetIds, ...rest } = input;
         const jobPost = new JobPost(rest);
-        if (facetValueIds) {
-            jobPost.facetValues = await this.facetValueService.findByIds(ctx, unique(facetValueIds));
-        }
+
+        await this.updateJobPostFacetValues(ctx, jobPost, {
+            requiredSkillIds: input.requiredSkillIds,
+            requiredCategoryId: input.requiredCategoryId,
+            requiredExperienceLevelId: input.requiredExperienceLevelId,
+            requiredJobDurationId: input.requiredJobDurationId,
+            requiredJobScopeId: input.requiredJobScopeId,
+        });
+
         const createdJobPost = await this.connection.getRepository(ctx, JobPost).save(jobPost);
         await this.assetService.updateEntityAssets(ctx, createdJobPost, { assetIds });
         await this.eventBus.publish(new JobPostEvent(ctx, createdJobPost, 'created', input));
         return assertFound(this.findOne(ctx, jobPost.id));
     }
 
-    async publish(ctx: RequestContext, input: PublishJobPostInput): Promise<JobPost> {
-        const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
-            relations: ['facetValues'],
-        });
-
-        await this.validatePublishable(ctx, jobPost);
-
-        const updatedJobPost = patchEntity(jobPost, { publishedAt: new Date() });
-        await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
-        await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'published', input));
-        return assertFound(this.findOne(ctx, updatedJobPost.id));
-    }
-
     async update(ctx: RequestContext, input: UpdateJobPostInput): Promise<JobPost> {
         const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
-            relations: ['facetValues'],
+            relations: ['facetValues', 'facetValues.facet'],
         });
 
         const updatedJobPost = patchEntity(jobPost, input);
-        if (input.facetValueIds) {
-            updatedJobPost.facetValues = await this.facetValueService.findByIds(ctx, unique(input.facetValueIds));
-        }
+
+        await this.updateJobPostFacetValues(ctx, updatedJobPost, {
+            requiredSkillIds: input.requiredSkillIds,
+            requiredCategoryId: input.requiredCategoryId,
+            requiredExperienceLevelId: input.requiredExperienceLevelId,
+            requiredJobDurationId: input.requiredJobDurationId,
+            requiredJobScopeId: input.requiredJobScopeId,
+        });
         await this.assetService.updateFeaturedAsset(ctx, jobPost, input);
         await this.assetService.updateEntityAssets(ctx, jobPost, input);
 
@@ -183,18 +190,32 @@ export class JobPostService {
         await this.eventBus.publish(new JobPostEvent(ctx, jobPost, 'deleted', jobPostId));
     }
 
-    private async validatePublishable(ctx: RequestContext, jobPost: JobPost): Promise<void> {
-        await this.entityHydrator.hydrate(ctx, jobPost, {
-            relations: ['facetValues' as never, 'facetValues.facet' as never],
+    async publish(ctx: RequestContext, input: PublishJobPostInput): Promise<JobPost> {
+        const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
+            relations: ['facetValues'],
         });
 
-        const requiredFields: Array<{ field: keyof JobPost; error: string }> = [
+        await this.checkRequiredFieldsDefined(ctx, jobPost);
+
+        const updatedJobPost = patchEntity(jobPost, { publishedAt: new Date() });
+        await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
+        await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'published', input));
+        return assertFound(this.findOne(ctx, updatedJobPost.id));
+    }
+
+    private async checkRequiredFieldsDefined(ctx: RequestContext, jobPost: JobPost): Promise<void> {
+        await this.entityHydrator.hydrate(ctx, jobPost, {
+            relations: ['facetValues', 'facetValues.facet'] as any,
+        });
+
+        // Check basic required fields
+        const requiredFields = [
             { field: 'title', error: 'error.job-post-title-required' },
             { field: 'description', error: 'error.job-post-description-required' },
             { field: 'visibility', error: 'error.job-post-visibility-required' },
             { field: 'budget', error: 'error.job-post-budget-required' },
             { field: 'currencyCode', error: 'error.job-post-currencyCode-required' },
-        ];
+        ] as const;
 
         for (const { field, error } of requiredFields) {
             if (!jobPost[field]) {
@@ -202,15 +223,17 @@ export class JobPostService {
             }
         }
 
+        // Check budget constraints
         if (jobPost.budget && jobPost.budget < PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET) {
             throw new UserInputException('error.job-post-budget-too-low', {
                 min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET,
             });
         }
 
+        const skillsCount = jobPost.requiredSkills.length;
         if (
-            jobPost.requiredSkills.length < PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS ||
-            jobPost.requiredSkills.length > PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS
+            skillsCount < PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS ||
+            skillsCount > PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS
         ) {
             throw new UserInputException('error.invalid-skills-count', {
                 min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
@@ -218,20 +241,127 @@ export class JobPostService {
             });
         }
 
-        if (!jobPost.requiredCategory) {
-            throw new UserInputException('error.invalid-category-required');
+        // Check required facet values
+        const requiredFacets = [
+            { value: jobPost.requiredCategory, error: 'error.invalid-category-required' },
+            { value: jobPost.requiredExperienceLevel, error: 'error.invalid-experience-level-required' },
+            { value: jobPost.requiredJobDuration, error: 'error.invalid-job-duration-required' },
+            { value: jobPost.requiredJobScope, error: 'error.invalid-job-scope-required' },
+        ] as const;
+
+        for (const { value, error } of requiredFacets) {
+            if (!value) {
+                throw new UserInputException(error);
+            }
+        }
+    }
+
+    private async updateJobPostFacetValues(
+        ctx: RequestContext,
+        jobPost: JobPost,
+        input: JobPostFacetValuesInput,
+    ): Promise<void> {
+        await this.updateFacetValuesForType({
+            ctx,
+            jobPost,
+            facetCode: SKILL_FACET_CODE,
+            newFacetValueIds: input.requiredSkillIds,
+            validateConstraints: (newFacetValues: FacetValue[]) => {
+                if (
+                    newFacetValues.length < PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS ||
+                    newFacetValues.length > PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS
+                ) {
+                    throw new UserInputException('error.invalid-skill-count', {
+                        min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
+                        max: PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
+                    });
+                }
+            },
+        });
+
+        await this.updateFacetValuesForType({
+            ctx,
+            jobPost,
+            facetCode: CATEGORY_FACET_CODE,
+            newFacetValueIds: input.requiredCategoryId ? [input.requiredCategoryId] : null,
+            validateConstraints: (newFacetValues: FacetValue[]) => {
+                if (newFacetValues.length !== 1) {
+                    throw new UserInputException('error.invalid-category-count');
+                }
+            },
+        });
+
+        await this.updateFacetValuesForType({
+            ctx,
+            jobPost,
+            facetCode: EXPERIENCE_LEVEL_FACET_CODE,
+            newFacetValueIds: input.requiredExperienceLevelId ? [input.requiredExperienceLevelId] : null,
+            validateConstraints: (newFacetValues: FacetValue[]) => {
+                if (newFacetValues.length !== 1) {
+                    throw new UserInputException('error.invalid-experience-level-count');
+                }
+            },
+        });
+
+        await this.updateFacetValuesForType({
+            ctx,
+            jobPost,
+            facetCode: DURATION_FACET_CODE,
+            newFacetValueIds: input.requiredJobDurationId ? [input.requiredJobDurationId] : null,
+            validateConstraints: (newFacetValues: FacetValue[]) => {
+                if (newFacetValues.length !== 1) {
+                    throw new UserInputException('error.invalid-job-duration-count');
+                }
+            },
+        });
+
+        await this.updateFacetValuesForType({
+            ctx,
+            jobPost,
+            facetCode: SCOPE_FACET_CODE,
+            newFacetValueIds: input.requiredJobScopeId ? [input.requiredJobScopeId] : null,
+            validateConstraints: (newFacetValues: FacetValue[]) => {
+                if (newFacetValues.length !== 1) {
+                    throw new UserInputException('error.invalid-job-scope-count');
+                }
+            },
+        });
+    }
+
+    private async updateFacetValuesForType(options: {
+        ctx: RequestContext;
+        jobPost: JobPost;
+        facetCode: string;
+        newFacetValueIds: ID[] | null | undefined;
+        validateConstraints: (newFacetValues: FacetValue[]) => any;
+    }): Promise<void> {
+        const { ctx, jobPost, facetCode, newFacetValueIds, validateConstraints } = options;
+
+        if (newFacetValueIds === undefined) {
+            return; // No update needed
         }
 
-        if (!jobPost.requiredExperienceLevel) {
-            throw new UserInputException('error.invalid-experience-level-required');
+        if (!jobPost.facetValues) {
+            jobPost.facetValues = [];
         }
 
-        if (!jobPost.requiredJobDuration) {
-            throw new UserInputException('error.invalid-job-duration-required');
-        }
+        // Remove all existing facet values of this type first
+        jobPost.facetValues = jobPost.facetValues.filter(fv => fv.facet?.code !== facetCode);
 
-        if (!jobPost.requiredJobScope) {
-            throw new UserInputException('error.invalid-job-scope-required');
+        // If null is passed, we're done (all values removed)
+        if (newFacetValueIds === null) {
+            return;
         }
+        // Get the new facet values
+        const newFacetValues = await this.facetValueService.findByIds(ctx, unique(newFacetValueIds));
+        // Validate that all new facet values belong to the correct facet
+        const invalidFacetValues = newFacetValues.filter(fv => fv.facet?.code !== facetCode);
+        if (invalidFacetValues.length > 0) {
+            // TODO: Add a more specific error message
+            throw new UserInputException(`error.invalid-facet-values`, { facetCode });
+        }
+        validateConstraints(newFacetValues);
+        // Add the new facet values
+        jobPost.facetValues = [...jobPost.facetValues, ...newFacetValues];
     }
 }
