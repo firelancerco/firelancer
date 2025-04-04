@@ -5,7 +5,6 @@ import {
     PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
     PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
 } from '@firelancerco/common/lib/shared-constants';
-import { Buffer } from 'buffer';
 import { Type } from 'class-transformer';
 import {
     ArrayMaxSize,
@@ -28,6 +27,8 @@ import {
     MaxLength,
     Min,
     MinLength,
+    NotEquals,
+    ValidateIf,
     ValidateNested,
 } from 'class-validator';
 
@@ -827,6 +828,14 @@ export enum LogicalOperator {
     OR = 'OR',
 }
 
+export class PaginatedList<T> {
+    @IsArray()
+    items: Array<T>;
+
+    @IsNumber()
+    totalItems: number;
+}
+
 export class NumberRange {
     @IsNumber()
     @Type(() => Number)
@@ -1352,9 +1361,19 @@ export class JobPost {
     @IsString()
     description: string | null;
 
-    @IsOptional()
     @IsEnum(JobPostVisibility)
-    visibility: JobPostVisibility | null;
+    visibility: JobPostVisibility;
+
+    @IsOptional()
+    @IsNumber()
+    budget: number | null;
+
+    @IsOptional()
+    @IsString()
+    currencyCode: string | null;
+
+    @IsEnum(JobPostStatus)
+    status: JobPostStatus;
 
     @IsOptional()
     @ValidateNested({ each: true })
@@ -1399,16 +1418,6 @@ export class JobPost {
 
 export class JobPostAsset extends OrderableAsset {
     @IsEntityId()
-    assetId: ID;
-
-    @IsOptional()
-    @Type(() => Asset)
-    asset?: Asset;
-
-    @IsInt()
-    position: number;
-
-    @IsEntityId()
     jobPostId: ID;
 
     @IsOptional()
@@ -1432,7 +1441,7 @@ export class Collection {
     id: ID;
 
     @ValidateNested({ each: true })
-    @Type(() => Asset)
+    @Type(() => CollectionAsset)
     assets?: Array<CollectionAsset>;
 
     @IsOptional()
@@ -1503,15 +1512,6 @@ export class Collection {
 }
 
 export class CollectionAsset extends OrderableAsset {
-    @IsEntityId()
-    assetId: ID;
-
-    @Type(() => Asset)
-    asset: Asset;
-
-    @IsInt()
-    position: number;
-
     @IsEntityId()
     collectionId: ID;
 
@@ -1912,8 +1912,7 @@ export class File {
     @IsDefined()
     @IsNotEmptyObject()
     @IsObject()
-    @Type(() => Buffer)
-    buffer: Buffer;
+    buffer: any;
 
     @IsNumber()
     @Type(() => Number)
@@ -1971,7 +1970,8 @@ export class CreateJobPostInput {
     @IsString()
     description?: string;
 
-    @IsOptional()
+    @NotEquals(null)
+    @ValidateIf((object, value) => value !== undefined)
     @IsEnum(JobPostVisibility)
     visibility?: JobPostVisibility;
 
@@ -2027,7 +2027,8 @@ export class UpdateJobPostInput {
     @IsString()
     description?: string;
 
-    @IsOptional()
+    @NotEquals(null)
+    @ValidateIf((object, value) => value !== undefined)
     @IsEnum(JobPostVisibility)
     visibility?: JobPostVisibility;
 
@@ -2084,7 +2085,8 @@ export class MutationCreateJobPostArgs {
     @IsString()
     description?: string;
 
-    @IsOptional()
+    @NotEquals(null)
+    @ValidateIf((object, value) => value !== undefined)
     @IsEnum(JobPostVisibility)
     visibility?: JobPostVisibility;
 
@@ -2141,7 +2143,8 @@ export class MutationUpdateJobPostArgs {
     @IsString()
     description?: string;
 
-    @IsOptional()
+    @NotEquals(null)
+    @ValidateIf((object, value) => value !== undefined)
     @IsEnum(JobPostVisibility)
     visibility?: JobPostVisibility;
 

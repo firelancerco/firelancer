@@ -13,7 +13,6 @@ export function filterToQueryString(filter: Record<string, any>): string {
             // Handle nested objects like sort and filter
             for (const [nestedKey, nestedValue] of Object.entries(value)) {
                 if (typeof nestedValue === 'object' && !Array.isArray(nestedValue) && nestedValue !== null) {
-                    // Handle deeply nested objects like filter[visibility][eq]
                     for (const [deepKey, deepValue] of Object.entries(nestedValue)) {
                         params.append(`${key}[${nestedKey}][${deepKey}]`, String(deepValue));
                     }

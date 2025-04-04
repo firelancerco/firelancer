@@ -793,6 +793,14 @@ export enum LogicalOperator {
     OR = 'OR',
 }
 
+export class PaginatedList<T> {
+    
+    items: Array<T>;
+
+    
+    totalItems: number;
+}
+
 export class NumberRange {
     
     
@@ -1319,8 +1327,18 @@ export class JobPost {
     description: string | null;
 
     
+    visibility: JobPostVisibility;
+
     
-    visibility: JobPostVisibility | null;
+    
+    budget: number | null;
+
+    
+    
+    currencyCode: string | null;
+
+    
+    status: JobPostStatus;
 
     
     
@@ -1364,16 +1382,6 @@ export class JobPost {
 }
 
 export class JobPostAsset extends OrderableAsset {
-    
-    assetId: ID;
-
-    
-    
-    asset?: Asset;
-
-    
-    position: number;
-
     
     jobPostId: ID;
 
@@ -1469,15 +1477,6 @@ export class Collection {
 }
 
 export class CollectionAsset extends OrderableAsset {
-    
-    assetId: ID;
-
-    
-    asset: Asset;
-
-    
-    position: number;
-
     
     collectionId: ID;
 
@@ -1878,8 +1877,7 @@ export class File {
     
     
     
-    
-    buffer: Buffer;
+    buffer: any;
 
     
     
@@ -1939,6 +1937,7 @@ export class CreateJobPostInput {
 
     
     
+    
     visibility?: JobPostVisibility;
 
     
@@ -1993,6 +1992,7 @@ export class UpdateJobPostInput {
     
     description?: string;
 
+    
     
     
     visibility?: JobPostVisibility;
@@ -2052,6 +2052,7 @@ export class MutationCreateJobPostArgs {
 
     
     
+    
     visibility?: JobPostVisibility;
 
     
@@ -2107,6 +2108,7 @@ export class MutationUpdateJobPostArgs {
     
     description?: string;
 
+    
     
     
     visibility?: JobPostVisibility;

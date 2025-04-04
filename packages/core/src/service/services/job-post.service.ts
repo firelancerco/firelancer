@@ -19,6 +19,7 @@ import {
     CreateJobPostInput,
     ID,
     JobPostStatus,
+    JobPostVisibility,
     PublishJobPostInput,
     UpdateJobPostInput,
 } from '../../common/shared-schema';
@@ -97,7 +98,11 @@ export class JobPostService {
                     deletedAt: IsNull(),
                 },
             })
-            .then(result => this.translator.translate(result as any, ctx, ['facetValues', ['facetValues', 'facet']]));
+            .then(result =>
+                result
+                    ? this.translator.translate(result as any, ctx, ['facetValues', ['facetValues', 'facet']])
+                    : undefined,
+            );
     }
 
     /**
@@ -117,8 +122,8 @@ export class JobPostService {
             .andWhere('jobpost.deletedAt IS NULL')
             .andWhere('collection.id = :collectionId', { collectionId });
 
-        if (options?.filter?.visibility?.eq === 'PUBLIC') {
-            qb.andWhere('jobpost.visibility = :visibility', { visibility: 'PUBLIC' });
+        if (options?.filter?.visibility?.eq === JobPostVisibility.PUBLIC) {
+            qb.andWhere('jobpost.visibility = :visibility', { visibility: JobPostVisibility.PUBLIC });
         }
 
         if (options?.filter?.publishedAt?.isNull === false) {
@@ -154,25 +159,32 @@ export class JobPostService {
     }
 
     async update(ctx: RequestContext, input: UpdateJobPostInput): Promise<JobPost> {
-        const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
-            relations: ['facetValues', 'facetValues.facet'],
-        });
+        try {
+            const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
+                relations: ['facetValues', 'facetValues.facet'],
+            });
 
-        const updatedJobPost = patchEntity(jobPost, input);
+            console.log({ jobPost });
 
-        await this.updateJobPostFacetValues(ctx, updatedJobPost, {
-            requiredSkillIds: input.requiredSkillIds,
-            requiredCategoryId: input.requiredCategoryId,
-            requiredExperienceLevelId: input.requiredExperienceLevelId,
-            requiredJobDurationId: input.requiredJobDurationId,
-            requiredJobScopeId: input.requiredJobScopeId,
-        });
-        await this.assetService.updateFeaturedAsset(ctx, jobPost, input);
-        await this.assetService.updateEntityAssets(ctx, jobPost, input);
+            const updatedJobPost = patchEntity(jobPost, input);
 
-        await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
-        await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'updated', input));
-        return assertFound(this.findOne(ctx, updatedJobPost.id));
+            await this.updateJobPostFacetValues(ctx, updatedJobPost, {
+                requiredSkillIds: input.requiredSkillIds,
+                requiredCategoryId: input.requiredCategoryId,
+                requiredExperienceLevelId: input.requiredExperienceLevelId,
+                requiredJobDurationId: input.requiredJobDurationId,
+                requiredJobScopeId: input.requiredJobScopeId,
+            });
+            await this.assetService.updateFeaturedAsset(ctx, jobPost, input);
+            await this.assetService.updateEntityAssets(ctx, jobPost, input);
+
+            await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
+            await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'updated', input));
+            return assertFound(this.findOne(ctx, updatedJobPost.id));
+        } catch (error) {
+            console.log({ error });
+            throw error;
+        }
     }
 
     async softDelete(ctx: RequestContext, jobPostId: ID) {
@@ -212,7 +224,6 @@ export class JobPostService {
         const requiredFields = [
             { field: 'title', error: 'error.job-post-title-required' },
             { field: 'description', error: 'error.job-post-description-required' },
-            { field: 'visibility', error: 'error.job-post-visibility-required' },
             { field: 'budget', error: 'error.job-post-budget-required' },
             { field: 'currencyCode', error: 'error.job-post-currencyCode-required' },
         ] as const;
@@ -261,6 +272,11 @@ export class JobPostService {
         jobPost: JobPost,
         input: JobPostFacetValuesInput,
     ): Promise<void> {
+        console.log({ jobPost });
+        if (!jobPost.facetValues) {
+            jobPost.facetValues = [];
+        }
+
         await this.updateFacetValuesForType({
             ctx,
             jobPost,

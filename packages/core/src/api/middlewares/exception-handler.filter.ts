@@ -13,7 +13,7 @@ export class ExceptionHandlerFilter implements ExceptionFilter {
     ) {}
 
     catch(exception: Error, host: ArgumentsHost): void {
-        Logger.error(JSON.stringify(exception));
+        console.error(exception);
         const { req, res } = parseContext(host);
 
         for (const handler of this.configService.systemOptions.errorHandlers) {

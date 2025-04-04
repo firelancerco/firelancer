@@ -48,8 +48,8 @@ export class JobPost extends FirelancerEntity implements Collectable, SoftDeleta
     @Column({ type: 'varchar', nullable: true })
     description: string | null;
 
-    @Column({ type: 'varchar', nullable: true })
-    visibility: JobPostVisibility | null;
+    @Column({ type: 'varchar', default: JobPostVisibility.PUBLIC })
+    visibility: JobPostVisibility;
 
     @Column({ type: 'varchar', nullable: true })
     currencyCode: CurrencyCode | null;
