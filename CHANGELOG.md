@@ -1,3 +1,18 @@
+## <small>1.1.9 (2025-04-04)</small>
+
+
+#### Features
+
+*
+    **core**
+update job post input schema to include required fields and adjust skill constraints; refactor job post service to handle new input structure([e4ef8f6](https://github.com/firelancerco/firelancer    /commit/e4ef8f6))*
+    **core**
+update shared-schema to enhance user and customer models; remove title field and add validation for email and phone number([eea0d84](https://github.com/firelancerco/firelancer    /commit/eea0d84))
+#### Fixes
+
+*
+    **core**
+reorder exports in cache index to ensure proper module resolution([b707ee9](https://github.com/firelancerco/firelancer    /commit/b707ee9))
 ## <small>1.1.8 (2025-04-03)</small>
 
 

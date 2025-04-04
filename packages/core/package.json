@@ -1,6 +1,6 @@
 {
     "name": "@firelancerco/core",
-    "version": "1.1.8",
+    "version": "1.1.9",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [
@@ -20,7 +20,7 @@
         "access": "restricted"
     },
     "dependencies": {
-        "@firelancerco/common": "^1.1.8",
+        "@firelancerco/common": "^1.1.9",
         "@nestjs/common": "^10.0.0",
         "@nestjs/core": "^10.0.0",
         "@nestjs/platform-express": "^10.0.0",
