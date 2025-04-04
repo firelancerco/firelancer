@@ -1964,11 +1964,11 @@ export class CreateJobPostInput {
 
     @IsOptional()
     @IsString()
-    title?: string;
+    title?: string | null;
 
     @IsOptional()
     @IsString()
-    description?: string;
+    description?: string | null;
 
     @NotEquals(null)
     @ValidateIf((object, value) => value !== undefined)
@@ -1977,42 +1977,42 @@ export class CreateJobPostInput {
 
     @IsOptional()
     @IsEnum(CurrencyCode)
-    currencyCode?: CurrencyCode;
+    currencyCode?: CurrencyCode | null;
 
     @IsOptional()
     @IsInt()
     @IsPositive()
     @Type(() => Number)
-    budget?: number;
+    budget?: number | null;
 
     @IsOptional()
     @IsArray()
     @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
     @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
-    assetIds?: Array<ID>;
+    assetIds?: Array<ID> | null;
 
     @IsOptional()
     @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
     @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
     @IsEntityId({ each: true })
-    requiredSkillIds?: Array<ID>;
+    requiredSkillIds?: Array<ID> | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredCategoryId?: ID;
+    requiredCategoryId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredExperienceLevelId?: ID;
+    requiredExperienceLevelId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredJobDurationId?: ID;
+    requiredJobDurationId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredJobScopeId?: ID;
+    requiredJobScopeId?: ID | null;
 }
 
 export class UpdateJobPostInput {
@@ -2021,11 +2021,11 @@ export class UpdateJobPostInput {
 
     @IsOptional()
     @IsString()
-    title?: string;
+    title?: string | null;
 
     @IsOptional()
     @IsString()
-    description?: string;
+    description?: string | null;
 
     @NotEquals(null)
     @ValidateIf((object, value) => value !== undefined)
@@ -2034,42 +2034,42 @@ export class UpdateJobPostInput {
 
     @IsOptional()
     @IsEnum(CurrencyCode)
-    currencyCode?: CurrencyCode;
+    currencyCode?: CurrencyCode | null;
 
     @IsInt()
     @IsPositive()
     @Min(5)
     @Type(() => Number)
-    budget?: number;
+    budget?: number | null;
 
     @IsOptional()
     @IsArray()
     @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
     @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
-    assetIds?: Array<ID>;
+    assetIds?: Array<ID> | null;
 
     @IsOptional()
     @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
     @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
     @IsEntityId({ each: true })
-    requiredSkillIds?: Array<ID>;
+    requiredSkillIds?: Array<ID> | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredCategoryId?: ID;
+    requiredCategoryId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredExperienceLevelId?: ID;
+    requiredExperienceLevelId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredJobDurationId?: ID;
+    requiredJobDurationId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredJobScopeId?: ID;
+    requiredJobScopeId?: ID | null;
 }
 
 export class PublishJobPostInput {
@@ -2083,7 +2083,7 @@ export class MutationCreateJobPostArgs {
 
     @IsOptional()
     @IsString()
-    description?: string;
+    description?: string | null;
 
     @NotEquals(null)
     @ValidateIf((object, value) => value !== undefined)
@@ -2092,43 +2092,43 @@ export class MutationCreateJobPostArgs {
 
     @IsOptional()
     @IsEnum(CurrencyCode)
-    currencyCode?: CurrencyCode;
+    currencyCode?: CurrencyCode | null;
 
     @IsOptional()
     @IsInt()
     @IsPositive()
     @Min(5)
     @Type(() => Number)
-    budget?: number;
+    budget?: number | null;
 
     @IsOptional()
     @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
     @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
     @IsEntityId({ each: true })
-    requiredSkillIds?: Array<ID>;
+    requiredSkillIds?: Array<ID> | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredCategoryId?: ID;
+    requiredCategoryId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredExperienceLevelId?: ID;
+    requiredExperienceLevelId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredJobDurationId?: ID;
+    requiredJobDurationId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredJobScopeId?: ID;
+    requiredJobScopeId?: ID | null;
 
     @IsOptional()
     @IsArray()
     @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
     @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
-    assetIds?: Array<ID>;
+    assetIds?: Array<ID> | null;
 }
 
 export class MutationUpdateJobPostArgs {
@@ -2137,11 +2137,11 @@ export class MutationUpdateJobPostArgs {
 
     @IsOptional()
     @IsString()
-    title?: string;
+    title?: string | null;
 
     @IsOptional()
     @IsString()
-    description?: string;
+    description?: string | null;
 
     @NotEquals(null)
     @ValidateIf((object, value) => value !== undefined)
@@ -2150,43 +2150,43 @@ export class MutationUpdateJobPostArgs {
 
     @IsOptional()
     @IsEnum(CurrencyCode)
-    currencyCode?: CurrencyCode;
+    currencyCode?: CurrencyCode | null;
 
     @IsOptional()
     @IsInt()
     @IsPositive()
     @Min(5)
     @Type(() => Number)
-    budget?: number;
+    budget?: number | null;
 
     @IsOptional()
     @IsArray()
     @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
     @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
     @IsEntityId({ each: true })
-    assetIds?: Array<ID>;
+    assetIds?: Array<ID> | null;
 
     @IsOptional()
     @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
     @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
     @IsEntityId({ each: true })
-    requiredSkillIds?: Array<ID>;
+    requiredSkillIds?: Array<ID> | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredCategoryId?: ID;
+    requiredCategoryId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredExperienceLevelId?: ID;
+    requiredExperienceLevelId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredJobDurationId?: ID;
+    requiredJobDurationId?: ID | null;
 
     @IsOptional()
     @IsEntityId()
-    requiredJobScopeId?: ID;
+    requiredJobScopeId?: ID | null;
 }
 
 export class MutationPublishJobPostArgs {
