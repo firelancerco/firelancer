@@ -1,3 +1,11 @@
+## <small>1.1.10 (2025-04-04)</small>
+
+
+#### Features
+
+*
+    **core**
+add PaginatedList class and update JobPost schema to enforce visibility and budget fields; refactor job post service to handle new visibility logic and ensure non-null constraints([c3852e5](https://github.com/firelancerco/firelancer    /commit/c3852e5))
 ## <small>1.1.9 (2025-04-04)</small>
 
 

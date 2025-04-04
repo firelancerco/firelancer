@@ -1,6 +1,6 @@
 {
     "name": "@firelancerco/admin-ui",
-    "version": "1.1.9",
+    "version": "1.1.10",
     "scripts": {
         "ng": "ng",
         "dev": "node scripts/set-version.js && ng serve",
@@ -23,7 +23,7 @@
         "@angular/platform-browser": "^19.0.0",
         "@angular/platform-browser-dynamic": "^19.0.0",
         "@angular/router": "^19.0.0",
-        "@firelancerco/common": "^1.1.9",
+        "@firelancerco/common": "^1.1.10",
         "@ngx-translate/core": "^16.0.4",
         "@primeng/themes": "^19.0.5",
         "primeng": "^19.0.5",
