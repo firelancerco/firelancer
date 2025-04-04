@@ -159,32 +159,25 @@ export class JobPostService {
     }
 
     async update(ctx: RequestContext, input: UpdateJobPostInput): Promise<JobPost> {
-        try {
-            const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
-                relations: ['facetValues', 'facetValues.facet'],
-            });
+        const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
+            relations: ['facetValues', 'facetValues.facet'],
+        });
 
-            console.log({ jobPost });
+        const updatedJobPost = patchEntity(jobPost, input);
 
-            const updatedJobPost = patchEntity(jobPost, input);
+        await this.updateJobPostFacetValues(ctx, updatedJobPost, {
+            requiredSkillIds: input.requiredSkillIds,
+            requiredCategoryId: input.requiredCategoryId,
+            requiredExperienceLevelId: input.requiredExperienceLevelId,
+            requiredJobDurationId: input.requiredJobDurationId,
+            requiredJobScopeId: input.requiredJobScopeId,
+        });
+        await this.assetService.updateFeaturedAsset(ctx, jobPost, input);
+        await this.assetService.updateEntityAssets(ctx, jobPost, input);
 
-            await this.updateJobPostFacetValues(ctx, updatedJobPost, {
-                requiredSkillIds: input.requiredSkillIds,
-                requiredCategoryId: input.requiredCategoryId,
-                requiredExperienceLevelId: input.requiredExperienceLevelId,
-                requiredJobDurationId: input.requiredJobDurationId,
-                requiredJobScopeId: input.requiredJobScopeId,
-            });
-            await this.assetService.updateFeaturedAsset(ctx, jobPost, input);
-            await this.assetService.updateEntityAssets(ctx, jobPost, input);
-
-            await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
-            await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'updated', input));
-            return assertFound(this.findOne(ctx, updatedJobPost.id));
-        } catch (error) {
-            console.log({ error });
-            throw error;
-        }
+        await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
+        await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'updated', input));
+        return assertFound(this.findOne(ctx, updatedJobPost.id));
     }
 
     async softDelete(ctx: RequestContext, jobPostId: ID) {
@@ -272,7 +265,6 @@ export class JobPostService {
         jobPost: JobPost,
         input: JobPostFacetValuesInput,
     ): Promise<void> {
-        console.log({ jobPost });
         if (!jobPost.facetValues) {
             jobPost.facetValues = [];
         }
