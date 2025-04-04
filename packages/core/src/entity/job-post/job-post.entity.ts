@@ -1,30 +1,21 @@
 import {
-    Column,
-    DeepPartial,
-    DeleteDateColumn,
-    Entity,
-    JoinTable,
-    ManyToMany,
-    ManyToOne,
-    OneToMany,
-    Brackets,
-} from 'typeorm';
-
-import { Calculated, Collectable, Draftable, SoftDeletable } from '../../common';
-import { CurrencyCode, ID, JobPostStatus, JobPostVisibility } from '../../common/shared-schema';
-import { FirelancerEntity } from '../base/base.entity';
-import { Collection } from '../collection/collection.entity';
-import { Customer } from '../customer/customer.entity';
-import { FacetValue } from '../facet-value/facet-value.entity';
-import { Money } from '../money.decorator';
-import { JobPostAsset } from './job-post-asset.entity';
-import {
     CATEGORY_FACET_CODE,
     DURATION_FACET_CODE,
     EXPERIENCE_LEVEL_FACET_CODE,
     SCOPE_FACET_CODE,
     SKILL_FACET_CODE,
 } from '@firelancerco/common/lib/shared-constants';
+import { Column, DeepPartial, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+
+import { Calculated, Collectable, Draftable, SoftDeletable } from '../../common';
+import { CurrencyCode, ID, JobPostStatus, JobPostVisibility } from '../../common/shared-schema';
+import { JobPostState } from '../../service/helpers/job-post-state-machine/job-post-state';
+import { FirelancerEntity } from '../base/base.entity';
+import { Collection } from '../collection/collection.entity';
+import { Customer } from '../customer/customer.entity';
+import { FacetValue } from '../facet-value/facet-value.entity';
+import { Money } from '../money.decorator';
+import { JobPostAsset } from './job-post-asset.entity';
 
 /**
  * @description
@@ -65,6 +56,8 @@ export class JobPost extends FirelancerEntity implements Collectable, SoftDeleta
 
     @Money({ nullable: true })
     budget: number | null;
+
+    @Column('varchar') state: JobPostState;
 
     @Calculated({
         expression: `

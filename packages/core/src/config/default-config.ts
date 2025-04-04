@@ -21,6 +21,7 @@ import { DefaultMoneyStrategy } from './strategies/entity/default/default-money-
 import { DefaultLogger } from './strategies/logger/default/default-logger';
 import { InMemorySessionCacheStrategy } from './strategies/session-cache/default/in-memory-session-cache-strategy';
 import { InMemoryCacheStrategy } from './strategies/system/default/in-memory-cache-strategy';
+import { defaultJobPostProcess } from './strategies/job-post/default/default-order-process';
 
 /**
  * @description
@@ -100,5 +101,8 @@ export const defaultConfig: RuntimeFirelancerConfig = {
     importExportOptions: {
         importAssetsDir: __dirname,
         assetImportStrategy: new DefaultAssetImportStrategy(),
+    },
+    jobPostOptions: {
+        process: [defaultJobPostProcess],
     },
 };

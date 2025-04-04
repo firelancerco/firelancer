@@ -20,6 +20,7 @@ import { FirelancerLogger } from './strategies/logger/firelancer-logger';
 import { SessionCacheStrategy } from './strategies/session-cache/session-cache-strategy';
 import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
 import { CacheStrategy } from './strategies/system/cache-strategy';
+import { JobPostProcess } from './strategies/job-post/job-post-process';
 
 /**
  * @description
@@ -310,6 +311,17 @@ export interface CookieOptions {
     expires?: Date;
 }
 
+export interface JobPostOptions {
+    /**
+     * @description
+     * Allows the definition of custom states and transition logic for the job post process state machine.
+     * Takes an array of objects implementing the {@link JobPostProcess} interface.
+     *
+     * @default []
+     */
+    process?: Array<JobPostProcess<any>>;
+}
+
 /**
  * @description
  * The AssetOptions define how assets (images and other files) are named and stored, and how preview images are generated.
@@ -577,6 +589,11 @@ export interface FirelancerConfig {
      * Configuration settings for data import and export.
      */
     importExportOptions?: ImportExportOptions;
+    /**
+     * @description
+     * Configuration settings governing how job-posts are handled.
+     */
+    jobPostOptions?: JobPostOptions;
 }
 
 /**
@@ -593,6 +610,7 @@ export interface RuntimeFirelancerConfig extends Required<FirelancerConfig> {
     systemOptions: Required<SystemOptions>;
     entityOptions: Required<EntityOptions>;
     importExportOptions: Required<ImportExportOptions>;
+    jobPostOptions: Required<JobPostOptions>;
 }
 
 type DeepPartialSimple<T> = {
