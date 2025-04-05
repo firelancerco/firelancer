@@ -10,7 +10,7 @@ import {
     RequestContext,
     UserInputException,
 } from '../../common';
-import { CreateAdministratorInput, DeletionResult, ID, UpdateAdministratorInput } from '../../common/shared-schema';
+import { CreateAdministratorInput, ID, UpdateAdministratorInput } from '../../common/shared-schema';
 import { ConfigService } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { Administrator, NativeAuthenticationMethod, Role, User } from '../../entity';
@@ -223,7 +223,7 @@ export class AdministratorService {
         await this.connection.getRepository(ctx, Administrator).update({ id }, { deletedAt: new Date() });
         await this.userService.softDelete(ctx, administrator.user.id);
         await this.eventBus.publish(new AdministratorEvent(ctx, administrator, 'deleted', id));
-        return { result: DeletionResult.DELETED };
+        return { success: true };
     }
 
     /**

@@ -8,7 +8,7 @@ import {
 import { Column, DeepPartial, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
 import { Calculated, Collectable, Draftable, SoftDeletable } from '../../common';
-import { CurrencyCode, ID, JobPostStatus, JobPostVisibility } from '../../common/shared-schema';
+import { CurrencyCode, ID, JobPostVisibility } from '../../common/shared-schema';
 import { JobPostState } from '../../service/helpers/job-post-state-machine/job-post-state';
 import { FirelancerEntity } from '../base/base.entity';
 import { Collection } from '../collection/collection.entity';
@@ -36,6 +36,12 @@ export class JobPost extends FirelancerEntity implements Collectable, SoftDeleta
     @Column({ type: 'timestamp', nullable: true })
     closedAt: Date | null;
 
+    @Column({ type: 'timestamp', nullable: true })
+    rejectedAt: Date | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    editedAt: Date | null;
+
     @Column()
     customerId: ID;
 
@@ -57,32 +63,8 @@ export class JobPost extends FirelancerEntity implements Collectable, SoftDeleta
     @Money({ nullable: true })
     budget: number | null;
 
-    // @Column('varchar')
+    @Column('varchar')
     state: JobPostState;
-
-    @Calculated({
-        expression: `
-            CASE 
-                WHEN publishedAt IS NULL THEN 'DRAFT'
-                WHEN publishedAt IS NOT NULL AND closedAt IS NULL THEN 'ACTIVE'
-                WHEN publishedAt IS NOT NULL AND closedAt IS NOT NULL THEN 'CLOSED'
-            END
-        `,
-    })
-    // TODO: should not return undefined
-    get status(): JobPostStatus | undefined {
-        if (!this.publishedAt) {
-            return JobPostStatus.DRAFT;
-        }
-
-        if (this.publishedAt && !this.closedAt) {
-            return JobPostStatus.ACTIVE;
-        }
-
-        if (this.publishedAt && this.closedAt) {
-            return JobPostStatus.CLOSED;
-        }
-    }
 
     @Calculated({ relations: ['facetValues', 'facetValues.facet'] })
     get requiredSkills(): FacetValue[] {

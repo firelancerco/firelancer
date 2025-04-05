@@ -75,12 +75,12 @@ export enum JobPostVisibility {
     INVITE_ONLY = 'INVITE_ONLY',
 }
 
-export enum JobPostStatus {
-    /**  Job is saved but not published. */
+export enum JobPostState {
     DRAFT = 'DRAFT',
-    /** Job is published and open for proposals. */
-    ACTIVE = 'ACTIVE',
-    /** Job is closed and no longer accepting bids (may reopen later) */
+    DRAFT_DELETED = 'DRAFT_DELETED',
+    REQUESTED = 'REQUESTED',
+    REJECTED = 'REJECTED',
+    OPEN = 'OPEN',
     CLOSED = 'CLOSED',
 }
 
@@ -117,13 +117,6 @@ export enum JobState {
     PENDING = 'PENDING',
     RETRYING = 'RETRYING',
     RUNNING = 'RUNNING',
-}
-
-export enum DeletionResult {
-    /** The entity was successfully deleted */
-    DELETED = 'DELETED',
-    /** Deletion did not take place, reason given in message */
-    NOT_DELETED = 'NOT_DELETED',
 }
 
 /**
@@ -1008,8 +1001,6 @@ export class Facet {
 
     code: string;
 
-    isPrivate: boolean;
-
     languageCode?: LanguageCode;
 
     name?: string;
@@ -1108,6 +1099,12 @@ export class JobPost {
 
     closedAt: Date | null;
 
+    rejectedAt: Date | null;
+
+    editedAt: Date | null;
+
+    state: JobPostState;
+
     title: string | null;
 
     description: string | null;
@@ -1117,8 +1114,6 @@ export class JobPost {
     budget: number | null;
 
     currencyCode: string | null;
-
-    status: JobPostStatus;
 
     assets?: JobPostAsset[];
 
@@ -1448,63 +1443,23 @@ export class UpdateAssetInput {
     tags?: Array<string>;
 }
 
+export class DeleteDraftJobPostInput {
+    id: ID;
+}
+
+export class MutationDeleteDraftJobPostArgs {
+    input: DeleteDraftJobPostInput;
+}
+
+export class CloseJobPostInput {
+    id: ID;
+}
+
+export class MutationCloseJobPostArgs {
+    input: CloseJobPostInput;
+}
+
 export class CreateJobPostInput {
-    customerId: ID;
-
-    title?: string | null;
-
-    description?: string | null;
-
-    visibility?: JobPostVisibility;
-
-    currencyCode?: CurrencyCode | null;
-
-    budget?: number | null;
-
-    assetIds?: Array<ID> | null;
-
-    requiredSkillIds?: Array<ID> | null;
-
-    requiredCategoryId?: ID | null;
-
-    requiredExperienceLevelId?: ID | null;
-
-    requiredJobDurationId?: ID | null;
-
-    requiredJobScopeId?: ID | null;
-}
-
-export class UpdateJobPostInput {
-    id: ID;
-
-    title?: string | null;
-
-    description?: string | null;
-
-    visibility?: JobPostVisibility;
-
-    currencyCode?: CurrencyCode | null;
-
-    budget?: number | null;
-
-    assetIds?: Array<ID> | null;
-
-    requiredSkillIds?: Array<ID> | null;
-
-    requiredCategoryId?: ID | null;
-
-    requiredExperienceLevelId?: ID | null;
-
-    requiredJobDurationId?: ID | null;
-
-    requiredJobScopeId?: ID | null;
-}
-
-export class PublishJobPostInput {
-    id: ID;
-}
-
-export class MutationCreateJobPostArgs {
     title: string;
 
     description?: string | null;
@@ -1528,7 +1483,11 @@ export class MutationCreateJobPostArgs {
     assetIds?: Array<ID> | null;
 }
 
-export class MutationUpdateJobPostArgs {
+export class MutationCreateJobPostArgs {
+    input: CreateJobPostInput;
+}
+
+export class EditDraftJobPostInput {
     id: ID;
 
     title?: string | null;
@@ -1554,8 +1513,46 @@ export class MutationUpdateJobPostArgs {
     requiredJobScopeId?: ID | null;
 }
 
-export class MutationPublishJobPostArgs {
+export class MutationEditDraftJobPostArgs {
+    input: EditDraftJobPostInput;
+}
+
+export class EditPublishedJobPostInput {
     id: ID;
+
+    title?: string | null;
+
+    description?: string | null;
+
+    visibility?: JobPostVisibility;
+
+    currencyCode?: CurrencyCode | null;
+
+    budget?: number | null;
+
+    assetIds?: Array<ID> | null;
+
+    requiredSkillIds?: Array<ID> | null;
+
+    requiredCategoryId?: ID | null;
+
+    requiredExperienceLevelId?: ID | null;
+
+    requiredJobDurationId?: ID | null;
+
+    requiredJobScopeId?: ID | null;
+}
+
+export class MutationEditPublishedJobPostArgs {
+    input: EditPublishedJobPostInput;
+}
+
+export class PublishJobPostInput {
+    id: ID;
+}
+
+export class MutationPublishJobPostArgs {
+    input: PublishJobPostInput;
 }
 
 export class FacetValueTranslationInput {
@@ -1847,14 +1844,14 @@ export class UpdateActiveAdministratorMutation {
 
 export class DeleteAdministratorMutation {
     deleteAdministrator: {
-        result: DeletionResult;
+        result: any;
         message?: string | null;
     };
 }
 
 export class DeleteAdministratorsMutation {
     deleteAdministrators: Array<{
-        result: DeletionResult;
+        result: any;
         message?: string | null;
     }>;
 }
@@ -1917,14 +1914,14 @@ export class UpdateRoleMutation {
 
 export class DeleteRoleMutation {
     deleteRole: {
-        result: DeletionResult;
+        result: any;
         message?: string | null;
     };
 }
 
 export class DeleteRolesMutation {
     deleteRoles: Array<{
-        result: DeletionResult;
+        result: any;
         message?: string | null;
     }>;
 }
@@ -1958,9 +1955,7 @@ export class JobPostFilterParameter {
 
     visibility?: StringOperators;
 
-    status?: StringOperators;
-
-    closedAt?: DateOperators;
+    state?: StringOperators;
 
     publishedAt?: DateOperators;
 

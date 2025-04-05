@@ -78,6 +78,7 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
         const { entityIdStrategy } = this.configService.entityOptions;
         const { assetImportStrategy } = this.configService.importExportOptions;
         const { cacheStrategy } = this.configService.systemOptions;
+        const { process: jobPostProcess } = this.configService.jobPostOptions;
 
         return [
             assetNamingStrategy,
@@ -94,6 +95,7 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
             entityIdStrategy,
             assetImportStrategy,
             cacheStrategy,
+            ...jobPostProcess,
         ];
     }
 

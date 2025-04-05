@@ -1,8 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
+
 import { ID } from '../../common/shared-schema';
 import { LogLevel } from '../../config';
 import { coreEntitiesMap } from '../../entity';
 import { I18nException } from '../../i18n';
+import { JobPostState } from '../../service';
 
 /**
  * @description
@@ -144,5 +146,11 @@ export class IdentifierChangeTokenInvalidException extends I18nException {
 export class IdentifierChangeTokenExpiredException extends I18nException {
     constructor() {
         super('error.identifier-change-token-expired', HttpStatus.GONE, {}, LogLevel.Warn);
+    }
+}
+
+export class JobPostStateTransitionException extends I18nException {
+    constructor(input: { fromState: JobPostState; toState: JobPostState; transitionError: string }) {
+        super(input.transitionError, HttpStatus.BAD_REQUEST, input, LogLevel.Warn);
     }
 }

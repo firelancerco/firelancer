@@ -36,5 +36,8 @@
         "password-validation": "كلمة المرور غير صالحة",
         "verification-token-expired": "رمز التحقق منتهي الصلاحية. استخدم refreshCustomerVerification لإرسال رمز جديد.",
         "verification-token-invalid": "رمز التحقق غير معترف به"
+    },
+    "message": {
+        "cannot-transition-job-post-from-to": "لا يمكن للمشروع الانتفال من \"{ fromState }\" إلى \"{ toState }\""
     }
 }

@@ -1,17 +1,9 @@
-import { RequestContext } from '../../../../common';
+import { RequestContext, UserInputException } from '../../../../common';
 import { ID } from '../../../../common/shared-schema';
 import { TransactionalConnection } from '../../../../connection';
 import { JobPost } from '../../../../entity';
 import { JobPostState } from '../../../../service/helpers/job-post-state-machine/job-post-state';
 import { JobPostProcess } from '../job-post-process';
-import { UserInputException } from '../../../../common';
-import { JobPostEvent } from '../../../../event-bus/events/job-post-event';
-import { JobPostStatus } from '../../../../common/shared-schema';
-
-// Constants for job post constraints
-const PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET = 100;
-const PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS = 1;
-const PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS = 10;
 
 /**
  * @description
@@ -22,42 +14,12 @@ const PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS = 10;
 export interface DefaultJobPostProcessOptions {
     /**
      * @description
-     * Prevents a JobPost from transitioning out of the `DRAFT` state if
+     * Prevents a JobPost from transitioning to `REQUESTED` state if
      * the JobPost is missing required fields.
      *
      * @default true
      */
     checkRequiredFieldsDefined?: boolean;
-    /**
-     * @description
-     * Prevents a JobPost from transitioning to `OPEN` if the budget is below
-     * the minimum required amount.
-     *
-     * @default true
-     */
-    checkMinimumBudget?: boolean;
-    /**
-     * @description
-     * Prevents a JobPost from transitioning to `OPEN` if the required skills
-     * count is not within the allowed range.
-     *
-     * @default true
-     */
-    checkSkillsCount?: boolean;
-    /**
-     * @description
-     * Prevents a JobPost from transitioning to `CLOSED` if it's already `FILLED`.
-     *
-     * @default true
-     */
-    checkClosedState?: boolean;
-    /**
-     * @description
-     * Prevents a JobPost from transitioning to `FILLED` if it's already `CLOSED`.
-     *
-     * @default true
-     */
-    checkFilledState?: boolean;
 }
 
 /**
@@ -75,24 +37,18 @@ export function configureDefaultJobPostProcess(options: DefaultJobPostProcessOpt
     const jobPostProcess: JobPostProcess<JobPostState> = {
         transitions: {
             DRAFT: {
-                to: ['DRAFT_DELETED', 'IN_REVIEW'],
+                to: ['DRAFT_DELETED', 'REQUESTED'],
             },
-            IN_REVIEW: {
+            REQUESTED: {
                 to: ['REJECTED', 'OPEN'],
+            },
+            OPEN: {
+                to: ['CLOSED'],
             },
             REJECTED: {
                 to: [],
             },
-            OPEN: {
-                to: ['CLOSED', 'CANCELLED', 'FILLED'],
-            },
             CLOSED: {
-                to: [],
-            },
-            CANCELLED: {
-                to: [],
-            },
-            FILLED: {
                 to: [],
             },
             DRAFT_DELETED: {
@@ -111,94 +67,62 @@ export function configureDefaultJobPostProcess(options: DefaultJobPostProcessOpt
             historyService = injector.get(HistoryService);
         },
         onTransitionStart: async (fromState, toState, { ctx, jobPost }) => {
-            // Validate transition is allowed
-            const allowedTransitions = jobPostProcess.transitions?.[fromState]?.to ?? [];
-            if (!allowedTransitions.includes(toState)) {
-                throw new UserInputException('error.invalid-job-post-transition', {
-                    fromState,
-                    toState,
-                });
-            }
-
-            // Special handling for specific transitions
-            switch (toState) {
-                case 'IN_REVIEW':
-                    if (options.checkRequiredFieldsDefined !== false) {
-                        await jobPostService['checkRequiredFieldsDefined'](ctx, jobPost);
-                    }
-                    break;
-                case 'OPEN':
-                    if (
-                        options.checkMinimumBudget !== false &&
-                        jobPost.budget &&
-                        jobPost.budget < PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET
-                    ) {
-                        throw new UserInputException('error.job-post-budget-too-low', {
-                            min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET,
-                        });
-                    }
-                    if (options.checkSkillsCount !== false) {
-                        const skillsCount = jobPost.requiredSkills.length;
-                        if (
-                            skillsCount < PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS ||
-                            skillsCount > PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS
-                        ) {
-                            throw new UserInputException('error.invalid-skills-count', {
-                                min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
-                                max: PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
-                            });
-                        }
-                    }
-                    break;
-                case 'CLOSED':
-                    if (options.checkClosedState !== false && jobPost.status === JobPostStatus.ACTIVE) {
-                        throw new UserInputException('error.job-post-already-filled');
-                    }
-                    break;
-                case 'FILLED':
-                    if (options.checkFilledState !== false && jobPost.status === JobPostStatus.CLOSED) {
-                        throw new UserInputException('error.job-post-already-closed');
-                    }
-                    break;
+            if (toState === 'REQUESTED') {
+                if (options.checkRequiredFieldsDefined !== false) {
+                    await checkRequiredFieldsDefined(ctx, jobPost.id);
+                }
             }
         },
         onTransitionEnd: async (fromState, toState, data) => {
             const { ctx, jobPost } = data;
 
-            // Update job post status
-            (jobPost as any).status = toState;
-            await connection.getRepository(ctx, JobPost).save(jobPost);
-
-            // Create history entry
-            // await historyService.createHistoryEntryForCustomer({
-            //     ctx,
-            //     customerId: jobPost.customerId,
-            //     type: 'JOB_POST_STATE_TRANSITION',
-            //     data: {
-            //         jobPostId: jobPost.id,
-            //         fromState,
-            //         toState,
-            //     },
-            // });
-
-            // Publish event
-            await eventBus.publish(new JobPostEvent(ctx, jobPost, 'updated', jobPost));
-
-            // Additional actions based on the new state
-            switch (toState) {
-                case 'OPEN':
-                    jobPost.publishedAt = new Date();
-                    await eventBus.publish(new JobPostEvent(ctx, jobPost, 'published', jobPost));
-                    break;
-                case 'CLOSED':
-                    await eventBus.publish(new JobPostEvent(ctx, jobPost, 'updated', jobPost));
-                    break;
-                case 'FILLED':
-                    await eventBus.publish(new JobPostEvent(ctx, jobPost, 'updated', jobPost));
-                    break;
+            if (toState === 'DRAFT_DELETED') {
+                jobPost.deletedAt = new Date();
             }
+
+            if (toState === 'DRAFT') {
+            }
+
+            if (toState === 'REQUESTED') {
+            }
+
+            if (toState === 'REJECTED') {
+                jobPost.rejectedAt = new Date();
+            }
+
+            if (toState === 'OPEN') {
+                jobPost.publishedAt = new Date();
+            }
+
+            if (toState === 'CLOSED') {
+                jobPost.closedAt = new Date();
+            }
+
+            // TODO: Create history entry
         },
     };
+
+    async function checkRequiredFieldsDefined(ctx: RequestContext, id: ID): Promise<void> {
+        const jobPost = await connection.getEntityOrThrow(ctx, JobPost, id, {
+            relations: ['facetValues', 'facetValues.facet'],
+        });
+
+        const fields = [
+            { value: jobPost.title, error: 'error.job-post-title-required' },
+            { value: jobPost.description, error: 'error.job-post-description-required' },
+            { value: jobPost.budget, error: 'error.job-post-budget-required' },
+            { value: jobPost.currencyCode, error: 'error.job-post-currencyCode-required' },
+            { value: jobPost.requiredCategory, error: 'error.invalid-category-required' },
+            { value: jobPost.requiredExperienceLevel, error: 'error.invalid-experience-level-required' },
+            { value: jobPost.requiredJobDuration, error: 'error.invalid-job-duration-required' },
+            { value: jobPost.requiredJobScope, error: 'error.invalid-job-scope-required' },
+            { value: jobPost.requiredSkills.length, error: 'error.invalid-skills-count' },
+        ];
+
+        for (const { value, error } of fields) {
+            if (!value) throw new UserInputException(error);
+        }
+    }
 
     return jobPostProcess;
 }

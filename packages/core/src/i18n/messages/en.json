@@ -36,5 +36,8 @@
         "password-validation": "Password is invalid",
         "verification-token-expired": "Verification token has expired. Use refreshCustomerVerification to send a new token.",
         "verification-token-invalid": "Verification token not recognized"
+    },
+    "message": {
+        "cannot-transition-job-post-from-to": "Cannot transition Job Post from \"{ fromState }\" to \"{ toState }\""
     }
 }

@@ -2,11 +2,13 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, Val
 
 import { EntityNotFoundException, ForbiddenException, RequestContext } from '../../../common';
 import {
-    CreateJobPostInput,
     JobPostListOptions,
+    MutationCloseJobPostArgs,
     MutationCreateJobPostArgs,
+    MutationDeleteDraftJobPostArgs,
+    MutationEditDraftJobPostArgs,
+    MutationEditPublishedJobPostArgs,
     MutationPublishJobPostArgs,
-    MutationUpdateJobPostArgs,
     Permission,
 } from '../../../common/shared-schema';
 import { CustomerService } from '../../../service';
@@ -21,45 +23,6 @@ export class ShopHiringController {
         private jobPostService: JobPostService,
         private customerService: CustomerService,
     ) {}
-
-    @Transaction()
-    @Post('job-posts/create')
-    @Allow(Permission.PublishJobPost)
-    async createJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCreateJobPostArgs) {
-        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-        const input: CreateJobPostInput = { ...args, customerId: customer.id };
-        return this.jobPostService.create(ctx, input);
-    }
-
-    @Transaction()
-    @Post('job-posts/publish')
-    @Allow(Permission.PublishJobPost)
-    async publishJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationPublishJobPostArgs) {
-        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-        const jobPost = await this.jobPostService.findOne(ctx, args.id);
-        if (!jobPost) {
-            throw new EntityNotFoundException('JobPost', args.id);
-        }
-        if (jobPost.customerId !== customer.id) {
-            throw new ForbiddenException();
-        }
-        return this.jobPostService.publish(ctx, args);
-    }
-
-    @Transaction()
-    @Patch('job-posts/edit')
-    @Allow(Permission.PublishJobPost)
-    async editJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationUpdateJobPostArgs) {
-        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-        const jobPost = await this.jobPostService.findOne(ctx, args.id);
-        if (!jobPost) {
-            throw new EntityNotFoundException('JobPost', args.id);
-        }
-        if (jobPost.customerId !== customer.id) {
-            throw new ForbiddenException();
-        }
-        return this.jobPostService.update(ctx, args);
-    }
 
     @Get('job-posts')
     @Allow(Permission.PublishJobPost)
@@ -87,19 +50,88 @@ export class ShopHiringController {
         return jobPost;
     }
 
-    @Delete('job-posts/:id')
+    @Transaction()
+    @Post('job-posts/create')
     @Allow(Permission.PublishJobPost)
-    @UsePipes(new ValidationPipe({ whitelist: true }))
-    async deleteJobPost(@Ctx() ctx: RequestContext, @Param() params: { id: string }) {
+    async createJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCreateJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-        const jobPost = await this.jobPostService.findOne(ctx, params.id);
+        return this.jobPostService.create(ctx, { ...args.input, customerId: customer.id });
+    }
+
+    @Transaction()
+    @Patch('job-posts/edit-draft')
+    @Allow(Permission.PublishJobPost)
+    async editDraftJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationEditDraftJobPostArgs) {
+        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+        const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
         if (!jobPost) {
-            throw new EntityNotFoundException('JobPost', params.id);
+            throw new EntityNotFoundException('JobPost', args.input.id);
         }
         if (jobPost.customerId !== customer.id) {
             throw new ForbiddenException();
         }
-        await this.jobPostService.softDelete(ctx, params.id);
+        return this.jobPostService.editDraft(ctx, args.input);
+    }
+
+    @Transaction()
+    @Delete('job-posts/delete-draft')
+    @Allow(Permission.PublishJobPost)
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    async deleteJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationDeleteDraftJobPostArgs) {
+        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+        const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
+        if (!jobPost) {
+            throw new EntityNotFoundException('JobPost', args.input.id);
+        }
+        if (jobPost.customerId !== customer.id) {
+            throw new ForbiddenException();
+        }
+        await this.jobPostService.deleteDraft(ctx, args.input);
         return { success: true };
+    }
+
+    @Transaction()
+    @Post('job-posts/publish')
+    @Allow(Permission.PublishJobPost)
+    async publishJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationPublishJobPostArgs) {
+        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+        const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
+        if (!jobPost) {
+            throw new EntityNotFoundException('JobPost', args.input.id);
+        }
+        if (jobPost.customerId !== customer.id) {
+            throw new ForbiddenException();
+        }
+        return this.jobPostService.publish(ctx, args.input);
+    }
+
+    @Transaction()
+    @Patch('job-posts/edit-published')
+    @Allow(Permission.PublishJobPost)
+    async editPublishedJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationEditPublishedJobPostArgs) {
+        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+        const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
+        if (!jobPost) {
+            throw new EntityNotFoundException('JobPost', args.input.id);
+        }
+        if (jobPost.customerId !== customer.id) {
+            throw new ForbiddenException();
+        }
+        return this.jobPostService.editPublished(ctx, args.input);
+    }
+
+    @Transaction()
+    @Post('job-posts/close')
+    @Allow(Permission.PublishJobPost)
+    async closeJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCloseJobPostArgs) {
+        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+        const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
+        if (!jobPost) {
+            throw new EntityNotFoundException('JobPost', args.input.id);
+        }
+        if (jobPost.customerId !== customer.id) {
+            throw new ForbiddenException();
+        }
+        return this.jobPostService.close(ctx, args.input);
     }
 }

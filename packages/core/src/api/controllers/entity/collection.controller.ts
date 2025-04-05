@@ -5,7 +5,13 @@ import { Api } from '../../../api/decorators/api.decorator';
 import { FieldsDecoratorConfig, RelationPaths, Relations } from '../../../api/decorators/relations.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { ApiType, RequestContext, Translated } from '../../../common';
-import { CollectionListOptions, ID, JobPostListOptions, JobPostVisibility } from '../../../common/shared-schema';
+import {
+    CollectionListOptions,
+    ID,
+    JobPostListOptions,
+    JobPostState,
+    JobPostVisibility,
+} from '../../../common/shared-schema';
 import { Collection, JobPost } from '../../../entity';
 import { CollectionService, JobPostService } from '../../../service';
 
@@ -82,7 +88,7 @@ export class CollectionController {
                 filter: {
                     ...(options ? options.filter : {}),
                     visibility: { eq: JobPostVisibility.PUBLIC },
-                    publishedAt: { isNull: false },
+                    state: { eq: JobPostState.OPEN },
                 },
             };
         }

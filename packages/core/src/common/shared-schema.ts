@@ -110,12 +110,12 @@ export enum JobPostVisibility {
     INVITE_ONLY = 'INVITE_ONLY',
 }
 
-export enum JobPostStatus {
-    /**  Job is saved but not published. */
+export enum JobPostState {
     DRAFT = 'DRAFT',
-    /** Job is published and open for proposals. */
-    ACTIVE = 'ACTIVE',
-    /** Job is closed and no longer accepting bids (may reopen later) */
+    DRAFT_DELETED = 'DRAFT_DELETED',
+    REQUESTED = 'REQUESTED',
+    REJECTED = 'REJECTED',
+    OPEN = 'OPEN',
     CLOSED = 'CLOSED',
 }
 
@@ -152,13 +152,6 @@ export enum JobState {
     PENDING = 'PENDING',
     RETRYING = 'RETRYING',
     RUNNING = 'RUNNING',
-}
-
-export enum DeletionResult {
-    /** The entity was successfully deleted */
-    DELETED = 'DELETED',
-    /** Deletion did not take place, reason given in message */
-    NOT_DELETED = 'NOT_DELETED',
 }
 
 /**
@@ -1192,10 +1185,6 @@ export class Facet {
     @IsString()
     code: string;
 
-    @IsBoolean()
-    @Type(() => Boolean)
-    isPrivate: boolean;
-
     @IsOptional()
     @IsEnum(LanguageCode)
     languageCode?: LanguageCode;
@@ -1354,6 +1343,17 @@ export class JobPost {
     closedAt: Date | null;
 
     @IsOptional()
+    @IsDate()
+    rejectedAt: Date | null;
+
+    @IsOptional()
+    @IsDate()
+    editedAt: Date | null;
+
+    @IsEnum(JobPostState)
+    state: JobPostState;
+
+    @IsOptional()
     @IsString()
     title: string | null;
 
@@ -1371,9 +1371,6 @@ export class JobPost {
     @IsOptional()
     @IsString()
     currencyCode: string | null;
-
-    @IsEnum(JobPostStatus)
-    status: JobPostStatus;
 
     @IsOptional()
     @ValidateNested({ each: true })
@@ -1795,7 +1792,6 @@ export class UpdateRoleInput {
 
 export class MutationRegisterCustomerAccountArgs {
     @IsDefined()
-    @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
     @Type(() => RegisterCustomerInput)
@@ -1855,7 +1851,6 @@ export class MutationUpdateCustomerEmailAddressArgs {
 
 export class MutationCreateAdministratorArgs {
     @IsDefined()
-    @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
     @Type(() => CreateAdministratorInput)
@@ -1864,7 +1859,6 @@ export class MutationCreateAdministratorArgs {
 
 export class MutationUpdateAdministratorArgs {
     @IsDefined()
-    @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
     @Type(() => UpdateAdministratorInput)
@@ -1873,7 +1867,6 @@ export class MutationUpdateAdministratorArgs {
 
 export class MutationUpdateActiveAdministratorArgs {
     @IsDefined()
-    @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
     @Type(() => UpdateActiveAdministratorInput)
@@ -1910,7 +1903,6 @@ export class File {
     mimetype: string;
 
     @IsDefined()
-    @IsNotEmptyObject()
     @IsObject()
     buffer: any;
 
@@ -1921,7 +1913,6 @@ export class File {
 
 export class CreateAssetInput {
     @IsDefined()
-    @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
     @Type(() => File)
@@ -1943,7 +1934,6 @@ export class UpdateAssetInput {
     id: ID;
 
     @IsOptional()
-    @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
     @Type(() => CoordinateInput)
@@ -1958,126 +1948,33 @@ export class UpdateAssetInput {
     tags?: Array<string>;
 }
 
+export class DeleteDraftJobPostInput {
+    @IsEntityId()
+    id: ID;
+}
+
+export class MutationDeleteDraftJobPostArgs {
+    @IsDefined()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => DeleteDraftJobPostInput)
+    input: DeleteDraftJobPostInput;
+}
+
+export class CloseJobPostInput {
+    @IsEntityId()
+    id: ID;
+}
+
+export class MutationCloseJobPostArgs {
+    @IsDefined()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => CloseJobPostInput)
+    input: CloseJobPostInput;
+}
+
 export class CreateJobPostInput {
-    @IsEntityId()
-    customerId: ID;
-
-    @IsOptional()
-    @IsString()
-    title?: string | null;
-
-    @IsOptional()
-    @IsString()
-    description?: string | null;
-
-    @NotEquals(null)
-    @ValidateIf((object, value) => value !== undefined)
-    @IsEnum(JobPostVisibility)
-    visibility?: JobPostVisibility;
-
-    @IsOptional()
-    @IsEnum(CurrencyCode)
-    currencyCode?: CurrencyCode | null;
-
-    @IsOptional()
-    @IsInt()
-    @IsPositive()
-    @Type(() => Number)
-    budget?: number | null;
-
-    @IsOptional()
-    @IsArray()
-    @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
-    @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
-    @IsEntityId({ each: true })
-    assetIds?: Array<ID> | null;
-
-    @IsOptional()
-    @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
-    @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
-    @IsEntityId({ each: true })
-    requiredSkillIds?: Array<ID> | null;
-
-    @IsOptional()
-    @IsEntityId()
-    requiredCategoryId?: ID | null;
-
-    @IsOptional()
-    @IsEntityId()
-    requiredExperienceLevelId?: ID | null;
-
-    @IsOptional()
-    @IsEntityId()
-    requiredJobDurationId?: ID | null;
-
-    @IsOptional()
-    @IsEntityId()
-    requiredJobScopeId?: ID | null;
-}
-
-export class UpdateJobPostInput {
-    @IsEntityId()
-    id: ID;
-
-    @IsOptional()
-    @IsString()
-    title?: string | null;
-
-    @IsOptional()
-    @IsString()
-    description?: string | null;
-
-    @NotEquals(null)
-    @ValidateIf((object, value) => value !== undefined)
-    @IsEnum(JobPostVisibility)
-    visibility?: JobPostVisibility;
-
-    @IsOptional()
-    @IsEnum(CurrencyCode)
-    currencyCode?: CurrencyCode | null;
-
-    @IsInt()
-    @IsPositive()
-    @Min(5)
-    @Type(() => Number)
-    budget?: number | null;
-
-    @IsOptional()
-    @IsArray()
-    @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
-    @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
-    @IsEntityId({ each: true })
-    assetIds?: Array<ID> | null;
-
-    @IsOptional()
-    @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
-    @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
-    @IsEntityId({ each: true })
-    requiredSkillIds?: Array<ID> | null;
-
-    @IsOptional()
-    @IsEntityId()
-    requiredCategoryId?: ID | null;
-
-    @IsOptional()
-    @IsEntityId()
-    requiredExperienceLevelId?: ID | null;
-
-    @IsOptional()
-    @IsEntityId()
-    requiredJobDurationId?: ID | null;
-
-    @IsOptional()
-    @IsEntityId()
-    requiredJobScopeId?: ID | null;
-}
-
-export class PublishJobPostInput {
-    @IsEntityId()
-    id: ID;
-}
-
-export class MutationCreateJobPostArgs {
     @IsString()
     title: string;
 
@@ -2131,7 +2028,15 @@ export class MutationCreateJobPostArgs {
     assetIds?: Array<ID> | null;
 }
 
-export class MutationUpdateJobPostArgs {
+export class MutationCreateJobPostArgs {
+    @IsDefined()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => CreateJobPostInput)
+    input: CreateJobPostInput;
+}
+
+export class EditDraftJobPostInput {
     @IsEntityId()
     id: ID;
 
@@ -2189,9 +2094,91 @@ export class MutationUpdateJobPostArgs {
     requiredJobScopeId?: ID | null;
 }
 
-export class MutationPublishJobPostArgs {
+export class MutationEditDraftJobPostArgs {
+    @IsDefined()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => EditDraftJobPostInput)
+    input: EditDraftJobPostInput;
+}
+
+export class EditPublishedJobPostInput {
     @IsEntityId()
     id: ID;
+
+    @IsOptional()
+    @IsString()
+    title?: string | null;
+
+    @IsOptional()
+    @IsString()
+    description?: string | null;
+
+    @NotEquals(null)
+    @ValidateIf((object, value) => value !== undefined)
+    @IsEnum(JobPostVisibility)
+    visibility?: JobPostVisibility;
+
+    @IsOptional()
+    @IsEnum(CurrencyCode)
+    currencyCode?: CurrencyCode | null;
+
+    @IsOptional()
+    @IsInt()
+    @IsPositive()
+    @Min(5)
+    @Type(() => Number)
+    budget?: number | null;
+
+    @IsOptional()
+    @IsArray()
+    @ArrayMaxSize(MAX_ASSETS_ARRAY_SIZE)
+    @ArrayMinSize(MIN_ASSETS_ARRAY_SIZE)
+    @IsEntityId({ each: true })
+    assetIds?: Array<ID> | null;
+
+    @IsOptional()
+    @ArrayMaxSize(PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS)
+    @ArrayMinSize(PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS)
+    @IsEntityId({ each: true })
+    requiredSkillIds?: Array<ID> | null;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredCategoryId?: ID | null;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredExperienceLevelId?: ID | null;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobDurationId?: ID | null;
+
+    @IsOptional()
+    @IsEntityId()
+    requiredJobScopeId?: ID | null;
+}
+
+export class MutationEditPublishedJobPostArgs {
+    @IsDefined()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => EditPublishedJobPostInput)
+    input: EditPublishedJobPostInput;
+}
+
+export class PublishJobPostInput {
+    @IsEntityId()
+    id: ID;
+}
+
+export class MutationPublishJobPostArgs {
+    @IsDefined()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => PublishJobPostInput)
+    input: PublishJobPostInput;
 }
 
 export class FacetValueTranslationInput {
@@ -2385,7 +2372,6 @@ export class CreateCollectionInput {
 
 export class MutationCreateCollectionArgs {
     @IsDefined()
-    @IsNotEmptyObject()
     @IsObject()
     @ValidateNested()
     @Type(() => CreateCollectionInput)
@@ -2456,6 +2442,7 @@ export class UpdateCollectionInput {
 }
 
 export class MutationUpdateCollectionArgs {
+    @IsDefined()
     @IsObject()
     @ValidateNested()
     @Type(() => UpdateCollectionInput)
@@ -2475,6 +2462,7 @@ export class MoveCollectionInput {
 }
 
 export class MutationMoveCollectionArgs {
+    @IsDefined()
     @IsObject()
     @ValidateNested()
     @Type(() => MoveCollectionInput)
@@ -2622,14 +2610,14 @@ export class UpdateActiveAdministratorMutation {
 
 export class DeleteAdministratorMutation {
     deleteAdministrator: {
-        result: DeletionResult;
+        result: any;
         message?: string | null;
     };
 }
 
 export class DeleteAdministratorsMutation {
     deleteAdministrators: Array<{
-        result: DeletionResult;
+        result: any;
         message?: string | null;
     }>;
 }
@@ -2639,18 +2627,29 @@ export class QueryRoleArgs {
 }
 
 export class MutationCreateRoleArgs {
+    @IsDefined()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => CreateRoleInput)
     input: CreateRoleInput;
 }
 
 export class MutationUpdateRoleArgs {
+    @IsDefined()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => UpdateRoleInput)
     input: UpdateRoleInput;
 }
 
 export class MutationDeleteRoleArgs {
+    @IsEntityId()
     id: ID;
 }
 
 export class MutationDeleteRolesArgs {
+    @IsArray()
+    @IsEntityId({ each: true })
     ids: Array<ID>;
 }
 
@@ -2692,14 +2691,14 @@ export class UpdateRoleMutation {
 
 export class DeleteRoleMutation {
     deleteRole: {
-        result: DeletionResult;
+        result: any;
         message?: string | null;
     };
 }
 
 export class DeleteRolesMutation {
     deleteRoles: Array<{
-        result: DeletionResult;
+        result: any;
         message?: string | null;
     }>;
 }
@@ -2779,13 +2778,7 @@ export class JobPostFilterParameter {
     @IsObject()
     @ValidateNested()
     @Type(() => StringOperators)
-    status?: StringOperators;
-
-    @IsOptional()
-    @IsObject()
-    @ValidateNested()
-    @Type(() => DateOperators)
-    closedAt?: DateOperators;
+    state?: StringOperators;
 
     @IsOptional()
     @IsObject()

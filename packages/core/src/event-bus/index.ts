@@ -17,6 +17,7 @@ export * from './events/identifier-change-request-event';
 export * from './events/initializer-event';
 export * from './events/job-post-event';
 export * from './events/login-event';
+export * from './events/job-post-transition-event';
 export * from './events/logout-event';
 export * from './events/password-reset-event';
 export * from './events/password-reset-verified-event';

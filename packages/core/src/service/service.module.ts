@@ -8,6 +8,7 @@ import { JobQueueModule } from '../job-queue/job-queue.module';
 import { ConfigArgService } from './helpers/config-arg/config-arg.service';
 import { EntityHydrator } from './helpers/entity-hydrator/entity-hydrator.service';
 import { ExternalAuthenticationService } from './helpers/external-authentication/external-authentication.service';
+import { JobPostStateMachine } from './helpers/job-post-state-machine/job-post-state-machine';
 import { ListQueryBuilder } from './helpers/list-query-builder/list-query-builder';
 import { LocaleStringHydrator } from './helpers/locale-string-hydrator/locale-string-hydrator';
 import { PasswordCipher } from './helpers/password-cipher/password-cipher';
@@ -63,6 +64,7 @@ const helpers = [
     LocaleStringHydrator,
     ExternalAuthenticationService,
     EntityHydrator,
+    JobPostStateMachine,
 ];
 
 /**

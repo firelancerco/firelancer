@@ -14,24 +14,29 @@ import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
 
 import { RelationPaths } from '../../api';
-import { InternalServerException, ListQueryOptions, RequestContext, UserInputException } from '../../common';
+import { JobPostStateTransitionException, ListQueryOptions, RequestContext, UserInputException } from '../../common';
+import { IllegalOperationException } from '../../common/error/errors';
 import {
+    CloseJobPostInput,
     CreateJobPostInput,
+    DeleteDraftJobPostInput,
+    EditDraftJobPostInput,
+    EditPublishedJobPostInput,
     ID,
-    JobPostStatus,
     JobPostVisibility,
     PublishJobPostInput,
-    UpdateJobPostInput,
 } from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { FacetValue, JobPost } from '../../entity';
-import { EventBus, JobPostEvent } from '../../event-bus';
+import { EventBus, JobPostEvent, JobPostStateTransitionEvent } from '../../event-bus';
+import { EntityHydrator } from '../../service/helpers/entity-hydrator/entity-hydrator.service';
+import { TranslatorService } from '../../service/helpers/translator/translator.service';
+import { JobPostState } from '../helpers/job-post-state-machine/job-post-state';
+import { JobPostStateMachine } from '../helpers/job-post-state-machine/job-post-state-machine';
 import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
 import { patchEntity } from '../helpers/utils/patch-entity';
 import { AssetService } from './asset.service';
 import { FacetValueService } from './facet-value.service';
-import { EntityHydrator } from '../../service/helpers/entity-hydrator/entity-hydrator.service';
-import { TranslatorService } from '../../service/helpers/translator/translator.service';
 
 export interface JobPostFacetValuesInput {
     requiredSkillIds?: ID[] | null;
@@ -51,8 +56,8 @@ export class JobPostService {
         private facetValueService: FacetValueService,
         private eventBus: EventBus,
         private listQueryBuilder: ListQueryBuilder,
-        private entityHydrator: EntityHydrator,
         private translator: TranslatorService,
+        private jobPostStateMachine: JobPostStateMachine,
     ) {}
 
     async findAll(
@@ -118,17 +123,8 @@ export class JobPostService {
         const qb = this.listQueryBuilder
             .build(JobPost, options, { ctx, relations: unique(relations) })
             .leftJoin('jobpost.collections', 'collection')
-            .andWhere('jobpost.publishedAt IS NOT NULL')
             .andWhere('jobpost.deletedAt IS NULL')
             .andWhere('collection.id = :collectionId', { collectionId });
-
-        if (options?.filter?.visibility?.eq === JobPostVisibility.PUBLIC) {
-            qb.andWhere('jobpost.visibility = :visibility', { visibility: JobPostVisibility.PUBLIC });
-        }
-
-        if (options?.filter?.publishedAt?.isNull === false) {
-            qb.andWhere('jobpost.publishedAt IS NOT NULL');
-        }
 
         return qb.getManyAndCount().then(([items, totalItems]) => {
             return {
@@ -140,17 +136,16 @@ export class JobPostService {
         });
     }
 
-    async create(ctx: RequestContext, input: CreateJobPostInput): Promise<JobPost> {
+    /**
+     * @description
+     * Creates a new JobPost.
+     */
+    async create(ctx: RequestContext, input: CreateJobPostInput & { customerId: ID }): Promise<JobPost> {
         const { assetIds, ...rest } = input;
         const jobPost = new JobPost(rest);
-
-        await this.updateJobPostFacetValues(ctx, jobPost, {
-            requiredSkillIds: input.requiredSkillIds,
-            requiredCategoryId: input.requiredCategoryId,
-            requiredExperienceLevelId: input.requiredExperienceLevelId,
-            requiredJobDurationId: input.requiredJobDurationId,
-            requiredJobScopeId: input.requiredJobScopeId,
-        });
+        jobPost.visibility = JobPostVisibility.PUBLIC;
+        jobPost.state = this.jobPostStateMachine.getInitialState();
+        await this.updateJobPostFacetValues(ctx, jobPost, input);
 
         const createdJobPost = await this.connection.getRepository(ctx, JobPost).save(jobPost);
         await this.assetService.updateEntityAssets(ctx, createdJobPost, { assetIds });
@@ -158,126 +153,122 @@ export class JobPostService {
         return assertFound(this.findOne(ctx, jobPost.id));
     }
 
-    async update(ctx: RequestContext, input: UpdateJobPostInput): Promise<JobPost> {
+    /**
+     * @description
+     * Edits an existing JobPost.
+     */
+    async editDraft(ctx: RequestContext, input: EditDraftJobPostInput): Promise<JobPost> {
         const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
             relations: ['facetValues', 'facetValues.facet'],
         });
 
-        const updatedJobPost = patchEntity(jobPost, input);
+        // TODO: Add a more specific error message
+        if (jobPost.state !== 'DRAFT') {
+            throw new IllegalOperationException('Job post can only be updated in DRAFT state');
+        }
 
-        await this.updateJobPostFacetValues(ctx, updatedJobPost, {
-            requiredSkillIds: input.requiredSkillIds,
-            requiredCategoryId: input.requiredCategoryId,
-            requiredExperienceLevelId: input.requiredExperienceLevelId,
-            requiredJobDurationId: input.requiredJobDurationId,
-            requiredJobScopeId: input.requiredJobScopeId,
-        });
+        const updatedJobPost = patchEntity(jobPost, input);
+        await this.updateJobPostFacetValues(ctx, updatedJobPost, input);
         await this.assetService.updateFeaturedAsset(ctx, jobPost, input);
         await this.assetService.updateEntityAssets(ctx, jobPost, input);
 
         await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
         await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'updated', input));
+
         return assertFound(this.findOne(ctx, updatedJobPost.id));
     }
 
-    async softDelete(ctx: RequestContext, jobPostId: ID) {
-        const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, jobPostId, {
-            relations: ['facetValues'],
-        });
-
-        // TODO: Remove this once we have a proper way to delete JobPosts.
-        if (jobPost.status !== JobPostStatus.DRAFT) {
-            throw new UserInputException('error.job-post-not-draft');
-        }
-
-        jobPost.deletedAt = new Date();
-        await this.connection.getRepository(ctx, JobPost).save(jobPost, { reload: false });
-        await this.eventBus.publish(new JobPostEvent(ctx, jobPost, 'deleted', jobPostId));
+    /**
+     * @description
+     * Deletes a JobPost.
+     */
+    async deleteDraft(ctx: RequestContext, input: DeleteDraftJobPostInput) {
+        const result = await this.transitionToState(ctx, input.id, 'DRAFT_DELETED');
+        return assertFound(this.findOne(ctx, result.id));
     }
 
+    /**
+     * @description
+     * Publishes a JobPost.
+     */
     async publish(ctx: RequestContext, input: PublishJobPostInput): Promise<JobPost> {
+        const result = await this.transitionToState(ctx, input.id, 'REQUESTED');
+        return assertFound(this.findOne(ctx, result.id));
+    }
+
+    /**
+     * @description
+     * Edits a published JobPost.
+     */
+    async editPublished(ctx: RequestContext, input: EditPublishedJobPostInput): Promise<JobPost> {
         const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
-            relations: ['facetValues'],
+            relations: ['facetValues', 'facetValues.facet'],
         });
 
-        await this.checkRequiredFieldsDefined(ctx, jobPost);
+        if (jobPost.state !== 'OPEN') {
+            throw new IllegalOperationException('Job post can only be updated in OPEN state');
+        }
 
-        const updatedJobPost = patchEntity(jobPost, { publishedAt: new Date() });
+        const updatedJobPost = patchEntity(jobPost, { ...input, editedAt: new Date() });
+        await this.updateJobPostFacetValues(ctx, updatedJobPost, input);
+        await this.assetService.updateFeaturedAsset(ctx, jobPost, input);
+        await this.assetService.updateEntityAssets(ctx, jobPost, input);
+
         await this.connection.getRepository(ctx, JobPost).save(updatedJobPost);
-        await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'published', input));
+        await this.eventBus.publish(new JobPostEvent(ctx, updatedJobPost, 'updated', input));
+
         return assertFound(this.findOne(ctx, updatedJobPost.id));
     }
 
-    private async checkRequiredFieldsDefined(ctx: RequestContext, jobPost: JobPost): Promise<void> {
-        await this.entityHydrator.hydrate(ctx, jobPost, {
-            relations: ['facetValues', 'facetValues.facet'] as any,
-        });
+    /**
+     * @description
+     * Closes a JobPost.
+     */
+    async close(ctx: RequestContext, input: CloseJobPostInput): Promise<JobPost> {
+        const result = await this.transitionToState(ctx, input.id, 'CLOSED');
+        return assertFound(this.findOne(ctx, result.id));
+    }
 
-        // Check basic required fields
-        const requiredFields = [
-            { field: 'title', error: 'error.job-post-title-required' },
-            { field: 'description', error: 'error.job-post-description-required' },
-            { field: 'budget', error: 'error.job-post-budget-required' },
-            { field: 'currencyCode', error: 'error.job-post-currencyCode-required' },
-        ] as const;
+    private async updateJobPostFacetValues(ctx: RequestContext, jobPost: JobPost, input: JobPostFacetValuesInput) {
+        const {
+            requiredSkillIds,
+            requiredCategoryId,
+            requiredExperienceLevelId,
+            requiredJobDurationId,
+            requiredJobScopeId,
+        } = input;
 
-        for (const { field, error } of requiredFields) {
-            if (!jobPost[field]) {
-                throw new UserInputException(error);
-            }
+        if (requiredSkillIds !== undefined) {
+            await this.updateJobPostSkills(ctx, jobPost, requiredSkillIds);
         }
 
-        // Check budget constraints
-        if (jobPost.budget && jobPost.budget < PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET) {
-            throw new UserInputException('error.job-post-budget-too-low', {
-                min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET,
-            });
+        if (requiredCategoryId !== undefined) {
+            await this.updateJobPostCategory(ctx, jobPost, requiredCategoryId);
         }
 
-        const skillsCount = jobPost.requiredSkills.length;
-        if (
-            skillsCount < PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS ||
-            skillsCount > PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS
-        ) {
-            throw new UserInputException('error.invalid-skills-count', {
-                min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
-                max: PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
-            });
+        if (requiredExperienceLevelId !== undefined) {
+            await this.updateJobPostExperienceLevel(ctx, jobPost, requiredExperienceLevelId);
         }
 
-        // Check required facet values
-        const requiredFacets = [
-            { value: jobPost.requiredCategory, error: 'error.invalid-category-required' },
-            { value: jobPost.requiredExperienceLevel, error: 'error.invalid-experience-level-required' },
-            { value: jobPost.requiredJobDuration, error: 'error.invalid-job-duration-required' },
-            { value: jobPost.requiredJobScope, error: 'error.invalid-job-scope-required' },
-        ] as const;
+        if (requiredJobDurationId !== undefined) {
+            await this.updateJobPostDuration(ctx, jobPost, requiredJobDurationId);
+        }
 
-        for (const { value, error } of requiredFacets) {
-            if (!value) {
-                throw new UserInputException(error);
-            }
+        if (requiredJobScopeId !== undefined) {
+            await this.updateJobPostScope(ctx, jobPost, requiredJobScopeId);
         }
     }
 
-    private async updateJobPostFacetValues(
-        ctx: RequestContext,
-        jobPost: JobPost,
-        input: JobPostFacetValuesInput,
-    ): Promise<void> {
-        if (!jobPost.facetValues) {
-            jobPost.facetValues = [];
-        }
-
+    private async updateJobPostSkills(ctx: RequestContext, jobPost: JobPost, requiredSkillIds: ID[] | null) {
         await this.updateFacetValuesForType({
             ctx,
             jobPost,
             facetCode: SKILL_FACET_CODE,
-            newFacetValueIds: input.requiredSkillIds,
-            validateConstraints: (newFacetValues: FacetValue[]) => {
+            newFacetValueIds: requiredSkillIds,
+            validateConstraints: (skills: FacetValue[]) => {
                 if (
-                    newFacetValues.length < PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS ||
-                    newFacetValues.length > PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS
+                    skills.length < PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS ||
+                    skills.length > PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS
                 ) {
                     throw new UserInputException('error.invalid-skill-count', {
                         min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
@@ -286,50 +277,62 @@ export class JobPostService {
                 }
             },
         });
+    }
 
+    private async updateJobPostCategory(ctx: RequestContext, jobPost: JobPost, requiredCategoryId: ID | null) {
         await this.updateFacetValuesForType({
             ctx,
             jobPost,
             facetCode: CATEGORY_FACET_CODE,
-            newFacetValueIds: input.requiredCategoryId ? [input.requiredCategoryId] : null,
-            validateConstraints: (newFacetValues: FacetValue[]) => {
-                if (newFacetValues.length !== 1) {
+            newFacetValueIds: requiredCategoryId ? [requiredCategoryId] : null,
+            validateConstraints: (category: FacetValue[]) => {
+                if (category.length !== 1) {
                     throw new UserInputException('error.invalid-category-count');
                 }
             },
         });
+    }
 
+    private async updateJobPostExperienceLevel(
+        ctx: RequestContext,
+        jobPost: JobPost,
+        requiredExperienceLevelId: ID | null,
+    ) {
         await this.updateFacetValuesForType({
             ctx,
             jobPost,
             facetCode: EXPERIENCE_LEVEL_FACET_CODE,
-            newFacetValueIds: input.requiredExperienceLevelId ? [input.requiredExperienceLevelId] : null,
-            validateConstraints: (newFacetValues: FacetValue[]) => {
-                if (newFacetValues.length !== 1) {
+            newFacetValueIds: requiredExperienceLevelId ? [requiredExperienceLevelId] : null,
+            validateConstraints: (experienceLevel: FacetValue[]) => {
+                if (experienceLevel.length !== 1) {
                     throw new UserInputException('error.invalid-experience-level-count');
                 }
             },
         });
+    }
 
+    private async updateJobPostDuration(ctx: RequestContext, jobPost: JobPost, requiredJobDurationId: ID | null) {
         await this.updateFacetValuesForType({
             ctx,
             jobPost,
             facetCode: DURATION_FACET_CODE,
-            newFacetValueIds: input.requiredJobDurationId ? [input.requiredJobDurationId] : null,
-            validateConstraints: (newFacetValues: FacetValue[]) => {
-                if (newFacetValues.length !== 1) {
+            newFacetValueIds: requiredJobDurationId ? [requiredJobDurationId] : null,
+            validateConstraints: (duration: FacetValue[]) => {
+                if (duration.length !== 1) {
                     throw new UserInputException('error.invalid-job-duration-count');
                 }
             },
         });
+    }
 
+    private async updateJobPostScope(ctx: RequestContext, jobPost: JobPost, requiredJobScopeId: ID | null) {
         await this.updateFacetValuesForType({
             ctx,
             jobPost,
             facetCode: SCOPE_FACET_CODE,
-            newFacetValueIds: input.requiredJobScopeId ? [input.requiredJobScopeId] : null,
-            validateConstraints: (newFacetValues: FacetValue[]) => {
-                if (newFacetValues.length !== 1) {
+            newFacetValueIds: requiredJobScopeId ? [requiredJobScopeId] : null,
+            validateConstraints: (scope: FacetValue[]) => {
+                if (scope.length !== 1) {
                     throw new UserInputException('error.invalid-job-scope-count');
                 }
             },
@@ -340,7 +343,7 @@ export class JobPostService {
         ctx: RequestContext;
         jobPost: JobPost;
         facetCode: string;
-        newFacetValueIds: ID[] | null | undefined;
+        newFacetValueIds: ID[] | null;
         validateConstraints: (newFacetValues: FacetValue[]) => any;
     }): Promise<void> {
         const { ctx, jobPost, facetCode, newFacetValueIds, validateConstraints } = options;
@@ -371,5 +374,47 @@ export class JobPostService {
         validateConstraints(newFacetValues);
         // Add the new facet values
         jobPost.facetValues = [...jobPost.facetValues, ...newFacetValues];
+    }
+
+    /**
+     * @description
+     * Returns an array of all the configured states and transitions of the job post process. This is
+     * based on the default job post process plus all configured {@link JobPostProcess} objects
+     * defined in the {@link JobPostOptions} `process` array.
+     */
+    getJobPostProcessStates(): JobPostState[] {
+        return Object.entries(this.jobPostStateMachine.config.transitions).map(([name, { to }]) => ({
+            name,
+            to,
+        })) as unknown as JobPostState[];
+    }
+
+    /**
+     * @description
+     * Returns the next possible states that the JobPost may transition to.
+     */
+    getNextJobPostStates(jobPost: JobPost): readonly JobPostState[] {
+        return this.jobPostStateMachine.getNextStates(jobPost);
+    }
+
+    /**
+     * @description
+     * Transitions the JobPost to the given state.
+     */
+    async transitionToState(ctx: RequestContext, jobPostId: ID, state: JobPostState): Promise<JobPost> {
+        const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, jobPostId);
+        const fromState = jobPost.state;
+        let finalize: () => Promise<any>;
+        try {
+            const result = await this.jobPostStateMachine.transition(ctx, jobPost, state);
+            finalize = result.finalize;
+        } catch (e: any) {
+            throw new JobPostStateTransitionException({ transitionError: e.message, fromState, toState: state });
+        }
+        await this.connection.getRepository(ctx, JobPost).save(jobPost, { reload: false });
+        await this.eventBus.publish(new JobPostStateTransitionEvent(fromState, state, ctx, jobPost));
+        await finalize();
+        await this.connection.getRepository(ctx, JobPost).save(jobPost, { reload: false });
+        return jobPost;
     }
 }

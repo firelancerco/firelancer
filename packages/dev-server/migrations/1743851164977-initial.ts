@@ -1,19 +1,19 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class InitialMigration1742409478503 implements MigrationInterface {
+export class Initial1743851164977 implements MigrationInterface {
 
    public async up(queryRunner: QueryRunner): Promise<any> {
-        await queryRunner.query(`CREATE TABLE "authentication_method" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "identifier" character varying, "passwordHash" character varying, "verificationToken" character varying, "passwordResetToken" character varying, "identifierChangeToken" character varying, "pendingIdentifier" character varying, "strategy" character varying, "externalIdentifier" character varying, "metadata" text, "id" SERIAL NOT NULL, "type" character varying NOT NULL, "userId" integer, CONSTRAINT "PK_e204686018c3c60f6164e385081" PRIMARY KEY ("id"))`, undefined);
+        await queryRunner.query(`CREATE TABLE "authentication_method" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "identifier" character varying, "passwordHash" character varying, "verificationToken" character varying, "verificationTokenCreatedAt" TIMESTAMP, "passwordResetToken" character varying, "passwordResetTokenCreatedAt" TIMESTAMP, "identifierChangeToken" character varying, "identifierChangeTokenCreatedAt" TIMESTAMP, "pendingIdentifier" character varying, "strategy" character varying, "externalIdentifier" character varying, "metadata" text, "id" SERIAL NOT NULL, "type" character varying NOT NULL, "userId" integer, CONSTRAINT "PK_e204686018c3c60f6164e385081" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_00cbe87bc0d4e36758d61bd31d" ON "authentication_method" ("userId") `, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_a23445b2c942d8dfcae15b8de2" ON "authentication_method" ("type") `, undefined);
+        await queryRunner.query(`CREATE TABLE "role" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "code" character varying NOT NULL, "description" character varying NOT NULL, "permissions" text NOT NULL, "id" SERIAL NOT NULL, CONSTRAINT "PK_b36bcfe02fc8de3c57a8b2391c2" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE TABLE "session" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "token" character varying NOT NULL, "expires" TIMESTAMP NOT NULL, "invalidated" boolean NOT NULL, "authenticationStrategy" character varying, "id" SERIAL NOT NULL, "type" character varying NOT NULL, "userId" integer, CONSTRAINT "PK_f55da76ac1c3ac420f444d2ff11" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_232f8e85d7633bd6ddfad42169" ON "session" ("token") `, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_3d2f174ef04fb312fdebd0ddc5" ON "session" ("userId") `, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_e5598363000cab9d9116bd5835" ON "session" ("type") `, undefined);
-        await queryRunner.query(`CREATE TABLE "role" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "code" character varying NOT NULL, "description" character varying NOT NULL, "permissions" text NOT NULL, "id" SERIAL NOT NULL, CONSTRAINT "PK_b36bcfe02fc8de3c57a8b2391c2" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE TABLE "user" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "identifier" character varying NOT NULL, "verified" boolean NOT NULL DEFAULT false, "lastLogin" TIMESTAMP, "id" SERIAL NOT NULL, CONSTRAINT "UQ_7efb296eadd258e554e84fa6eb6" UNIQUE ("identifier"), CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE TABLE "administrator" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "firstName" character varying NOT NULL, "lastName" character varying NOT NULL, "emailAddress" character varying NOT NULL, "id" SERIAL NOT NULL, "userId" integer, CONSTRAINT "UQ_154f5c538b1576ccc277b1ed631" UNIQUE ("emailAddress"), CONSTRAINT "REL_1966e18ce6a39a82b19204704d" UNIQUE ("userId"), CONSTRAINT "PK_ee58e71b3b4008b20ddc7b3092b" PRIMARY KEY ("id"))`, undefined);
-        await queryRunner.query(`CREATE TABLE "customer" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "title" character varying, "firstName" character varying NOT NULL, "lastName" character varying NOT NULL, "phoneNumber" character varying, "emailAddress" character varying NOT NULL, "id" SERIAL NOT NULL, "userId" integer, CONSTRAINT "REL_3f62b42ed23958b120c235f74d" UNIQUE ("userId"), CONSTRAINT "PK_a7a13f4cacb744524e44dfdad32" PRIMARY KEY ("id"))`, undefined);
+        await queryRunner.query(`CREATE TABLE "customer" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "firstName" character varying NOT NULL, "lastName" character varying NOT NULL, "phoneNumber" character varying, "emailAddress" character varying NOT NULL, "id" SERIAL NOT NULL, "userId" integer, CONSTRAINT "REL_3f62b42ed23958b120c235f74d" UNIQUE ("userId"), CONSTRAINT "PK_a7a13f4cacb744524e44dfdad32" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE TABLE "facet_translation" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "languageCode" character varying NOT NULL, "name" character varying NOT NULL, "id" SERIAL NOT NULL, "baseId" integer, CONSTRAINT "PK_a6902cc1dcbb5e52a980f0189ad" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_eaea53f44bf9e97790d38a3d68" ON "facet_translation" ("baseId") `, undefined);
         await queryRunner.query(`CREATE TABLE "facet" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "code" character varying NOT NULL, "id" SERIAL NOT NULL, CONSTRAINT "UQ_0c9a5d053fdf4ebb5f0490b40fd" UNIQUE ("code"), CONSTRAINT "PK_a0ebfe3c68076820c6886aa9ff3" PRIMARY KEY ("id"))`, undefined);
@@ -24,7 +24,7 @@ export class InitialMigration1742409478503 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "job_post_asset" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "position" integer NOT NULL, "id" SERIAL NOT NULL, "jobPostId" integer NOT NULL, "assetId" integer NOT NULL, CONSTRAINT "PK_880dd97c36cc75453f592482626" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_ee44237b8964f6c9223377be7f" ON "job_post_asset" ("assetId") `, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_c1ed28c618dd757b037bd1624b" ON "job_post_asset" ("jobPostId") `, undefined);
-        await queryRunner.query(`CREATE TABLE "job_post" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "publishedAt" TIMESTAMP, "customerId" integer NOT NULL, "title" character varying NOT NULL, "description" character varying NOT NULL, "enabled" boolean NOT NULL, "private" boolean NOT NULL, "id" SERIAL NOT NULL, CONSTRAINT "PK_a70f902a85e6de57340d153c813" PRIMARY KEY ("id"))`, undefined);
+        await queryRunner.query(`CREATE TABLE "job_post" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "publishedAt" TIMESTAMP, "closedAt" TIMESTAMP, "rejectedAt" TIMESTAMP, "editedAt" TIMESTAMP, "customerId" integer NOT NULL, "title" character varying, "description" character varying, "visibility" character varying NOT NULL DEFAULT 'PUBLIC', "currencyCode" character varying, "state" character varying NOT NULL, "id" SERIAL NOT NULL, "budget" integer, CONSTRAINT "PK_a70f902a85e6de57340d153c813" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE TABLE "collection_asset" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "position" integer NOT NULL, "collectionId" integer NOT NULL, "id" SERIAL NOT NULL, "assetId" integer NOT NULL, CONSTRAINT "PK_a2adab6fd086adfb7858f1f110c" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_51da53b26522dc0525762d2de8" ON "collection_asset" ("assetId") `, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_1ed9e48dfbf74b5fcbb35d3d68" ON "collection_asset" ("collectionId") `, undefined);
@@ -39,6 +39,10 @@ export class InitialMigration1742409478503 implements MigrationInterface {
         await queryRunner.query(`CREATE INDEX "IDX_92f8c334ef06275f9586fd0183" ON "history_entry" ("administratorId") `, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_43ac602f839847fdb91101f30e" ON "history_entry" ("customerId") `, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_f3a761f6bcfabb474b11e1e51f" ON "history_entry" ("discriminator") `, undefined);
+        await queryRunner.query(`CREATE TABLE "cache_item" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "insertedAt" TIMESTAMP(3) NOT NULL, "key" character varying NOT NULL, "value" text NOT NULL, "expiresAt" TIMESTAMP, "id" SERIAL NOT NULL, CONSTRAINT "UQ_1ada355aa01694ed45f7ed0fba8" UNIQUE ("key"), CONSTRAINT "PK_36ada2d984757e4a4a1bf672415" PRIMARY KEY ("id"))`, undefined);
+        await queryRunner.query(`CREATE INDEX "cache_item_key" ON "cache_item" ("key") `, undefined);
+        await queryRunner.query(`CREATE TABLE "cache_tag" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "tag" character varying NOT NULL, "id" SERIAL NOT NULL, "itemId" integer NOT NULL, CONSTRAINT "UQ_99cfdf5b111a6589a5c5ab1e0c7" UNIQUE ("tag", "itemId"), CONSTRAINT "PK_992ec92255266beaebbf3ea250b" PRIMARY KEY ("id"))`, undefined);
+        await queryRunner.query(`CREATE INDEX "cache_tag_tag" ON "cache_tag" ("tag") `, undefined);
         await queryRunner.query(`CREATE TABLE "job_record_buffer" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "bufferId" character varying NOT NULL, "job" text NOT NULL, "id" SERIAL NOT NULL, CONSTRAINT "PK_9a1cfa02511065b32053efceeff" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE TABLE "job_record" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "queueName" character varying NOT NULL, "data" text, "state" character varying NOT NULL, "progress" integer NOT NULL, "result" text, "error" character varying, "startedAt" TIMESTAMP(6), "settledAt" TIMESTAMP(6), "isSettled" boolean NOT NULL, "retries" integer NOT NULL, "attempts" integer NOT NULL, "id" SERIAL NOT NULL, CONSTRAINT "PK_88ce3ea0c9dca8b571450b457a7" PRIMARY KEY ("id"))`, undefined);
         await queryRunner.query(`CREATE TABLE "user_roles_role" ("userId" integer NOT NULL, "roleId" integer NOT NULL, CONSTRAINT "PK_b47cd6c84ee205ac5a713718292" PRIMARY KEY ("userId", "roleId"))`, undefined);
@@ -72,6 +76,7 @@ export class InitialMigration1742409478503 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "balance_entry" ADD CONSTRAINT "FK_17fc1ea7fcb1da3d217302b19d3" FOREIGN KEY ("parentId") REFERENCES "balance_entry"("id") ON DELETE CASCADE ON UPDATE NO ACTION`, undefined);
         await queryRunner.query(`ALTER TABLE "history_entry" ADD CONSTRAINT "FK_92f8c334ef06275f9586fd01832" FOREIGN KEY ("administratorId") REFERENCES "administrator"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`, undefined);
         await queryRunner.query(`ALTER TABLE "history_entry" ADD CONSTRAINT "FK_43ac602f839847fdb91101f30ec" FOREIGN KEY ("customerId") REFERENCES "customer"("id") ON DELETE CASCADE ON UPDATE NO ACTION`, undefined);
+        await queryRunner.query(`ALTER TABLE "cache_tag" ADD CONSTRAINT "FK_16516b25ba15db4e95261bb0bfe" FOREIGN KEY ("itemId") REFERENCES "cache_item"("id") ON DELETE CASCADE ON UPDATE NO ACTION`, undefined);
         await queryRunner.query(`ALTER TABLE "user_roles_role" ADD CONSTRAINT "FK_5f9286e6c25594c6b88c108db77" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE`, undefined);
         await queryRunner.query(`ALTER TABLE "user_roles_role" ADD CONSTRAINT "FK_4be2f7adf862634f5f803d246b8" FOREIGN KEY ("roleId") REFERENCES "role"("id") ON DELETE CASCADE ON UPDATE CASCADE`, undefined);
         await queryRunner.query(`ALTER TABLE "job_post_facet_values_facet_value" ADD CONSTRAINT "FK_3d8dfbc3432b77cb48103ee032f" FOREIGN KEY ("jobPostId") REFERENCES "job_post"("id") ON DELETE CASCADE ON UPDATE CASCADE`, undefined);
@@ -91,6 +96,7 @@ export class InitialMigration1742409478503 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "job_post_facet_values_facet_value" DROP CONSTRAINT "FK_3d8dfbc3432b77cb48103ee032f"`, undefined);
         await queryRunner.query(`ALTER TABLE "user_roles_role" DROP CONSTRAINT "FK_4be2f7adf862634f5f803d246b8"`, undefined);
         await queryRunner.query(`ALTER TABLE "user_roles_role" DROP CONSTRAINT "FK_5f9286e6c25594c6b88c108db77"`, undefined);
+        await queryRunner.query(`ALTER TABLE "cache_tag" DROP CONSTRAINT "FK_16516b25ba15db4e95261bb0bfe"`, undefined);
         await queryRunner.query(`ALTER TABLE "history_entry" DROP CONSTRAINT "FK_43ac602f839847fdb91101f30ec"`, undefined);
         await queryRunner.query(`ALTER TABLE "history_entry" DROP CONSTRAINT "FK_92f8c334ef06275f9586fd01832"`, undefined);
         await queryRunner.query(`ALTER TABLE "balance_entry" DROP CONSTRAINT "FK_17fc1ea7fcb1da3d217302b19d3"`, undefined);
@@ -124,6 +130,10 @@ export class InitialMigration1742409478503 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "user_roles_role"`, undefined);
         await queryRunner.query(`DROP TABLE "job_record"`, undefined);
         await queryRunner.query(`DROP TABLE "job_record_buffer"`, undefined);
+        await queryRunner.query(`DROP INDEX "public"."cache_tag_tag"`, undefined);
+        await queryRunner.query(`DROP TABLE "cache_tag"`, undefined);
+        await queryRunner.query(`DROP INDEX "public"."cache_item_key"`, undefined);
+        await queryRunner.query(`DROP TABLE "cache_item"`, undefined);
         await queryRunner.query(`DROP INDEX "public"."IDX_f3a761f6bcfabb474b11e1e51f"`, undefined);
         await queryRunner.query(`DROP INDEX "public"."IDX_43ac602f839847fdb91101f30e"`, undefined);
         await queryRunner.query(`DROP INDEX "public"."IDX_92f8c334ef06275f9586fd0183"`, undefined);
@@ -152,11 +162,11 @@ export class InitialMigration1742409478503 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "customer"`, undefined);
         await queryRunner.query(`DROP TABLE "administrator"`, undefined);
         await queryRunner.query(`DROP TABLE "user"`, undefined);
-        await queryRunner.query(`DROP TABLE "role"`, undefined);
         await queryRunner.query(`DROP INDEX "public"."IDX_e5598363000cab9d9116bd5835"`, undefined);
         await queryRunner.query(`DROP INDEX "public"."IDX_3d2f174ef04fb312fdebd0ddc5"`, undefined);
         await queryRunner.query(`DROP INDEX "public"."IDX_232f8e85d7633bd6ddfad42169"`, undefined);
         await queryRunner.query(`DROP TABLE "session"`, undefined);
+        await queryRunner.query(`DROP TABLE "role"`, undefined);
         await queryRunner.query(`DROP INDEX "public"."IDX_a23445b2c942d8dfcae15b8de2"`, undefined);
         await queryRunner.query(`DROP INDEX "public"."IDX_00cbe87bc0d4e36758d61bd31d"`, undefined);
         await queryRunner.query(`DROP TABLE "authentication_method"`, undefined);
