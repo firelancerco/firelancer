@@ -17,14 +17,14 @@ import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';
 import { Transaction } from '../../decorators/transaction.decorator';
 
-@Controller('hiring')
-export class ShopHiringController {
+@Controller('hiring/job-posts')
+export class HiringJobPostController {
     constructor(
         private jobPostService: JobPostService,
         private customerService: CustomerService,
     ) {}
 
-    @Get('job-posts')
+    @Get()
     @Allow(Permission.PublishJobPost)
     @UsePipes(new ValidationPipe({ whitelist: true }))
     async getJobPostsList(@Ctx() ctx: RequestContext, @Query() options: JobPostListOptions) {
@@ -35,7 +35,7 @@ export class ShopHiringController {
         return this.jobPostService.findAll(ctx, { ...options, filter: mergedFilter });
     }
 
-    @Get('job-posts/:id')
+    @Get(':id')
     @Allow(Permission.PublishJobPost)
     @UsePipes(new ValidationPipe({ whitelist: true }))
     async getJobPost(@Ctx() ctx: RequestContext, @Param() params: { id: string }) {
@@ -51,7 +51,7 @@ export class ShopHiringController {
     }
 
     @Transaction()
-    @Post('job-posts/create')
+    @Post('create')
     @Allow(Permission.PublishJobPost)
     async createJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCreateJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
@@ -59,7 +59,7 @@ export class ShopHiringController {
     }
 
     @Transaction()
-    @Patch('job-posts/edit-draft')
+    @Patch('edit-draft')
     @Allow(Permission.PublishJobPost)
     async editDraftJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationEditDraftJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
@@ -74,7 +74,7 @@ export class ShopHiringController {
     }
 
     @Transaction()
-    @Delete('job-posts/delete-draft')
+    @Delete('delete-draft')
     @Allow(Permission.PublishJobPost)
     @UsePipes(new ValidationPipe({ whitelist: true }))
     async deleteJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationDeleteDraftJobPostArgs) {
@@ -91,7 +91,7 @@ export class ShopHiringController {
     }
 
     @Transaction()
-    @Post('job-posts/publish')
+    @Post('publish')
     @Allow(Permission.PublishJobPost)
     async publishJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationPublishJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
@@ -106,7 +106,7 @@ export class ShopHiringController {
     }
 
     @Transaction()
-    @Patch('job-posts/edit-published')
+    @Patch('edit-published')
     @Allow(Permission.PublishJobPost)
     async editPublishedJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationEditPublishedJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
@@ -121,7 +121,7 @@ export class ShopHiringController {
     }
 
     @Transaction()
-    @Post('job-posts/close')
+    @Post('close')
     @Allow(Permission.PublishJobPost)
     async closeJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCloseJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);

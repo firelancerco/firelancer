@@ -17,12 +17,12 @@ import { FacetController } from './controllers/entity/facet-entity.controller';
 import { FacetValueController } from './controllers/entity/facet-value-entity.controller';
 import { JobPostController } from './controllers/entity/job-post-entity.controller';
 import { ShopAuthController } from './controllers/shop/auth.controller';
-import { ShopHiringController } from './controllers/shop/hiring.controller';
+import { HiringJobPostController } from './controllers/shop/hiring-job-post.controller';
 
 const { apiOptions } = getConfig();
 
 const adminResolvers = [AdminAuthController, AdministratorController, RoleController];
-const shopControllers = [ShopAuthController, ShopHiringController];
+const shopControllers = [ShopAuthController, HiringJobPostController];
 export const entityControllers = [
     FacetController,
     FacetValueController,
