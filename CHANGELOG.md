@@ -1,3 +1,11 @@
+## 1.2.0 (2025-04-05)
+
+
+#### Features
+
+*
+    **core**
+enhance job post management by introducing a state machine for transitions, updating job post schema to include new states, and refining job post service methods for better state handling and validation([7c9075f](https://github.com/firelancerco/firelancer    /commit/7c9075f))
 ## <small>1.1.10 (2025-04-04)</small>
 
 
