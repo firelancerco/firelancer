@@ -14,7 +14,7 @@ export class Administrator extends FirelancerEntity implements SoftDeletable {
         super(input);
     }
 
-    @DeleteDateColumn({ nullable: true })
+    @DeleteDateColumn({ type: 'timestamptz', nullable: true })
     deletedAt: Date | null;
 
     @Column()

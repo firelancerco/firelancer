@@ -14,7 +14,7 @@ export abstract class Session extends FirelancerEntity {
     @Column()
     token: string;
 
-    @Column()
+    @Column({ type: 'timestamptz' })
     expires: Date;
 
     @Column()

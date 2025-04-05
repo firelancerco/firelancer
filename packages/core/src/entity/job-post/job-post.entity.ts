@@ -27,19 +27,19 @@ export class JobPost extends FirelancerEntity implements Collectable, SoftDeleta
         super(input);
     }
 
-    @DeleteDateColumn({ nullable: true })
+    @DeleteDateColumn({ type: 'timestamptz', nullable: true })
     deletedAt: Date | null;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamptz', nullable: true })
     publishedAt: Date | null;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamptz', nullable: true })
     closedAt: Date | null;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamptz', nullable: true })
     rejectedAt: Date | null;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamptz', nullable: true })
     editedAt: Date | null;
 
     @Column()
