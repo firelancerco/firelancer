@@ -1991,10 +1991,14 @@ export class MutationCloseJobPostArgs {
 
 export class CreateJobPostInput {
     @IsString()
+    @MinLength(5)
+    @MaxLength(70)
     title: string;
 
     @IsOptional()
     @IsString()
+    @MinLength(5)
+    @MaxLength(1000)
     description?: string | null;
 
     @NotEquals(null)
@@ -2057,10 +2061,14 @@ export class EditDraftJobPostInput {
 
     @IsOptional()
     @IsString()
+    @MinLength(5)
+    @MaxLength(70)
     title?: string | null;
 
     @IsOptional()
     @IsString()
+    @MinLength(5)
+    @MaxLength(1000)
     description?: string | null;
 
     @NotEquals(null)
@@ -2123,10 +2131,14 @@ export class EditPublishedJobPostInput {
 
     @IsOptional()
     @IsString()
+    @MinLength(5)
+    @MaxLength(70)
     title?: string | null;
 
     @IsOptional()
     @IsString()
+    @MinLength(5)
+    @MaxLength(1000)
     description?: string | null;
 
     @NotEquals(null)
