@@ -1,3 +1,11 @@
+## <small>1.2.1 (2025-04-06)</small>
+
+
+#### Fixes
+
+*
+    **core**
+change timestamp columns from 'timestamptz' to 'timestamp' type across multiple entities([3a99034](https://github.com/firelancerco/firelancer    /commit/3a99034))
 ## 1.2.0 (2025-04-05)
 
 
