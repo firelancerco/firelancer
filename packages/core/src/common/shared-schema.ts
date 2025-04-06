@@ -154,6 +154,21 @@ export enum JobState {
     RUNNING = 'RUNNING',
 }
 
+export class JobPostProcessState {
+    /**
+     * @description
+     * The name of the state
+     */
+    @IsString()
+    name: string;
+    /**
+     * @description
+     * The states that can transition to the current state
+     */
+    @IsArray()
+    @IsString({ each: true })
+    to: Array<string>;
+}
 /**
  * @description
  * Certain entities (those which implement ConfigurableOperationDef) allow arbitrary

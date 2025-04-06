@@ -6,7 +6,7 @@ import { FacetService } from '../../../service';
 import { Ctx } from '../../decorators/request-context.decorator';
 
 @Controller('facets')
-export class FacetController {
+export class FacetEntityController {
     constructor(private facetService: FacetService) {}
 
     @Get()

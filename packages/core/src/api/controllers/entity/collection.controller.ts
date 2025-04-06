@@ -22,7 +22,7 @@ const relationsOptions: FieldsDecoratorConfig<Collection> = {
 };
 
 @Controller('collections')
-export class CollectionController {
+export class CollectionEntityController {
     constructor(
         private collectionService: CollectionService,
         private jobPostService: JobPostService,
@@ -47,10 +47,10 @@ export class CollectionController {
     async collection(
         @Ctx() ctx: RequestContext,
         @Api() apiType: ApiType,
-        @Param() params: { id: ID },
+        @Param('id') id: ID,
         @Relations(relationsOptions) relations?: RelationPaths<Collection>,
     ): Promise<Translated<Collection> | undefined> {
-        const collection = await this.collectionService.findOne(ctx, params.id, relations);
+        const collection = await this.collectionService.findOne(ctx, id, relations);
         if (!collection || collection.isPrivate) {
             return undefined;
         }
@@ -63,10 +63,10 @@ export class CollectionController {
     async collectionBySlug(
         @Ctx() ctx: RequestContext,
         @Api() apiType: ApiType,
-        @Param() params: { slug: string },
+        @Param('slug') slug: string,
         @Relations(relationsOptions) relations?: RelationPaths<Collection>,
     ): Promise<Translated<Collection> | undefined> {
-        const collection = await this.collectionService.findOneBySlug(ctx, params.slug, relations);
+        const collection = await this.collectionService.findOneBySlug(ctx, slug, relations);
         if (!collection || collection.isPrivate) {
             return undefined;
         }
@@ -78,7 +78,7 @@ export class CollectionController {
     async productVariants(
         @Ctx() ctx: RequestContext,
         @Api() apiType: ApiType,
-        @Query() params: { id: ID },
+        @Param('id') id: ID,
         @Query() options: JobPostListOptions,
         @Relations({ entity: JobPost, omit: ['assets'] }) relations: RelationPaths<JobPost>,
     ): Promise<PaginatedList<JobPost>> {
@@ -92,7 +92,7 @@ export class CollectionController {
                 },
             };
         }
-        return this.jobPostService.getJobPostsByCollectionId(ctx, params.id, options, relations);
+        return this.jobPostService.getJobPostsByCollectionId(ctx, id, options, relations);
     }
 
     private async resolveCollection(ctx: RequestContext, collection: Collection, apiType: ApiType) {

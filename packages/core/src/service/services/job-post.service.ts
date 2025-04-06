@@ -3,7 +3,6 @@ import {
     DURATION_FACET_CODE,
     EXPERIENCE_LEVEL_FACET_CODE,
     PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
-    PUBLISH_JOB_POST_CONSTRAINTS_MIN_BUDGET,
     PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
     SCOPE_FACET_CODE,
     SKILL_FACET_CODE,
@@ -23,13 +22,13 @@ import {
     EditDraftJobPostInput,
     EditPublishedJobPostInput,
     ID,
+    JobPostProcessState,
     JobPostVisibility,
     PublishJobPostInput,
 } from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { FacetValue, JobPost } from '../../entity';
 import { EventBus, JobPostEvent, JobPostStateTransitionEvent } from '../../event-bus';
-import { EntityHydrator } from '../../service/helpers/entity-hydrator/entity-hydrator.service';
 import { TranslatorService } from '../../service/helpers/translator/translator.service';
 import { JobPostState } from '../helpers/job-post-state-machine/job-post-state';
 import { JobPostStateMachine } from '../helpers/job-post-state-machine/job-post-state-machine';
@@ -138,9 +137,9 @@ export class JobPostService {
 
     /**
      * @description
-     * Creates a new JobPost.
+     * Creates a new draft JobPost.
      */
-    async create(ctx: RequestContext, input: CreateJobPostInput & { customerId: ID }): Promise<JobPost> {
+    async createDraft(ctx: RequestContext, input: CreateJobPostInput & { customerId: ID }): Promise<JobPost> {
         const { assetIds, ...rest } = input;
         const jobPost = new JobPost(rest);
         jobPost.visibility = JobPostVisibility.PUBLIC;
@@ -155,7 +154,7 @@ export class JobPostService {
 
     /**
      * @description
-     * Edits an existing JobPost.
+     * Edits a draft JobPost.
      */
     async editDraft(ctx: RequestContext, input: EditDraftJobPostInput): Promise<JobPost> {
         const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
@@ -180,7 +179,7 @@ export class JobPostService {
 
     /**
      * @description
-     * Deletes a JobPost.
+     * Deletes a draft JobPost.
      */
     async deleteDraft(ctx: RequestContext, input: DeleteDraftJobPostInput) {
         const result = await this.transitionToState(ctx, input.id, 'DRAFT_DELETED');
@@ -189,10 +188,19 @@ export class JobPostService {
 
     /**
      * @description
+     * Requests to publish a JobPost.
+     */
+    async requestPublishDraft(ctx: RequestContext, input: PublishJobPostInput): Promise<JobPost> {
+        const result = await this.transitionToState(ctx, input.id, 'REQUESTED');
+        return assertFound(this.findOne(ctx, result.id));
+    }
+
+    /**
+     * @description
      * Publishes a JobPost.
      */
-    async publish(ctx: RequestContext, input: PublishJobPostInput): Promise<JobPost> {
-        const result = await this.transitionToState(ctx, input.id, 'REQUESTED');
+    async publish(ctx: RequestContext, jobPostId: ID): Promise<JobPost> {
+        const result = await this.transitionToState(ctx, jobPostId, 'OPEN');
         return assertFound(this.findOne(ctx, result.id));
     }
 
@@ -200,7 +208,7 @@ export class JobPostService {
      * @description
      * Edits a published JobPost.
      */
-    async editPublished(ctx: RequestContext, input: EditPublishedJobPostInput): Promise<JobPost> {
+    async edit(ctx: RequestContext, input: EditPublishedJobPostInput): Promise<JobPost> {
         const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, input.id, {
             relations: ['facetValues', 'facetValues.facet'],
         });
@@ -222,11 +230,53 @@ export class JobPostService {
 
     /**
      * @description
-     * Closes a JobPost.
+     * Closes a published JobPost.
      */
     async close(ctx: RequestContext, input: CloseJobPostInput): Promise<JobPost> {
         const result = await this.transitionToState(ctx, input.id, 'CLOSED');
         return assertFound(this.findOne(ctx, result.id));
+    }
+
+    /**
+     * @description
+     * Returns an array of all the configured states and transitions of the job post process. This is
+     * based on the default job post process plus all configured {@link JobPostProcess} objects
+     * defined in the {@link JobPostOptions} `process` array.
+     */
+    getJobPostProcessStates(): JobPostProcessState[] {
+        return Object.entries(this.jobPostStateMachine.config.transitions).map(([name, { to }]) => ({
+            name,
+            to,
+        })) as JobPostProcessState[];
+    }
+
+    /**
+     * @description
+     * Returns the next possible states that the JobPost may transition to.
+     */
+    getNextJobPostStates(jobPost: JobPost): readonly JobPostState[] {
+        return this.jobPostStateMachine.getNextStates(jobPost);
+    }
+
+    /**
+     * @description
+     * Transitions the JobPost to the given state.
+     */
+    async transitionToState(ctx: RequestContext, jobPostId: ID, state: JobPostState): Promise<JobPost> {
+        const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, jobPostId);
+        const fromState = jobPost.state;
+        let finalize: () => Promise<any>;
+        try {
+            const result = await this.jobPostStateMachine.transition(ctx, jobPost, state);
+            finalize = result.finalize;
+        } catch (e: any) {
+            throw new JobPostStateTransitionException({ transitionError: e.message, fromState, toState: state });
+        }
+        await this.connection.getRepository(ctx, JobPost).save(jobPost, { reload: false });
+        await this.eventBus.publish(new JobPostStateTransitionEvent(fromState, state, ctx, jobPost));
+        await finalize();
+        await this.connection.getRepository(ctx, JobPost).save(jobPost, { reload: false });
+        return jobPost;
     }
 
     private async updateJobPostFacetValues(ctx: RequestContext, jobPost: JobPost, input: JobPostFacetValuesInput) {
@@ -374,47 +424,5 @@ export class JobPostService {
         validateConstraints(newFacetValues);
         // Add the new facet values
         jobPost.facetValues = [...jobPost.facetValues, ...newFacetValues];
-    }
-
-    /**
-     * @description
-     * Returns an array of all the configured states and transitions of the job post process. This is
-     * based on the default job post process plus all configured {@link JobPostProcess} objects
-     * defined in the {@link JobPostOptions} `process` array.
-     */
-    getJobPostProcessStates(): JobPostState[] {
-        return Object.entries(this.jobPostStateMachine.config.transitions).map(([name, { to }]) => ({
-            name,
-            to,
-        })) as unknown as JobPostState[];
-    }
-
-    /**
-     * @description
-     * Returns the next possible states that the JobPost may transition to.
-     */
-    getNextJobPostStates(jobPost: JobPost): readonly JobPostState[] {
-        return this.jobPostStateMachine.getNextStates(jobPost);
-    }
-
-    /**
-     * @description
-     * Transitions the JobPost to the given state.
-     */
-    async transitionToState(ctx: RequestContext, jobPostId: ID, state: JobPostState): Promise<JobPost> {
-        const jobPost = await this.connection.getEntityOrThrow(ctx, JobPost, jobPostId);
-        const fromState = jobPost.state;
-        let finalize: () => Promise<any>;
-        try {
-            const result = await this.jobPostStateMachine.transition(ctx, jobPost, state);
-            finalize = result.finalize;
-        } catch (e: any) {
-            throw new JobPostStateTransitionException({ transitionError: e.message, fromState, toState: state });
-        }
-        await this.connection.getRepository(ctx, JobPost).save(jobPost, { reload: false });
-        await this.eventBus.publish(new JobPostStateTransitionEvent(fromState, state, ctx, jobPost));
-        await finalize();
-        await this.connection.getRepository(ctx, JobPost).save(jobPost, { reload: false });
-        return jobPost;
     }
 }

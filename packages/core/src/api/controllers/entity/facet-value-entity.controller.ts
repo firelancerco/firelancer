@@ -6,7 +6,7 @@ import { FacetValueListOptions, ID } from '../../../common/shared-schema';
 import { FacetService, FacetValueService } from '../../../service';
 
 @Controller('facet-values')
-export class FacetValueController {
+export class FacetValueEntityController {
     constructor(
         private facetValueService: FacetValueService,
         private facetService: FacetService,

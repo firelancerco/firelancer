@@ -18,7 +18,7 @@ import { Ctx } from '../../decorators/request-context.decorator';
 import { Transaction } from '../../decorators/transaction.decorator';
 
 @Controller('hiring/job-posts')
-export class HiringJobPostController {
+export class ShopHiringJobPostController {
     constructor(
         private jobPostService: JobPostService,
         private customerService: CustomerService,
@@ -55,7 +55,7 @@ export class HiringJobPostController {
     @Allow(Permission.PublishJobPost)
     async createJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCreateJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-        return this.jobPostService.create(ctx, { ...args.input, customerId: customer.id });
+        return this.jobPostService.createDraft(ctx, { ...args.input, customerId: customer.id });
     }
 
     @Transaction()
@@ -77,7 +77,7 @@ export class HiringJobPostController {
     @Delete('delete-draft')
     @Allow(Permission.PublishJobPost)
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    async deleteJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationDeleteDraftJobPostArgs) {
+    async deleteDraftJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationDeleteDraftJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
         if (!jobPost) {
@@ -93,7 +93,7 @@ export class HiringJobPostController {
     @Transaction()
     @Post('publish')
     @Allow(Permission.PublishJobPost)
-    async publishJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationPublishJobPostArgs) {
+    async requestPublishDraft(@Ctx() ctx: RequestContext, @Body() args: MutationPublishJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
         if (!jobPost) {
@@ -102,7 +102,7 @@ export class HiringJobPostController {
         if (jobPost.customerId !== customer.id) {
             throw new ForbiddenException();
         }
-        return this.jobPostService.publish(ctx, args.input);
+        return this.jobPostService.requestPublishDraft(ctx, args.input);
     }
 
     @Transaction()
@@ -117,13 +117,13 @@ export class HiringJobPostController {
         if (jobPost.customerId !== customer.id) {
             throw new ForbiddenException();
         }
-        return this.jobPostService.editPublished(ctx, args.input);
+        return this.jobPostService.edit(ctx, args.input);
     }
 
     @Transaction()
     @Post('close')
     @Allow(Permission.PublishJobPost)
-    async closeJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCloseJobPostArgs) {
+    async closePublishedJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCloseJobPostArgs) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
         if (!jobPost) {

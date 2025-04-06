@@ -9,7 +9,7 @@ import { Ctx } from '../../decorators/request-context.decorator';
 import { Transaction } from '../../decorators/transaction.decorator';
 
 @Controller('assets')
-export class AssetController {
+export class AssetEntityController {
     constructor(private assetService: AssetService) {}
 
     @Transaction()

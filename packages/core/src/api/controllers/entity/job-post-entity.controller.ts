@@ -8,7 +8,7 @@ import { Api } from '../../decorators/api.decorator';
 import { ApiType } from '../../../common';
 
 @Controller('job-posts')
-export class JobPostController {
+export class JobPostEntityController {
     constructor(private jobPostService: JobPostService) {}
 
     @Get()

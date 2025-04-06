@@ -11,24 +11,25 @@ import { ServiceModule } from '../service/service.module';
 import { AdministratorController } from './controllers/admin/administrator.controller';
 import { AdminAuthController } from './controllers/admin/auth.controller';
 import { RoleController } from './controllers/admin/roles.controller';
-import { AssetController } from './controllers/entity/asset.controller';
-import { CollectionController } from './controllers/entity/collection.controller';
-import { FacetController } from './controllers/entity/facet-entity.controller';
-import { FacetValueController } from './controllers/entity/facet-value-entity.controller';
-import { JobPostController } from './controllers/entity/job-post-entity.controller';
+import { AssetEntityController } from './controllers/entity/asset.controller';
+import { CollectionEntityController } from './controllers/entity/collection.controller';
+import { FacetEntityController } from './controllers/entity/facet-entity.controller';
+import { FacetValueEntityController } from './controllers/entity/facet-value-entity.controller';
+import { JobPostEntityController } from './controllers/entity/job-post-entity.controller';
 import { ShopAuthController } from './controllers/shop/auth.controller';
-import { HiringJobPostController } from './controllers/shop/hiring-job-post.controller';
+import { ShopHiringJobPostController } from './controllers/shop/hiring-job-post.controller';
+import { JobPostController } from './controllers/admin/job-post.controller';
 
 const { apiOptions } = getConfig();
 
-const adminResolvers = [AdminAuthController, AdministratorController, RoleController];
-const shopControllers = [ShopAuthController, HiringJobPostController];
+const adminResolvers = [AdminAuthController, AdministratorController, RoleController, JobPostController];
+const shopControllers = [ShopAuthController, ShopHiringJobPostController];
 export const entityControllers = [
-    FacetController,
-    FacetValueController,
-    JobPostController,
-    CollectionController,
-    AssetController,
+    FacetEntityController,
+    FacetValueEntityController,
+    JobPostEntityController,
+    CollectionEntityController,
+    AssetEntityController,
 ];
 export const adminEntityControllers = [];
 
