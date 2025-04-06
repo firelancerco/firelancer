@@ -9,7 +9,7 @@ export class CacheItem extends FirelancerEntity {
         super(input);
     }
 
-    @Column({ type: 'timestamptz', precision: 3 })
+    @Column({ type: 'timestamp', precision: 3 })
     insertedAt: Date;
 
     @Index('cache_item_key')
@@ -19,6 +19,6 @@ export class CacheItem extends FirelancerEntity {
     @Column('text')
     value: string;
 
-    @Column({ type: 'timestamptz', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     expiresAt: Date | null;
 }

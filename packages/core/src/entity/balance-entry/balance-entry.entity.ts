@@ -51,16 +51,16 @@ export class BalanceEntry extends FirelancerEntity {
     @Column({ default: 0 })
     reviewDays: number;
 
-    @Column({ type: 'timestamptz', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     settledAt: Date | null;
 
-    @Column({ type: 'timestamptz', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     rejectedAt: Date | null;
 
     @Money({ nullable: true })
     prevBalance: number | null;
 
-    @Column({ type: 'timestamptz', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     prevSettledAt: Date | null;
 
     @EntityId({ nullable: true })

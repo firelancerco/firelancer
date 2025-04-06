@@ -22,13 +22,13 @@ export class NativeAuthenticationMethod extends AuthenticationMethod {
     @Column({ type: 'varchar', nullable: true })
     verificationToken: string | null;
 
-    @Column({ type: 'timestamptz', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     verificationTokenCreatedAt: Date | null;
 
     @Column({ type: 'varchar', nullable: true })
     passwordResetToken: string | null;
 
-    @Column({ type: 'timestamptz', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     passwordResetTokenCreatedAt: Date | null;
 
     /**
@@ -38,7 +38,7 @@ export class NativeAuthenticationMethod extends AuthenticationMethod {
     @Column({ type: 'varchar', nullable: true })
     identifierChangeToken: string | null;
 
-    @Column({ type: 'timestamptz', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     identifierChangeTokenCreatedAt: Date | null;
 
     /**

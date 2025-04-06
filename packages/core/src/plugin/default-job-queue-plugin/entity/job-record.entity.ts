@@ -29,10 +29,10 @@ export class JobRecord extends FirelancerEntity {
     @Column({ nullable: true })
     error: string;
 
-    @Column({ type: 'timestamptz', nullable: true, precision: 6 })
+    @Column({ type: 'timestamp', nullable: true, precision: 6 })
     startedAt?: Date;
 
-    @Column({ type: 'timestamptz', nullable: true, precision: 6 })
+    @Column({ type: 'timestamp', nullable: true, precision: 6 })
     settledAt?: Date;
 
     @Column()
