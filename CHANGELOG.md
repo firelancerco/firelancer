@@ -1,3 +1,13 @@
+## <small>1.2.2 (2025-04-14)</small>
+
+
+#### Features
+
+*
+    **core**
+add validation constraints for title and description fields in job post input classes([6123f32](https://github.com/firelancerco/firelancer    /commit/6123f32))*
+    **core**
+implement MIME type validation and update error handling in asset service([582ec15](https://github.com/firelancerco/firelancer    /commit/582ec15))
 ## <small>1.2.1 (2025-04-06)</small>
 
 
