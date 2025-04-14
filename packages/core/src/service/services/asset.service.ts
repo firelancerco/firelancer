@@ -11,7 +11,7 @@ import { Readable, Stream } from 'stream';
 import { FindOneOptions, In, IsNull } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils';
 import { RelationPaths } from '../../api';
-import { InternalServerException, ListQueryOptions, RequestContext } from '../../common';
+import { InternalServerException, ListQueryOptions, MimeTypeException, RequestContext } from '../../common';
 import { AssetType, CreateAssetInput, ID, UpdateAssetInput } from '../../common/shared-schema';
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
@@ -248,8 +248,7 @@ export class AssetService {
     ): Promise<Asset> {
         const { assetOptions } = this.configService;
         if (!this.validateMimeType(mimetype)) {
-            // return new MimeTypeError({ fileName: filename, mimeType: mimetype });
-            throw new Error('MIME_TYPE_ERROR');
+            throw new MimeTypeException({ fileName: filename, mimeType: mimetype });
         }
         const { assetPreviewStrategy, assetStorageStrategy } = assetOptions;
         const sourceFileName = await this.getSourceFileName(ctx, filename);

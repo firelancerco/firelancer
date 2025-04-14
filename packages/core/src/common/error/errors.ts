@@ -154,3 +154,9 @@ export class JobPostStateTransitionException extends I18nException {
         super(input.transitionError, HttpStatus.BAD_REQUEST, input, LogLevel.Warn);
     }
 }
+
+export class MimeTypeException extends I18nException {
+    constructor(input: { fileName: string; mimeType: string }) {
+        super('errorResult.MIME_TYPE_ERROR', HttpStatus.BAD_REQUEST, input, LogLevel.Warn);
+    }
+}

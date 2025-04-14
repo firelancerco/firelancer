@@ -37,6 +37,9 @@
         "verification-token-expired": "رمز التحقق منتهي الصلاحية. استخدم refreshCustomerVerification لإرسال رمز جديد.",
         "verification-token-invalid": "رمز التحقق غير معترف به"
     },
+    "errorResult": {
+        "MIME_TYPE_ERROR": "نوع MIME \"{ mimeType }\" غير مسموح به."
+    },
     "message": {
         "cannot-transition-job-post-from-to": "لا يمكن للمشروع الانتفال من \"{ fromState }\" إلى \"{ toState }\""
     }

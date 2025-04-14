@@ -24,6 +24,6 @@ export class AssetEntityController {
                 assets.push(asset);
             }
         }
-        return { assets };
+        return assets;
     }
 }
