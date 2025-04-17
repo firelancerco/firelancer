@@ -10,7 +10,7 @@ import {
 import axios from 'axios';
 import { OAuth2Client } from 'google-auth-library';
 
-import { GoogleAuthData } from './shared-schema';
+import { GoogleAuthData } from './schema';
 
 export class GoogleAuthenticationStrategy implements AuthenticationStrategy<GoogleAuthData> {
     readonly name = 'google';
@@ -23,6 +23,10 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
 
     init(injector: Injector) {
         this.externalAuthenticationService = injector.get(ExternalAuthenticationService);
+    }
+
+    getInputType(): string {
+        return 'GoogleAuthData';
     }
 
     async authenticate(ctx: RequestContext, data: GoogleAuthData): Promise<User | string> {

@@ -34,6 +34,10 @@ export class NativeAuthenticationStrategy implements AuthenticationStrategy<Nati
         this.userService = injector.get(UserService);
     }
 
+    getInputType(): string {
+        return 'NativeAuthInput';
+    }
+
     async authenticate(ctx: RequestContext, data: NativeAuthenticationData): Promise<User | false> {
         const user = await this.userService.getUserByEmailAddress(ctx, data.username);
         if (!user) {

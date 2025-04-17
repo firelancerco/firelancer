@@ -12,7 +12,7 @@ import { MiddlewareConsumer, NestModule, OnApplicationBootstrap } from '@nestjs/
 import { createHash } from 'crypto';
 import express, { NextFunction, Request, Response } from 'express';
 import fs from 'fs-extra';
-import path from 'path';
+import path, { resolve } from 'path';
 import { getValidFormat } from './common';
 import { DEFAULT_CACHE_HEADER, loggerCtx } from './constants';
 import { defaultAssetStorageStrategyFactory } from './default-asset-storage-strategy-factory';
@@ -140,6 +140,12 @@ async function getFileType(buffer: Buffer) {
  */
 @FirelancerPlugin({
     imports: [PluginCommonModule],
+    shopApiExtensions: {
+        schemaPath: resolve(__dirname, './schema.d.ts'),
+    },
+    adminApiExtensions: {
+        schemaPath: resolve(__dirname, './schema.d.ts'),
+    },
     configuration: config => AssetServerPlugin.configure(config),
     compatibility: '>=1.0.0',
 })

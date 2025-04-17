@@ -14,7 +14,7 @@
         "start": "lerna run start",
         "test": "lerna run test --stream --no-bail",
         "version": "npm run check-imports && npm run build && npm run generate-changelog && git add CHANGELOG* && git add */version.ts",
-        "codegen": "ts-node scripts/copy-api-schemas-types.ts",
+        "codegen": "ts-node scripts/build-api-shared-schema.ts",
         "check-imports": "ts-node scripts/check-imports.ts",
         "generate-changelog": "ts-node scripts/changelogs/generate-changelog.ts",
         "publish-local": "lerna version --force-publish --no-git-tag-version && cd scripts && ./publish-to-verdaccio.sh",

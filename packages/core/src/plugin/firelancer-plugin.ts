@@ -64,6 +64,11 @@ export interface FirelancerPluginMetadata extends ModuleMetadata {
 export interface APIExtensionDefinition {
     /**
      * @description
+     * Extensions to the schema.
+     */
+    schemaPath?: string | (() => string | undefined);
+    /**
+     * @description
      * An array of controllers. Should be defined as [Nestjs REST Controller](https://docs.nestjs.com/controllers)
      * classes, i.e. using the Nest `\@Resolver()` decorator etc.
      */

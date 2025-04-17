@@ -25,6 +25,12 @@ export interface AuthenticationStrategy<Data = unknown> extends InjectableStrate
 
     /**
      * @description
+     * Get the type name of the Input object expected by the `authenticate` mutation.
+     */
+    getInputType(): string;
+
+    /**
+     * @description
      * Used to authenticate a user with the authentication provider. This method
      * will implement the provider-specific authentication logic, and should resolve to either a
      * User object on success, or `false | string` on failure.

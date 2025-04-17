@@ -1,7 +1,9 @@
 import { Logger } from '@firelancerco/core';
 import sharp, { FormatEnum, Region, ResizeOptions } from 'sharp';
+
 import { getValidFormat } from './common';
 import { loggerCtx } from './constants';
+import { TransformImageOptions } from './schema';
 import { ImageTransformFormat, ImageTransformPreset } from './types';
 
 export type Dimensions = { w: number; h: number };
@@ -12,7 +14,7 @@ export type Point = { x: number; y: number };
  */
 export async function transformImage(
     originalImage: Buffer,
-    queryParams: Record<string, string>,
+    queryParams: TransformImageOptions,
     presets: ImageTransformPreset[],
 ): Promise<sharp.Sharp> {
     let targetWidth = Math.round(+queryParams.w) || undefined;

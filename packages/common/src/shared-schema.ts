@@ -1,1746 +1,1327 @@
 /* eslint-disable */
 export type ID = string | number;
-
 export enum CustomerType {
-    SELLER = 'SELLER',
-    BUYER = 'BUYER',
+    SELLER = "SELLER",
+    BUYER = "BUYER"
 }
-
 export enum Permission {
     /** Authenticated means simply that the user is logged in */
-    Authenticated = 'Authenticated',
+    Authenticated = "Authenticated",
     /** Grants permission to create Administrator */
-    CreateAdministrator = 'CreateAdministrator',
+    CreateAdministrator = "CreateAdministrator",
     /** Grants permission to create Asset */
-    CreateAsset = 'CreateAsset',
+    CreateAsset = "CreateAsset",
     /** Grants permission to create Customer */
-    CreateCustomer = 'CreateCustomer',
+    CreateCustomer = "CreateCustomer",
     /** Grants permission to create JobPost */
-    CreateJobPost = 'CreateJobPost',
+    CreateJobPost = "CreateJobPost",
     /** Grants permission to create Facet */
-    CreateFacet = 'CreateFacet',
+    CreateFacet = "CreateFacet",
     /** Grants permission to delete Administrator */
-    DeleteAdministrator = 'DeleteAdministrator',
+    DeleteAdministrator = "DeleteAdministrator",
     /** Grants permission to delete Asset */
-    DeleteAsset = 'DeleteAsset',
+    DeleteAsset = "DeleteAsset",
     /** Grants permission to delete Customer */
-    DeleteCustomer = 'DeleteCustomer',
+    DeleteCustomer = "DeleteCustomer",
     /** Grants permission to delete JobPost */
-    DeleteJobPost = 'DeleteJobPost',
+    DeleteJobPost = "DeleteJobPost",
     /** Grants permission to delete Facet */
-    DeleteFacet = 'DeleteFacet',
+    DeleteFacet = "DeleteFacet",
     /** Owner means the user owns this entity, e.g. a Customer's own Order */
-    Owner = 'Owner',
+    Owner = "Owner",
     /** Public means any unauthenticated user may perform the operation */
-    Public = 'Public',
+    Public = "Public",
     /** Grants permission to read Administrator */
-    ReadAdministrator = 'ReadAdministrator',
+    ReadAdministrator = "ReadAdministrator",
     /** Grants permission to read Asset */
-    ReadAsset = 'ReadAsset',
+    ReadAsset = "ReadAsset",
     /** Grants permission to read Customer */
-    ReadCustomer = 'ReadCustomer',
+    ReadCustomer = "ReadCustomer",
     /** Grants permission to read JobPost */
-    ReadJobPost = 'ReadJobPost',
+    ReadJobPost = "ReadJobPost",
     /** Grants permission to read Facet */
-    ReadFacet = 'ReadFacet',
+    ReadFacet = "ReadFacet",
     /** SuperAdmin has unrestricted access to all operations */
-    SuperAdmin = 'SuperAdmin',
+    SuperAdmin = "SuperAdmin",
     /** Grants permission to update Administrator */
-    UpdateAdministrator = 'UpdateAdministrator',
+    UpdateAdministrator = "UpdateAdministrator",
     /** Grants permission to update Asset */
-    UpdateAsset = 'UpdateAsset',
+    UpdateAsset = "UpdateAsset",
     /** Grants permission to update Customer */
-    UpdateCustomer = 'UpdateCustomer',
+    UpdateCustomer = "UpdateCustomer",
     /** Grants permission to update JobPost */
-    UpdateJobPost = 'UpdateJobPost',
+    UpdateJobPost = "UpdateJobPost",
     /** Grants permission to update Facet */
-    UpdateFacet = 'UpdateFacet',
+    UpdateFacet = "UpdateFacet",
     /** Grants permission to publish new JobPost */
-    PublishJobPost = 'PublishJobPost',
+    PublishJobPost = "PublishJobPost"
 }
-
 export enum HistoryEntryType {
-    CUSTOMER_EMAIL_UPDATE_REQUESTED = 'CUSTOMER_EMAIL_UPDATE_REQUESTED',
-    CUSTOMER_EMAIL_UPDATE_VERIFIED = 'CUSTOMER_EMAIL_UPDATE_VERIFIED',
-    CUSTOMER_DETAIL_UPDATED = 'CUSTOMER_DETAIL_UPDATED',
-    CUSTOMER_PASSWORD_RESET_REQUESTED = 'CUSTOMER_PASSWORD_RESET_REQUESTED',
-    CUSTOMER_PASSWORD_RESET_VERIFIED = 'CUSTOMER_PASSWORD_RESET_VERIFIED',
-    CUSTOMER_PASSWORD_UPDATED = 'CUSTOMER_PASSWORD_UPDATED',
-    CUSTOMER_REGISTERED = 'CUSTOMER_REGISTERED',
-    CUSTOMER_VERIFIED = 'CUSTOMER_VERIFIED',
+    CUSTOMER_EMAIL_UPDATE_REQUESTED = "CUSTOMER_EMAIL_UPDATE_REQUESTED",
+    CUSTOMER_EMAIL_UPDATE_VERIFIED = "CUSTOMER_EMAIL_UPDATE_VERIFIED",
+    CUSTOMER_DETAIL_UPDATED = "CUSTOMER_DETAIL_UPDATED",
+    CUSTOMER_PASSWORD_RESET_REQUESTED = "CUSTOMER_PASSWORD_RESET_REQUESTED",
+    CUSTOMER_PASSWORD_RESET_VERIFIED = "CUSTOMER_PASSWORD_RESET_VERIFIED",
+    CUSTOMER_PASSWORD_UPDATED = "CUSTOMER_PASSWORD_UPDATED",
+    CUSTOMER_REGISTERED = "CUSTOMER_REGISTERED",
+    CUSTOMER_VERIFIED = "CUSTOMER_VERIFIED"
 }
-
 export enum JobPostVisibility {
-    PUBLIC = 'PUBLIC',
-    INVITE_ONLY = 'INVITE_ONLY',
+    PUBLIC = "PUBLIC",
+    INVITE_ONLY = "INVITE_ONLY"
 }
-
 export enum JobPostState {
-    DRAFT = 'DRAFT',
-    DRAFT_DELETED = 'DRAFT_DELETED',
-    REQUESTED = 'REQUESTED',
-    REJECTED = 'REJECTED',
-    OPEN = 'OPEN',
-    CLOSED = 'CLOSED',
+    DRAFT = "DRAFT",
+    DRAFT_DELETED = "DRAFT_DELETED",
+    REQUESTED = "REQUESTED",
+    REJECTED = "REJECTED",
+    OPEN = "OPEN",
+    CLOSED = "CLOSED"
 }
-
 export enum AssetType {
-    BINARY = 'BINARY',
-    IMAGE = 'IMAGE',
-    VIDEO = 'VIDEO',
+    BINARY = "BINARY",
+    IMAGE = "IMAGE",
+    VIDEO = "VIDEO"
 }
-
 export enum BalanceEntryType {
-    FIXED_PRICE = 'FIXED_PRICE',
-    BONUS = 'BONUS',
-    PAYMENT = 'PAYMENT',
-    WITHDRAWAL = 'WITHDRAWAL',
+    FIXED_PRICE = "FIXED_PRICE",
+    BONUS = "BONUS",
+    PAYMENT = "PAYMENT",
+    WITHDRAWAL = "WITHDRAWAL"
 }
-
 export enum BalanceEntryStatus {
     /** The balance entry is pending settlement */
-    PENDING = 'PENDING',
+    PENDING = "PENDING",
     /** The balance entry has been settled */
-    SETTLED = 'SETTLED',
+    SETTLED = "SETTLED",
     /** The balance entry has been rejected */
-    REJECTED = 'REJECTED',
+    REJECTED = "REJECTED"
 }
-
-/**
- * @description
- * The state of a Job in the JobQueue
- */
 export enum JobState {
-    CANCELLED = 'CANCELLED',
-    COMPLETED = 'COMPLETED',
-    FAILED = 'FAILED',
-    PENDING = 'PENDING',
-    RETRYING = 'RETRYING',
-    RUNNING = 'RUNNING',
+    CANCELLED = "CANCELLED",
+    COMPLETED = "COMPLETED",
+    FAILED = "FAILED",
+    PENDING = "PENDING",
+    RETRYING = "RETRYING",
+    RUNNING = "RUNNING"
 }
-
 export class JobPostProcessState {
     /**
      * @description
      * The name of the state
-     */ name: string;
+     */
+    name: string;
     /**
      * @description
      * The states that can transition to the current state
-     */ to: Array<string>;
+     */
+    to: Array<string>;
 }
-/**
- * @description
- * Certain entities (those which implement ConfigurableOperationDef) allow arbitrary
- * configuration arguments to be specified which can then be set in the admin-ui and used in
- * the business logic of the app. These are the valid data types of such arguments.
- * The data type influences:
- *
- * 1. How the argument form field is rendered in the admin-ui
- * 2. The JavaScript type into which the value is coerced before being passed to the business logic.
- */
 export type ConfigArgType = 'string' | 'int' | 'float' | 'boolean' | 'datetime' | 'ID';
-
 export enum SortOrder {
-    ASC = 'ASC',
-    DESC = 'DESC',
+    ASC = "ASC",
+    DESC = "DESC"
 }
-
-/**
- * @description
- * ISO 4217 currency code
- */
 export enum CurrencyCode {
     /** United Arab Emirates dirham */
-    AED = 'AED',
+    AED = "AED",
     /** Afghan afghani */
-    AFN = 'AFN',
+    AFN = "AFN",
     /** Albanian lek */
-    ALL = 'ALL',
+    ALL = "ALL",
     /** Armenian dram */
-    AMD = 'AMD',
+    AMD = "AMD",
     /** Netherlands Antillean guilder */
-    ANG = 'ANG',
+    ANG = "ANG",
     /** Angolan kwanza */
-    AOA = 'AOA',
+    AOA = "AOA",
     /** Argentine peso */
-    ARS = 'ARS',
+    ARS = "ARS",
     /** Australian dollar */
-    AUD = 'AUD',
+    AUD = "AUD",
     /** Aruban florin */
-    AWG = 'AWG',
+    AWG = "AWG",
     /** Azerbaijani manat */
-    AZN = 'AZN',
+    AZN = "AZN",
     /** Bosnia and Herzegovina convertible mark */
-    BAM = 'BAM',
+    BAM = "BAM",
     /** Barbados dollar */
-    BBD = 'BBD',
+    BBD = "BBD",
     /** Bangladeshi taka */
-    BDT = 'BDT',
+    BDT = "BDT",
     /** Bulgarian lev */
-    BGN = 'BGN',
+    BGN = "BGN",
     /** Bahraini dinar */
-    BHD = 'BHD',
+    BHD = "BHD",
     /** Burundian franc */
-    BIF = 'BIF',
+    BIF = "BIF",
     /** Bermudian dollar */
-    BMD = 'BMD',
+    BMD = "BMD",
     /** Brunei dollar */
-    BND = 'BND',
+    BND = "BND",
     /** Boliviano */
-    BOB = 'BOB',
+    BOB = "BOB",
     /** Brazilian real */
-    BRL = 'BRL',
+    BRL = "BRL",
     /** Bahamian dollar */
-    BSD = 'BSD',
+    BSD = "BSD",
     /** Bhutanese ngultrum */
-    BTN = 'BTN',
+    BTN = "BTN",
     /** Botswana pula */
-    BWP = 'BWP',
+    BWP = "BWP",
     /** Belarusian ruble */
-    BYN = 'BYN',
+    BYN = "BYN",
     /** Belize dollar */
-    BZD = 'BZD',
+    BZD = "BZD",
     /** Canadian dollar */
-    CAD = 'CAD',
+    CAD = "CAD",
     /** Congolese franc */
-    CDF = 'CDF',
+    CDF = "CDF",
     /** Swiss franc */
-    CHF = 'CHF',
+    CHF = "CHF",
     /** Chilean peso */
-    CLP = 'CLP',
+    CLP = "CLP",
     /** Renminbi (Chinese) yuan */
-    CNY = 'CNY',
+    CNY = "CNY",
     /** Colombian peso */
-    COP = 'COP',
+    COP = "COP",
     /** Costa Rican colon */
-    CRC = 'CRC',
+    CRC = "CRC",
     /** Cuban convertible peso */
-    CUC = 'CUC',
+    CUC = "CUC",
     /** Cuban peso */
-    CUP = 'CUP',
+    CUP = "CUP",
     /** Cape Verde escudo */
-    CVE = 'CVE',
+    CVE = "CVE",
     /** Czech koruna */
-    CZK = 'CZK',
+    CZK = "CZK",
     /** Djiboutian franc */
-    DJF = 'DJF',
+    DJF = "DJF",
     /** Danish krone */
-    DKK = 'DKK',
+    DKK = "DKK",
     /** Dominican peso */
-    DOP = 'DOP',
+    DOP = "DOP",
     /** Algerian dinar */
-    DZD = 'DZD',
+    DZD = "DZD",
     /** Egyptian pound */
-    EGP = 'EGP',
+    EGP = "EGP",
     /** Eritrean nakfa */
-    ERN = 'ERN',
+    ERN = "ERN",
     /** Ethiopian birr */
-    ETB = 'ETB',
+    ETB = "ETB",
     /** Euro */
-    EUR = 'EUR',
+    EUR = "EUR",
     /** Fiji dollar */
-    FJD = 'FJD',
+    FJD = "FJD",
     /** Falkland Islands pound */
-    FKP = 'FKP',
+    FKP = "FKP",
     /** Pound sterling */
-    GBP = 'GBP',
+    GBP = "GBP",
     /** Georgian lari */
-    GEL = 'GEL',
+    GEL = "GEL",
     /** Ghanaian cedi */
-    GHS = 'GHS',
+    GHS = "GHS",
     /** Gibraltar pound */
-    GIP = 'GIP',
+    GIP = "GIP",
     /** Gambian dalasi */
-    GMD = 'GMD',
+    GMD = "GMD",
     /** Guinean franc */
-    GNF = 'GNF',
+    GNF = "GNF",
     /** Guatemalan quetzal */
-    GTQ = 'GTQ',
+    GTQ = "GTQ",
     /** Guyanese dollar */
-    GYD = 'GYD',
+    GYD = "GYD",
     /** Hong Kong dollar */
-    HKD = 'HKD',
+    HKD = "HKD",
     /** Honduran lempira */
-    HNL = 'HNL',
+    HNL = "HNL",
     /** Croatian kuna */
-    HRK = 'HRK',
+    HRK = "HRK",
     /** Haitian gourde */
-    HTG = 'HTG',
+    HTG = "HTG",
     /** Hungarian forint */
-    HUF = 'HUF',
+    HUF = "HUF",
     /** Indonesian rupiah */
-    IDR = 'IDR',
+    IDR = "IDR",
     /** Israeli new shekel */
-    ILS = 'ILS',
+    ILS = "ILS",
     /** Indian rupee */
-    INR = 'INR',
+    INR = "INR",
     /** Iraqi dinar */
-    IQD = 'IQD',
+    IQD = "IQD",
     /** Iranian rial */
-    IRR = 'IRR',
+    IRR = "IRR",
     /** Icelandic króna */
-    ISK = 'ISK',
+    ISK = "ISK",
     /** Jamaican dollar */
-    JMD = 'JMD',
+    JMD = "JMD",
     /** Jordanian dinar */
-    JOD = 'JOD',
+    JOD = "JOD",
     /** Japanese yen */
-    JPY = 'JPY',
+    JPY = "JPY",
     /** Kenyan shilling */
-    KES = 'KES',
+    KES = "KES",
     /** Kyrgyzstani som */
-    KGS = 'KGS',
+    KGS = "KGS",
     /** Cambodian riel */
-    KHR = 'KHR',
+    KHR = "KHR",
     /** Comoro franc */
-    KMF = 'KMF',
+    KMF = "KMF",
     /** North Korean won */
-    KPW = 'KPW',
+    KPW = "KPW",
     /** South Korean won */
-    KRW = 'KRW',
+    KRW = "KRW",
     /** Kuwaiti dinar */
-    KWD = 'KWD',
+    KWD = "KWD",
     /** Cayman Islands dollar */
-    KYD = 'KYD',
+    KYD = "KYD",
     /** Kazakhstani tenge */
-    KZT = 'KZT',
+    KZT = "KZT",
     /** Lao kip */
-    LAK = 'LAK',
+    LAK = "LAK",
     /** Lebanese pound */
-    LBP = 'LBP',
+    LBP = "LBP",
     /** Sri Lankan rupee */
-    LKR = 'LKR',
+    LKR = "LKR",
     /** Liberian dollar */
-    LRD = 'LRD',
+    LRD = "LRD",
     /** Lesotho loti */
-    LSL = 'LSL',
+    LSL = "LSL",
     /** Libyan dinar */
-    LYD = 'LYD',
+    LYD = "LYD",
     /** Moroccan dirham */
-    MAD = 'MAD',
+    MAD = "MAD",
     /** Moldovan leu */
-    MDL = 'MDL',
+    MDL = "MDL",
     /** Malagasy ariary */
-    MGA = 'MGA',
+    MGA = "MGA",
     /** Macedonian denar */
-    MKD = 'MKD',
+    MKD = "MKD",
     /** Myanmar kyat */
-    MMK = 'MMK',
+    MMK = "MMK",
     /** Mongolian tögrög */
-    MNT = 'MNT',
+    MNT = "MNT",
     /** Macanese pataca */
-    MOP = 'MOP',
+    MOP = "MOP",
     /** Mauritanian ouguiya */
-    MRU = 'MRU',
+    MRU = "MRU",
     /** Mauritian rupee */
-    MUR = 'MUR',
+    MUR = "MUR",
     /** Maldivian rufiyaa */
-    MVR = 'MVR',
+    MVR = "MVR",
     /** Malawian kwacha */
-    MWK = 'MWK',
+    MWK = "MWK",
     /** Mexican peso */
-    MXN = 'MXN',
+    MXN = "MXN",
     /** Malaysian ringgit */
-    MYR = 'MYR',
+    MYR = "MYR",
     /** Mozambican metical */
-    MZN = 'MZN',
+    MZN = "MZN",
     /** Namibian dollar */
-    NAD = 'NAD',
+    NAD = "NAD",
     /** Nigerian naira */
-    NGN = 'NGN',
+    NGN = "NGN",
     /** Nicaraguan córdoba */
-    NIO = 'NIO',
+    NIO = "NIO",
     /** Norwegian krone */
-    NOK = 'NOK',
+    NOK = "NOK",
     /** Nepalese rupee */
-    NPR = 'NPR',
+    NPR = "NPR",
     /** New Zealand dollar */
-    NZD = 'NZD',
+    NZD = "NZD",
     /** Omani rial */
-    OMR = 'OMR',
+    OMR = "OMR",
     /** Panamanian balboa */
-    PAB = 'PAB',
+    PAB = "PAB",
     /** Peruvian sol */
-    PEN = 'PEN',
+    PEN = "PEN",
     /** Papua New Guinean kina */
-    PGK = 'PGK',
+    PGK = "PGK",
     /** Philippine peso */
-    PHP = 'PHP',
+    PHP = "PHP",
     /** Pakistani rupee */
-    PKR = 'PKR',
+    PKR = "PKR",
     /** Polish złoty */
-    PLN = 'PLN',
+    PLN = "PLN",
     /** Paraguayan guaraní */
-    PYG = 'PYG',
+    PYG = "PYG",
     /** Qatari riyal */
-    QAR = 'QAR',
+    QAR = "QAR",
     /** Romanian leu */
-    RON = 'RON',
+    RON = "RON",
     /** Serbian dinar */
-    RSD = 'RSD',
+    RSD = "RSD",
     /** Russian ruble */
-    RUB = 'RUB',
+    RUB = "RUB",
     /** Rwandan franc */
-    RWF = 'RWF',
+    RWF = "RWF",
     /** Saudi riyal */
-    SAR = 'SAR',
+    SAR = "SAR",
     /** Solomon Islands dollar */
-    SBD = 'SBD',
+    SBD = "SBD",
     /** Seychelles rupee */
-    SCR = 'SCR',
+    SCR = "SCR",
     /** Sudanese pound */
-    SDG = 'SDG',
+    SDG = "SDG",
     /** Swedish krona/kronor */
-    SEK = 'SEK',
+    SEK = "SEK",
     /** Singapore dollar */
-    SGD = 'SGD',
+    SGD = "SGD",
     /** Saint Helena pound */
-    SHP = 'SHP',
+    SHP = "SHP",
     /** Sierra Leonean leone */
-    SLL = 'SLL',
+    SLL = "SLL",
     /** Somali shilling */
-    SOS = 'SOS',
+    SOS = "SOS",
     /** Surinamese dollar */
-    SRD = 'SRD',
+    SRD = "SRD",
     /** South Sudanese pound */
-    SSP = 'SSP',
+    SSP = "SSP",
     /** São Tomé and Príncipe dobra */
-    STN = 'STN',
+    STN = "STN",
     /** Salvadoran colón */
-    SVC = 'SVC',
+    SVC = "SVC",
     /** Syrian pound */
-    SYP = 'SYP',
+    SYP = "SYP",
     /** Swazi lilangeni */
-    SZL = 'SZL',
+    SZL = "SZL",
     /** Thai baht */
-    THB = 'THB',
+    THB = "THB",
     /** Tajikistani somoni */
-    TJS = 'TJS',
+    TJS = "TJS",
     /** Turkmenistan manat */
-    TMT = 'TMT',
+    TMT = "TMT",
     /** Tunisian dinar */
-    TND = 'TND',
+    TND = "TND",
     /** Tongan paʻanga */
-    TOP = 'TOP',
+    TOP = "TOP",
     /** Turkish lira */
-    TRY = 'TRY',
+    TRY = "TRY",
     /** Trinidad and Tobago dollar */
-    TTD = 'TTD',
+    TTD = "TTD",
     /** New Taiwan dollar */
-    TWD = 'TWD',
+    TWD = "TWD",
     /** Tanzanian shilling */
-    TZS = 'TZS',
+    TZS = "TZS",
     /** Ukrainian hryvnia */
-    UAH = 'UAH',
+    UAH = "UAH",
     /** Ugandan shilling */
-    UGX = 'UGX',
+    UGX = "UGX",
     /** United States dollar */
-    USD = 'USD',
+    USD = "USD",
     /** Uruguayan peso */
-    UYU = 'UYU',
+    UYU = "UYU",
     /** Uzbekistan som */
-    UZS = 'UZS',
+    UZS = "UZS",
     /** Venezuelan bolívar soberano */
-    VES = 'VES',
+    VES = "VES",
     /** Vietnamese đồng */
-    VND = 'VND',
+    VND = "VND",
     /** Vanuatu vatu */
-    VUV = 'VUV',
+    VUV = "VUV",
     /** Samoan tala */
-    WST = 'WST',
+    WST = "WST",
     /** CFA franc BEAC */
-    XAF = 'XAF',
+    XAF = "XAF",
     /** East Caribbean dollar */
-    XCD = 'XCD',
+    XCD = "XCD",
     /** CFA franc BCEAO */
-    XOF = 'XOF',
+    XOF = "XOF",
     /** CFP franc (franc Pacifique) */
-    XPF = 'XPF',
+    XPF = "XPF",
     /** Yemeni rial */
-    YER = 'YER',
+    YER = "YER",
     /** South African rand */
-    ZAR = 'ZAR',
+    ZAR = "ZAR",
     /** Zambian kwacha */
-    ZMW = 'ZMW',
+    ZMW = "ZMW",
     /** Zimbabwean dollar */
-    ZWL = 'ZWL',
+    ZWL = "ZWL"
 }
-
-/**
- * @description
- * Languages in the form of a ISO 639-1 language code with optional
- * region or script modifier (e.g. de_AT). The selection available is based
- * on the [Unicode CLDR summary list](https://unicode-org.github.io/cldr-staging/charts/37/summary/root.html)
- * and includes the major spoken languages of the world and any widely-used variants.
- */
 export enum LanguageCode {
     /** Afrikaans */
-    af = 'af',
+    af = "af",
     /** Akan */
-    ak = 'ak',
+    ak = "ak",
     /** Amharic */
-    am = 'am',
+    am = "am",
     /** Arabic */
-    ar = 'ar',
+    ar = "ar",
     /** Assamese */
-    as = 'as',
+    as = "as",
     /** Azerbaijani */
-    az = 'az',
+    az = "az",
     /** Belarusian */
-    be = 'be',
+    be = "be",
     /** Bulgarian */
-    bg = 'bg',
+    bg = "bg",
     /** Bambara */
-    bm = 'bm',
+    bm = "bm",
     /** Bangla */
-    bn = 'bn',
+    bn = "bn",
     /** Tibetan */
-    bo = 'bo',
+    bo = "bo",
     /** Breton */
-    br = 'br',
+    br = "br",
     /** Bosnian */
-    bs = 'bs',
+    bs = "bs",
     /** Catalan */
-    ca = 'ca',
+    ca = "ca",
     /** Chechen */
-    ce = 'ce',
+    ce = "ce",
     /** Corsican */
-    co = 'co',
+    co = "co",
     /** Czech */
-    cs = 'cs',
+    cs = "cs",
     /** Church Slavic */
-    cu = 'cu',
+    cu = "cu",
     /** Welsh */
-    cy = 'cy',
+    cy = "cy",
     /** Danish */
-    da = 'da',
+    da = "da",
     /** German */
-    de = 'de',
+    de = "de",
     /** Austrian German */
-    de_AT = 'de_AT',
+    de_AT = "de_AT",
     /** Swiss High German */
-    de_CH = 'de_CH',
+    de_CH = "de_CH",
     /** Dzongkha */
-    dz = 'dz',
+    dz = "dz",
     /** Ewe */
-    ee = 'ee',
+    ee = "ee",
     /** Greek */
-    el = 'el',
+    el = "el",
     /** English */
-    en = 'en',
+    en = "en",
     /** Australian English */
-    en_AU = 'en_AU',
+    en_AU = "en_AU",
     /** Canadian English */
-    en_CA = 'en_CA',
+    en_CA = "en_CA",
     /** British English */
-    en_GB = 'en_GB',
+    en_GB = "en_GB",
     /** American English */
-    en_US = 'en_US',
+    en_US = "en_US",
     /** Esperanto */
-    eo = 'eo',
+    eo = "eo",
     /** Spanish */
-    es = 'es',
+    es = "es",
     /** European Spanish */
-    es_ES = 'es_ES',
+    es_ES = "es_ES",
     /** Mexican Spanish */
-    es_MX = 'es_MX',
+    es_MX = "es_MX",
     /** Estonian */
-    et = 'et',
+    et = "et",
     /** Basque */
-    eu = 'eu',
+    eu = "eu",
     /** Persian */
-    fa = 'fa',
+    fa = "fa",
     /** Dari */
-    fa_AF = 'fa_AF',
+    fa_AF = "fa_AF",
     /** Fulah */
-    ff = 'ff',
+    ff = "ff",
     /** Finnish */
-    fi = 'fi',
+    fi = "fi",
     /** Faroese */
-    fo = 'fo',
+    fo = "fo",
     /** French */
-    fr = 'fr',
+    fr = "fr",
     /** Canadian French */
-    fr_CA = 'fr_CA',
+    fr_CA = "fr_CA",
     /** Swiss French */
-    fr_CH = 'fr_CH',
+    fr_CH = "fr_CH",
     /** Western Frisian */
-    fy = 'fy',
+    fy = "fy",
     /** Irish */
-    ga = 'ga',
+    ga = "ga",
     /** Scottish Gaelic */
-    gd = 'gd',
+    gd = "gd",
     /** Galician */
-    gl = 'gl',
+    gl = "gl",
     /** Gujarati */
-    gu = 'gu',
+    gu = "gu",
     /** Manx */
-    gv = 'gv',
+    gv = "gv",
     /** Hausa */
-    ha = 'ha',
+    ha = "ha",
     /** Hebrew */
-    he = 'he',
+    he = "he",
     /** Hindi */
-    hi = 'hi',
+    hi = "hi",
     /** Croatian */
-    hr = 'hr',
+    hr = "hr",
     /** Haitian Creole */
-    ht = 'ht',
+    ht = "ht",
     /** Hungarian */
-    hu = 'hu',
+    hu = "hu",
     /** Armenian */
-    hy = 'hy',
+    hy = "hy",
     /** Interlingua */
-    ia = 'ia',
+    ia = "ia",
     /** Indonesian */
-    id = 'id',
+    id = "id",
     /** Igbo */
-    ig = 'ig',
+    ig = "ig",
     /** Sichuan Yi */
-    ii = 'ii',
+    ii = "ii",
     /** Icelandic */
-    is = 'is',
+    is = "is",
     /** Italian */
-    it = 'it',
+    it = "it",
     /** Japanese */
-    ja = 'ja',
+    ja = "ja",
     /** Javanese */
-    jv = 'jv',
+    jv = "jv",
     /** Georgian */
-    ka = 'ka',
+    ka = "ka",
     /** Kikuyu */
-    ki = 'ki',
+    ki = "ki",
     /** Kazakh */
-    kk = 'kk',
+    kk = "kk",
     /** Kalaallisut */
-    kl = 'kl',
+    kl = "kl",
     /** Khmer */
-    km = 'km',
+    km = "km",
     /** Kannada */
-    kn = 'kn',
+    kn = "kn",
     /** Korean */
-    ko = 'ko',
+    ko = "ko",
     /** Kashmiri */
-    ks = 'ks',
+    ks = "ks",
     /** Kurdish */
-    ku = 'ku',
+    ku = "ku",
     /** Cornish */
-    kw = 'kw',
+    kw = "kw",
     /** Kyrgyz */
-    ky = 'ky',
+    ky = "ky",
     /** Latin */
-    la = 'la',
+    la = "la",
     /** Luxembourgish */
-    lb = 'lb',
+    lb = "lb",
     /** Ganda */
-    lg = 'lg',
+    lg = "lg",
     /** Lingala */
-    ln = 'ln',
+    ln = "ln",
     /** Lao */
-    lo = 'lo',
+    lo = "lo",
     /** Lithuanian */
-    lt = 'lt',
+    lt = "lt",
     /** Luba-Katanga */
-    lu = 'lu',
+    lu = "lu",
     /** Latvian */
-    lv = 'lv',
+    lv = "lv",
     /** Malagasy */
-    mg = 'mg',
+    mg = "mg",
     /** Maori */
-    mi = 'mi',
+    mi = "mi",
     /** Macedonian */
-    mk = 'mk',
+    mk = "mk",
     /** Malayalam */
-    ml = 'ml',
+    ml = "ml",
     /** Mongolian */
-    mn = 'mn',
+    mn = "mn",
     /** Marathi */
-    mr = 'mr',
+    mr = "mr",
     /** Malay */
-    ms = 'ms',
+    ms = "ms",
     /** Maltese */
-    mt = 'mt',
+    mt = "mt",
     /** Burmese */
-    my = 'my',
+    my = "my",
     /** Norwegian Bokmål */
-    nb = 'nb',
+    nb = "nb",
     /** North Ndebele */
-    nd = 'nd',
+    nd = "nd",
     /** Nepali */
-    ne = 'ne',
+    ne = "ne",
     /** Dutch */
-    nl = 'nl',
+    nl = "nl",
     /** Flemish */
-    nl_BE = 'nl_BE',
+    nl_BE = "nl_BE",
     /** Norwegian Nynorsk */
-    nn = 'nn',
+    nn = "nn",
     /** Nyanja */
-    ny = 'ny',
+    ny = "ny",
     /** Oromo */
-    om = 'om',
+    om = "om",
     /** Odia */
-    or = 'or',
+    or = "or",
     /** Ossetic */
-    os = 'os',
+    os = "os",
     /** Punjabi */
-    pa = 'pa',
+    pa = "pa",
     /** Polish */
-    pl = 'pl',
+    pl = "pl",
     /** Pashto */
-    ps = 'ps',
+    ps = "ps",
     /** Portuguese */
-    pt = 'pt',
+    pt = "pt",
     /** Brazilian Portuguese */
-    pt_BR = 'pt_BR',
+    pt_BR = "pt_BR",
     /** European Portuguese */
-    pt_PT = 'pt_PT',
+    pt_PT = "pt_PT",
     /** Quechua */
-    qu = 'qu',
+    qu = "qu",
     /** Romansh */
-    rm = 'rm',
+    rm = "rm",
     /** Rundi */
-    rn = 'rn',
+    rn = "rn",
     /** Romanian */
-    ro = 'ro',
+    ro = "ro",
     /** Moldavian */
-    ro_MD = 'ro_MD',
+    ro_MD = "ro_MD",
     /** Russian */
-    ru = 'ru',
+    ru = "ru",
     /** Kinyarwanda */
-    rw = 'rw',
+    rw = "rw",
     /** Sanskrit */
-    sa = 'sa',
+    sa = "sa",
     /** Sindhi */
-    sd = 'sd',
+    sd = "sd",
     /** Northern Sami */
-    se = 'se',
+    se = "se",
     /** Sango */
-    sg = 'sg',
+    sg = "sg",
     /** Sinhala */
-    si = 'si',
+    si = "si",
     /** Slovak */
-    sk = 'sk',
+    sk = "sk",
     /** Slovenian */
-    sl = 'sl',
+    sl = "sl",
     /** Samoan */
-    sm = 'sm',
+    sm = "sm",
     /** Shona */
-    sn = 'sn',
+    sn = "sn",
     /** Somali */
-    so = 'so',
+    so = "so",
     /** Albanian */
-    sq = 'sq',
+    sq = "sq",
     /** Serbian */
-    sr = 'sr',
+    sr = "sr",
     /** Southern Sotho */
-    st = 'st',
+    st = "st",
     /** Sundanese */
-    su = 'su',
+    su = "su",
     /** Swedish */
-    sv = 'sv',
+    sv = "sv",
     /** Swahili */
-    sw = 'sw',
+    sw = "sw",
     /** Congo Swahili */
-    sw_CD = 'sw_CD',
+    sw_CD = "sw_CD",
     /** Tamil */
-    ta = 'ta',
+    ta = "ta",
     /** Telugu */
-    te = 'te',
+    te = "te",
     /** Tajik */
-    tg = 'tg',
+    tg = "tg",
     /** Thai */
-    th = 'th',
+    th = "th",
     /** Tigrinya */
-    ti = 'ti',
+    ti = "ti",
     /** Turkmen */
-    tk = 'tk',
+    tk = "tk",
     /** Tongan */
-    to = 'to',
+    to = "to",
     /** Turkish */
-    tr = 'tr',
+    tr = "tr",
     /** Tatar */
-    tt = 'tt',
+    tt = "tt",
     /** Uyghur */
-    ug = 'ug',
+    ug = "ug",
     /** Ukrainian */
-    uk = 'uk',
+    uk = "uk",
     /** Urdu */
-    ur = 'ur',
+    ur = "ur",
     /** Uzbek */
-    uz = 'uz',
+    uz = "uz",
     /** Vietnamese */
-    vi = 'vi',
+    vi = "vi",
     /** Volapük */
-    vo = 'vo',
+    vo = "vo",
     /** Wolof */
-    wo = 'wo',
+    wo = "wo",
     /** Xhosa */
-    xh = 'xh',
+    xh = "xh",
     /** Yiddish */
-    yi = 'yi',
+    yi = "yi",
     /** Yoruba */
-    yo = 'yo',
+    yo = "yo",
     /** Chinese */
-    zh = 'zh',
+    zh = "zh",
     /** Simplified Chinese */
-    zh_Hans = 'zh_Hans',
+    zh_Hans = "zh_Hans",
     /** Traditional Chinese */
-    zh_Hant = 'zh_Hant',
+    zh_Hant = "zh_Hant",
     /** Zulu */
-    zu = 'zu',
+    zu = "zu"
 }
-
 export enum LogicalOperator {
-    AND = 'AND',
-    OR = 'OR',
+    AND = "AND",
+    OR = "OR"
 }
-
 export class PaginatedList<T> {
     items: Array<T>;
-
     totalItems: number;
 }
-
 export class NumberRange {
     end: number;
-
     start: number;
 }
-
 export class DateRange {
     end: Date;
-
     start: Date;
 }
-
 export class LocalizedString {
     languageCode: LanguageCode;
-
     value: string;
 }
-
-/** Operators for filtering on a String field */
 export class StringOperators {
     contains?: string;
-
     eq?: string;
-
     in?: string;
-
     isNull?: boolean;
-
     notContains?: string;
-
     notEq?: string;
-
     notIn?: Array<string>;
-
     regex?: string;
 }
-
-/** Operators for filtering on a Int or Float field */
 export class NumberOperators {
     between?: NumberRange;
-
     eq?: number;
-
     gt?: number;
-
     gte?: number;
-
     isNull?: boolean;
-
     lt?: number;
-
     lte?: number;
 }
-
-/** Operators for filtering on a Boolean field */
 export class BooleanOperators {
     eq?: boolean;
-
     isNull?: boolean;
 }
-
-/** Operators for filtering on a DateTime field */
 export class DateOperators {
     after?: Date;
-
     before?: Date;
-
     between?: DateRange;
-
     eq?: Date;
-
     isNull?: boolean;
 }
-
 export class IdOperators {
     eq?: string;
-
     in?: Array<string>;
-
     isNull?: boolean;
-
     notEq?: string;
-
     notIn?: Array<string>;
 }
-
 export class ConfigArgInput {
     name: string;
-
     value: string;
 }
-
 export class ConfigurableOperationInput {
     arguments: Array<ConfigArgInput>;
-
     code: string;
 }
-
 export class ConfigArgDefinition {
     defaultValue?: string;
-
     description?: string;
-
     label?: string;
-
     list: boolean;
-
     name: string;
-
     required: boolean;
-
     type: string;
 }
-
 export class ConfigurableOperationDefinition {
     args: Array<ConfigArgDefinition>;
-
     code: string;
-
     description: string;
 }
-
-/* --------------- */
-
 export class Coordinate {
     x: number;
-
     y: number;
 }
-
 export class AuthenticationMethod {
     id: ID;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     strategy?: string;
-
     user?: User;
 }
-
 export class Role {
     id: ID;
-
     code: string;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     description: string;
-
     permissions: Array<Permission>;
 }
-
 export class User {
     id: ID;
-
     authenticationMethods: Array<AuthenticationMethod>;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     identifier: string;
-
     lastLogin?: Date | null;
-
     verified: boolean;
-
     roles?: Array<Role>;
 }
-
 export class Customer {
     deletedAt: Date | null;
-
     firstName: string;
-
     lastName: string;
-
     emailAddress: string;
-
     phoneNumber: string | null;
-
     user?: User;
 }
-
 export class FacetTranslation {
     id: ID;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     name: string;
-
     languageCode: LanguageCode;
 }
-
 export class Facet {
     id: ID;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     code: string;
-
     languageCode?: LanguageCode;
-
     name?: string;
-
     translations: Array<FacetTranslation>;
-
     values?: Array<FacetValue>;
 }
-
 export class FacetValue {
     id: ID;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     code: string;
-
     facetId: ID;
-
     facet?: Facet;
-
     languageCode?: LanguageCode;
-
     name?: string;
-
     translations: Array<FacetValueTranslation>;
 }
-
 export class FacetValueTranslation {
     id: ID;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     languageCode: LanguageCode;
-
     name: string;
 }
-
 export class Asset {
     id: ID;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     fileSize: number;
-
     focalPoint?: Coordinate;
-
     height: number;
-
     mimeType: string;
-
     name: string;
-
     preview: string;
-
     source: string;
-
     type: AssetType;
-
     width: number;
 }
-
 export abstract class OrderableAsset {
     id: ID;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     assetId: ID;
-
     asset?: Asset;
-
     position: number;
 }
-
 export class JobPost {
     id: ID;
-
     customerId: ID;
-
     customer?: Customer;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     deletedAt: Date | null;
-
     publishedAt: Date | null;
-
     closedAt: Date | null;
-
     rejectedAt: Date | null;
-
     editedAt: Date | null;
-
     state: JobPostState;
-
     title: string | null;
-
     description: string | null;
-
     visibility: JobPostVisibility;
-
     budget: number | null;
-
     currencyCode: string | null;
-
     assets?: JobPostAsset[];
-
     requiredSkills: FacetValue[];
-
     requiredCategory: FacetValue | null;
-
     requiredExperienceLevel: FacetValue | null;
-
     requiredJobDuration: FacetValue | null;
-
     requiredJobScope: FacetValue | null;
-
     facetValues?: FacetValue[];
-
     collections?: Collection[];
 }
-
 export class JobPostAsset extends OrderableAsset {
     jobPostId: ID;
-
     jobPost?: JobPost;
 }
-
 export class CollectionBreadcrumb {
     id: ID;
-
     name: string;
-
     slug: string;
 }
-
 export class Collection {
     id: ID;
-
     assets?: Array<CollectionAsset>;
-
     breadcrumbs?: Array<CollectionBreadcrumb>;
-
     children?: Array<Collection>;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     description: string;
-
     featuredAsset?: Asset;
-
     filters: Array<ConfigurableOperation>;
-
     inheritFilters: boolean;
-
     isPrivate: boolean;
-
     languageCode?: LanguageCode;
-
     name?: string;
-
     parent?: Collection;
-
     parentId?: ID | null;
-
     position: number;
-
     slug: string;
-
     translations: Array<CollectionTranslation>;
-
-    // TODO
-    // jobPosts: JobPostList;
 }
-
 export class CollectionAsset extends OrderableAsset {
     collectionId: ID;
-
     collection: Collection;
 }
-
 export class CollectionTranslation {
     id: ID;
-
     createdAt: Date;
-
     updatedAt: Date;
-
     description: string;
-
     languageCode: LanguageCode;
-
     name: string;
-
     slug: string;
 }
-
-/* --------------- */
-
 export class CreateAdministratorInput {
     emailAddress: string;
-
     firstName: string;
-
     lastName: string;
-
     password: string;
-
     roleIds: Array<ID>;
 }
-
 export class UpdateAdministratorInput {
     id: ID;
-
     emailAddress?: string;
-
     firstName?: string;
-
     lastName?: string;
-
     password?: string;
-
     roleIds?: Array<ID>;
 }
-
 export class UpdateActiveAdministratorInput {
     emailAddress?: string;
-
     firstName?: string;
-
     lastName?: string;
-
     password?: string;
 }
-
 export class CurrentUserRole {
     code: string;
-
     description: string;
 }
-
 export class CurrentUser {
     id: ID;
-
     identifier: string;
-
     roles: Array<CurrentUserRole>;
-
     permissions: Array<Permission>;
 }
-
 export class MutationLoginArgs {
     password: string;
-
     rememberMe?: boolean;
-
     username: string;
 }
-
 export class NativeAuthInput {
     password: string;
-
     username: string;
 }
-
 export class AuthenticationInput {
     native?: NativeAuthInput;
 }
-
 export class MutationAuthenticateArgs {
     input: AuthenticationInput;
-
     rememberMe?: boolean;
 }
-
 export class CreateCustomerInput {
     emailAddress: string;
-
     customerType: CustomerType;
-
     firstName: string;
-
     lastName: string;
-
     phoneNumber?: string;
 }
-
 export class UpdateCustomerInput {
     id: ID;
-
     emailAddress?: string;
-
     firstName?: string;
-
     lastName?: string;
-
     phoneNumber?: string;
 }
-
 export class RegisterCustomerInput {
     emailAddress: string;
-
     customerType: CustomerType;
-
     firstName?: string;
-
     lastName?: string;
-
     password?: string;
-
     phoneNumber?: string;
 }
-
 export class CreateRoleInput {
     code: string;
-
     description: string;
-
     permissions: Array<Permission>;
 }
-
 export class UpdateRoleInput {
     id: ID;
-
     code?: string;
-
     description?: string;
-
     permissions?: Array<Permission>;
 }
-
 export class MutationRegisterCustomerAccountArgs {
     input: RegisterCustomerInput;
 }
-
 export class MutationVerifyCustomerAccountArgs {
     password?: string;
-
     token: string;
 }
-
 export class MutationRefreshCustomerVerificationArgs {
     emailAddress: string;
 }
-
 export class MutationRequestPasswordResetArgs {
     emailAddress: string;
 }
-
 export class MutationResetPasswordArgs {
     password: string;
-
     token: string;
 }
-
 export class MutationUpdateCustomerPasswordArgs {
     currentPassword: string;
-
     newPassword: string;
 }
-
 export class MutationRequestUpdateCustomerEmailAddressArgs {
     newEmailAddress: string;
-
     password: string;
 }
-
 export class MutationUpdateCustomerEmailAddressArgs {
     token: string;
 }
-
 export class MutationCreateAdministratorArgs {
     input: CreateAdministratorInput;
 }
-
 export class MutationUpdateAdministratorArgs {
     input: UpdateAdministratorInput;
 }
-
 export class MutationUpdateActiveAdministratorArgs {
     input: UpdateActiveAdministratorInput;
 }
-
 export class MutationAssignRoleToAdministratorArgs {
     administratorId: ID;
-
     roleId: ID;
 }
-
 export class MutationDeleteAdministratorArgs {
     id: ID;
 }
-
 export class MutationDeleteAdministratorsArgs {
     ids: Array<ID>;
 }
-
 export class QueryAdministratorArgs {
     id: ID;
 }
-
 export class File {
     originalname: string;
-
     mimetype: string;
-
     buffer: any;
-
     size: number;
 }
-
 export class CreateAssetInput {
     file: File;
 }
-
 export class CoordinateInput {
     x: number;
-
     y: number;
 }
-
 export class UpdateAssetInput {
     id: ID;
-
     focalPoint?: CoordinateInput;
-
     name?: string;
-
     tags?: Array<string>;
 }
-
 export class DeleteDraftJobPostInput {
     id: ID;
 }
-
 export class MutationDeleteDraftJobPostArgs {
     input: DeleteDraftJobPostInput;
 }
-
 export class CloseJobPostInput {
     id: ID;
 }
-
 export class MutationCloseJobPostArgs {
     input: CloseJobPostInput;
 }
-
 export class CreateJobPostInput {
     title: string;
-
     description?: string | null;
-
     visibility?: JobPostVisibility;
-
     currencyCode?: CurrencyCode | null;
-
     budget?: number | null;
-
     requiredSkillIds?: Array<ID> | null;
-
     requiredCategoryId?: ID | null;
-
     requiredExperienceLevelId?: ID | null;
-
     requiredJobDurationId?: ID | null;
-
     requiredJobScopeId?: ID | null;
-
     assetIds?: Array<ID> | null;
 }
-
 export class MutationCreateJobPostArgs {
     input: CreateJobPostInput;
 }
-
 export class EditDraftJobPostInput {
     id: ID;
-
     title?: string | null;
-
     description?: string | null;
-
     visibility?: JobPostVisibility;
-
     currencyCode?: CurrencyCode | null;
-
     budget?: number | null;
-
     assetIds?: Array<ID> | null;
-
     requiredSkillIds?: Array<ID> | null;
-
     requiredCategoryId?: ID | null;
-
     requiredExperienceLevelId?: ID | null;
-
     requiredJobDurationId?: ID | null;
-
     requiredJobScopeId?: ID | null;
 }
-
 export class MutationEditDraftJobPostArgs {
     input: EditDraftJobPostInput;
 }
-
 export class EditPublishedJobPostInput {
     id: ID;
-
     title?: string | null;
-
     description?: string | null;
-
     visibility?: JobPostVisibility;
-
     currencyCode?: CurrencyCode | null;
-
     budget?: number | null;
-
     assetIds?: Array<ID> | null;
-
     requiredSkillIds?: Array<ID> | null;
-
     requiredCategoryId?: ID | null;
-
     requiredExperienceLevelId?: ID | null;
-
     requiredJobDurationId?: ID | null;
-
     requiredJobScopeId?: ID | null;
 }
-
 export class MutationEditPublishedJobPostArgs {
     input: EditPublishedJobPostInput;
 }
-
 export class PublishJobPostInput {
     id: ID;
 }
-
 export class MutationPublishJobPostArgs {
     input: PublishJobPostInput;
 }
-
 export class FacetValueTranslationInput {
     id?: ID;
-
     languageCode: LanguageCode;
-
     name?: string;
 }
-
 export class CreateFacetValueInput {
     code: string;
-
     facetId: ID;
-
     translations: Array<FacetValueTranslationInput>;
 }
-
 export class UpdateFacetValueInput {
     id: ID;
-
     code?: string;
-
     translations?: Array<FacetValueTranslationInput>;
 }
-
 export class CreateFacetValueWithFacetInput {
     code: string;
-
     name: string;
 }
-
 export class FacetTranslationInput {
     id?: ID;
-
     languageCode: LanguageCode;
-
     name?: string;
 }
-
 export class CreateFacetInput {
     code: string;
-
     translations: Array<FacetTranslationInput>;
-
     values?: CreateFacetValueWithFacetInput[];
 }
-
 export class UpdateFacetInput {
     id: ID;
-
     code?: string;
-
     translations: Array<FacetTranslationInput>;
 }
-
 export class CreateBalanceEntryInput {
     customerId: ID;
-
     type: BalanceEntryType;
-
     reviewDays?: number;
-
     currencyCode: CurrencyCode;
-
     credit: number;
-
     debit: number;
-
     description?: string;
-
     metadata?: Record<string, string>;
 }
-
 export class ConfigArg {
     name: string;
-
     value: string;
 }
-
 export class ConfigurableOperation {
     code: string;
-
     args: Array<ConfigArg>;
 }
-
 export class CreateCollectionTranslationInput {
     languageCode: LanguageCode;
-
     name: string;
-
     slug: string;
-
     description: string;
 }
-
 export class CreateCollectionInput {
     translations: Array<CreateCollectionTranslationInput>;
-
     featuredAssetId?: ID;
-
     assetIds?: Array<ID>;
-
     filters: Array<ConfigurableOperation>;
-
     inheritFilters?: boolean;
-
     isPrivate?: boolean;
-
     parentId?: ID;
 }
-
 export class MutationCreateCollectionArgs {
     input: CreateCollectionInput;
 }
-
 export class UpdateCollectionTranslationInput {
     id?: ID;
-
     languageCode: LanguageCode;
-
     name?: string;
-
     slug?: string;
-
     description?: string;
 }
-
 export class UpdateCollectionInput {
     id: ID;
-
     translations?: Array<UpdateCollectionTranslationInput>;
-
     featuredAssetId?: ID;
-
     assetIds?: Array<ID>;
-
     filters?: Array<ConfigurableOperation>;
-
     inheritFilters?: boolean;
-
     isPrivate?: boolean;
-
     parentId?: ID;
 }
-
 export class MutationUpdateCollectionArgs {
     input: UpdateCollectionInput;
 }
-
 export class MoveCollectionInput {
     collectionId: ID;
-
     index: number;
-
     parentId: ID;
 }
-
 export class MutationMoveCollectionArgs {
     input: MoveCollectionInput;
 }
-
 export class Success {
     success: boolean;
 }
-
 export class GetCurrentUserQuery {
     me?: CurrentUser | null;
 }
-
 export class AttemptLoginMutation {
     login: CurrentUser;
 }
-
 export class LogOutMutation {
     logout: Success;
 }
-
 export class AssetFragment {
     id: string;
     createdAt: any;
@@ -1755,7 +1336,6 @@ export class AssetFragment {
     height: number;
     focalPoint?: Coordinate | null;
 }
-
 export class GetActiveAdministratorQuery {
     activeAdministrator: {
         id: string;
@@ -1779,7 +1359,6 @@ export class GetActiveAdministratorQuery {
         };
     } | null;
 }
-
 export class CreateAdministratorMutation {
     createAdministrator: {
         id: string;
@@ -1803,7 +1382,6 @@ export class CreateAdministratorMutation {
         };
     };
 }
-
 export class UpdateAdministratorMutation {
     updateAdministrator: {
         id: string;
@@ -1827,7 +1405,6 @@ export class UpdateAdministratorMutation {
         };
     };
 }
-
 export class UpdateActiveAdministratorMutation {
     updateActiveAdministrator: {
         id: string;
@@ -1851,41 +1428,33 @@ export class UpdateActiveAdministratorMutation {
         };
     } | null;
 }
-
 export class DeleteAdministratorMutation {
     deleteAdministrator: {
         result: any;
         message?: string | null;
     };
 }
-
 export class DeleteAdministratorsMutation {
     deleteAdministrators: Array<{
         result: any;
         message?: string | null;
     }>;
 }
-
 export class QueryRoleArgs {
     id: ID;
 }
-
 export class MutationCreateRoleArgs {
     input: CreateRoleInput;
 }
-
 export class MutationUpdateRoleArgs {
     input: UpdateRoleInput;
 }
-
 export class MutationDeleteRoleArgs {
     id: ID;
 }
-
 export class MutationDeleteRolesArgs {
     ids: Array<ID>;
 }
-
 export class GetRolesQuery {
     roles: {
         totalItems: number;
@@ -1899,7 +1468,6 @@ export class GetRolesQuery {
         }>;
     };
 }
-
 export class CreateRoleMutation {
     createRole: {
         id: string;
@@ -1910,7 +1478,6 @@ export class CreateRoleMutation {
         permissions: Array<Permission>;
     };
 }
-
 export class UpdateRoleMutation {
     updateRole: {
         id: string;
@@ -1921,312 +1488,199 @@ export class UpdateRoleMutation {
         permissions: Array<Permission>;
     };
 }
-
 export class DeleteRoleMutation {
     deleteRole: {
         result: any;
         message?: string | null;
     };
 }
-
 export class DeleteRolesMutation {
     deleteRoles: Array<{
         result: any;
         message?: string | null;
     }>;
 }
-
 export class JobPostSortParameter {
     id?: SortOrder;
-
     closedAt?: SortOrder;
-
     publishedAt?: SortOrder;
-
     createdAt?: SortOrder;
-
     updatedAt?: SortOrder;
 }
-
 export class JobPostFilterParameter {
     _and?: Array<JobPostFilterParameter>;
-
     _or?: Array<JobPostFilterParameter>;
-
     id?: IdOperators;
-
     title?: StringOperators;
-
     description?: StringOperators;
-
     budget?: NumberOperators;
-
     facetValueId?: IdOperators;
-
     visibility?: StringOperators;
-
     state?: StringOperators;
-
     publishedAt?: DateOperators;
-
     createdAt?: DateOperators;
-
     updatedAt?: DateOperators;
 }
-
 export class JobPostListOptions {
-    /** Takes n results, for use in pagination */ take?: number | null;
-
-    /** Skips the first n results, for use in pagination */ skip?: number | null;
-
-    /** Specifies which properties to sort the results by */ sort?: JobPostSortParameter | null;
-
-    /** Allows the results to be filtered */ filter?: JobPostFilterParameter | null;
-
-    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */ filterOperator?: LogicalOperator;
+    /** Takes n results, for use in pagination */
+    take?: number | null;
+    /** Skips the first n results, for use in pagination */
+    skip?: number | null;
+    /** Specifies which properties to sort the results by */
+    sort?: JobPostSortParameter | null;
+    /** Allows the results to be filtered */
+    filter?: JobPostFilterParameter | null;
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */
+    filterOperator?: LogicalOperator;
 }
-
 export class FacetFilterParameter {
     _and?: Array<FacetFilterParameter>;
-
     _or?: Array<FacetFilterParameter>;
-
     code?: StringOperators;
-
     createdAt?: DateOperators;
-
     id?: IdOperators;
-
     isPrivate?: BooleanOperators;
-
     languageCode?: StringOperators;
-
     name?: StringOperators;
-
     updatedAt?: DateOperators;
 }
-
 export class FacetSortParameter {
     code?: SortOrder;
-
     createdAt?: SortOrder;
-
     id?: SortOrder;
-
     name?: SortOrder;
     updatedAt?: SortOrder;
 }
-
 export class FacetListOptions {
-    /** Takes n results, for use in pagination */ take?: number | null;
-
-    /** Skips the first n results, for use in pagination */ skip?: number | null;
-
-    /** Specifies which properties to sort the results by */ sort?: FacetSortParameter | null;
-
-    /** Allows the results to be filtered */ filter?: FacetFilterParameter | null;
-
-    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */ filterOperator?: LogicalOperator;
+    /** Takes n results, for use in pagination */
+    take?: number | null;
+    /** Skips the first n results, for use in pagination */
+    skip?: number | null;
+    /** Specifies which properties to sort the results by */
+    sort?: FacetSortParameter | null;
+    /** Allows the results to be filtered */
+    filter?: FacetFilterParameter | null;
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */
+    filterOperator?: LogicalOperator;
 }
-
 export class FacetValueFilterParameter {
     _and?: Array<FacetValueFilterParameter>;
-
     _or?: Array<FacetValueFilterParameter>;
-
     code?: StringOperators;
-
     createdAt?: DateOperators;
-
     facetId?: IdOperators;
-
     id?: IdOperators;
-
     languageCode?: StringOperators;
-
     name?: StringOperators;
-
     updatedAt?: DateOperators;
 }
-
 export class FacetValueSortParameter {
     id?: SortOrder;
-
     code?: SortOrder;
-
     facetId?: SortOrder;
-
     name?: SortOrder;
-
     updatedAt?: SortOrder;
-
     createdAt?: SortOrder;
 }
-
 export class FacetValueListOptions {
-    /** Takes n results, for use in pagination */ take?: number | null;
-
-    /** Skips the first n results, for use in pagination */ skip?: number | null;
-
-    /** Specifies which properties to sort the results by */ sort?: FacetValueSortParameter | null;
-
-    /** Allows the results to be filtered */ filter?: FacetValueFilterParameter | null;
-
-    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */ filterOperator?: LogicalOperator;
+    /** Takes n results, for use in pagination */
+    take?: number | null;
+    /** Skips the first n results, for use in pagination */
+    skip?: number | null;
+    /** Specifies which properties to sort the results by */
+    sort?: FacetValueSortParameter | null;
+    /** Allows the results to be filtered */
+    filter?: FacetValueFilterParameter | null;
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */
+    filterOperator?: LogicalOperator;
 }
-
 export class CollectionFilterParameter {
     _and?: Array<CollectionFilterParameter>;
-
     _or?: Array<CollectionFilterParameter>;
-
     createdAt?: DateOperators;
-
     description?: StringOperators;
-
     id?: IdOperators;
-
     inheritFilters?: BooleanOperators;
-
     isPrivate?: BooleanOperators;
-
     languageCode?: StringOperators;
-
     name?: StringOperators;
-
     parentId?: IdOperators;
-
     position?: NumberOperators;
-
     slug?: StringOperators;
-
     updatedAt?: DateOperators;
 }
-
 export class CollectionSortParameter {
     createdAt?: SortOrder;
-
     description?: SortOrder;
-
     id?: SortOrder;
-
     name?: SortOrder;
-
     parentId?: SortOrder;
-
     position?: SortOrder;
-
     slug?: SortOrder;
-
     updatedAt?: SortOrder;
 }
-
 export class CollectionListOptions {
-    /** Takes n results, for use in pagination */ take?: number | null;
-
-    /** Skips the first n results, for use in pagination */ skip?: number | null;
-
-    /** Specifies which properties to sort the results by */ sort?: CollectionSortParameter | null;
-
-    /** Allows the results to be filtered */ filter?: CollectionFilterParameter | null;
-
-    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */ filterOperator?: LogicalOperator;
-
+    /** Takes n results, for use in pagination */
+    take?: number | null;
+    /** Skips the first n results, for use in pagination */
+    skip?: number | null;
+    /** Specifies which properties to sort the results by */
+    sort?: CollectionSortParameter | null;
+    /** Allows the results to be filtered */
+    filter?: CollectionFilterParameter | null;
+    /** Specifies whether multiple top-level "filter" fields should be combined with a logical AND or OR operation. Defaults to AND. */
+    filterOperator?: LogicalOperator;
     topLevelOnly?: boolean;
 }
-
 export enum SearchIndex {
-    JobPost = 'JobPost',
-    Profile = 'Profile',
+    JobPost = "JobPost",
+    Profile = "Profile"
 }
-
-/**
- * Used to construct boolean expressions for filtering search results
- * by FacetValue ID. Examples:
- *
- * * ID=1 OR ID=2: `{ facetValueFilters: [{ or: [1,2] }] }`
- * * ID=1 AND ID=2: `{ facetValueFilters: [{ and: 1 }, { and: 2 }] }`
- * * ID=1 AND (ID=2 OR ID=3): `{ facetValueFilters: [{ and: 1 }, { or: [2,3] }] }`
- */
 export class FacetValueFilterInput {
     and?: ID;
-
     or?: Array<ID>;
 }
-
-// Sort parameter classes
-export class BaseSearchResultSortParameter {}
-
+export class BaseSearchResultSortParameter {
+}
 export class JobPostSearchResultSortParameter extends BaseSearchResultSortParameter {
     title?: SortOrder;
 }
-
-export class ProfileSearchResultSortParameter extends BaseSearchResultSortParameter {}
-
-// Base classes for search functionality
+export class ProfileSearchResultSortParameter extends BaseSearchResultSortParameter {
+}
 export class BaseSearchResult {
     Id: ID;
-
     collectionIds: Array<ID>;
-
     facetIds: Array<ID>;
-
     facetValueIds: Array<ID>;
-
     score: number;
 }
-
 export class JobPostSearchResult extends BaseSearchResult {
     title: string;
-
     description: string;
-
     currencyCode: string;
-
     budget: number;
 }
-
-export class ProfileSearchResult extends BaseSearchResult {}
-
-// Search input types
+export class ProfileSearchResult extends BaseSearchResult {
+}
 export class BaseSearchInput {
     index: SearchIndex;
-
     collectionId?: ID;
-
     collectionSlug?: string;
-
     facetValueFilters?: Array<FacetValueFilterInput>;
-
     skip?: number;
-
     take?: number;
-
     term?: string;
 }
-
 export class JobPostSearchInput extends BaseSearchInput {
     sort?: JobPostSearchResultSortParameter;
 }
-
 export class ProfileSearchInput extends BaseSearchInput {
     sort?: ProfileSearchResultSortParameter;
 }
-
-// Search result types
 export class SearchResult {
     index: SearchIndex;
-
     result: ProfileSearchResult[] | JobPostSearchResult[];
 }
-
 export class SearchInput {
     search: JobPostSearchInput | ProfileSearchInput;
-}
-
-export class GoogleAuthData {
-    action: 'register' | 'login';
-    id_token?: string;
-    access_token?: string;
-    customer_type?: CustomerType;
 }

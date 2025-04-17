@@ -1,5 +1,6 @@
 export { bootstrap, bootstrapWorker } from './bootstrap';
 export { generateMigration, revertLastMigration, runMigrations } from './migrate';
+export { buildApiSchema } from './build-api-schema';
 export * from './api/index';
 export * from './cache/index';
 export * from './common/index';
