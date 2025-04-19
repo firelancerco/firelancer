@@ -1,11 +1,11 @@
 import { HttpStatus } from '@nestjs/common';
+import { ParseKeys } from 'i18next';
 
 import { ID } from '../../common/shared-schema';
 import { LogLevel } from '../../config';
 import { coreEntitiesMap } from '../../entity';
 import { I18nException } from '../../i18n';
 import { JobPostState } from '../../service';
-import { ParseKeys } from 'i18next';
 
 /**
  * @description

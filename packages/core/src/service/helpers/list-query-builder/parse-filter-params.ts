@@ -245,6 +245,8 @@ function getRegexpClause(fieldName: string, argIndex: number, dbType: DataSource
         // function. See https://github.com/mapbox/node-sqlite3/issues/140
         case 'sqlite':
         default:
-            throw new InternalServerException(`The 'regex' filter is not available when using the '${dbType}' driver` as any);
+            throw new InternalServerException(
+                `The 'regex' filter is not available when using the '${dbType}' driver` as any,
+            );
     }
 }

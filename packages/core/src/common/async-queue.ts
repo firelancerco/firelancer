@@ -14,7 +14,10 @@ export class AsyncQueue {
     private static running: { [label: string]: number } = {};
     private static taskQueue: { [label: string]: TaskQueueItem[] } = {};
 
-    constructor(private label: string = 'default', private concurrency: number = 1) {
+    constructor(
+        private label: string = 'default',
+        private concurrency: number = 1,
+    ) {
         if (!AsyncQueue.taskQueue[label]) {
             AsyncQueue.taskQueue[label] = [];
             AsyncQueue.running[label] = 0;

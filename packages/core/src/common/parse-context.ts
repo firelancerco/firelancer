@@ -16,6 +16,6 @@ export function parseContext(context: ExecutionContext | ArgumentsHost): RestCon
         };
     } else {
         // TODO
-        throw new InternalServerException('Context "' + context.getType() + '" is not supported.' as any);
+        throw new InternalServerException(('Context "' + context.getType() + '" is not supported.') as any);
     }
 }

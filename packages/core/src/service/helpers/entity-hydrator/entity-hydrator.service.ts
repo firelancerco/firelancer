@@ -167,7 +167,9 @@ export class EntityHydrator {
         const targetMetadata = entityMetadatas.find(m => m.target === entity.constructor);
         if (!targetMetadata) {
             // TODO
-            throw new InternalServerException(`Cannot find entity metadata for entity "${entity.constructor.name}"` as any);
+            throw new InternalServerException(
+                `Cannot find entity metadata for entity "${entity.constructor.name}"` as any,
+            );
         }
         let currentMetadata = targetMetadata;
         for (const pathPart of path.split('.')) {

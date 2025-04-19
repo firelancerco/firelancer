@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpException, HttpExceptionOptions } from '@nestjs/common';
+import { ParseKeys } from 'i18next';
+
 import { LogLevel } from '../config';
-import { TMessages } from '../../i18next';
-import { ParseKeys, TFunction } from 'i18next';
 
 export interface I18nExceptionOptions extends HttpExceptionOptions {
     variables?: { [key: string]: string | number };
@@ -38,7 +38,7 @@ export abstract class I18nException extends HttpException {
         options?: HttpExceptionOptions,
     ) {
         super(key, status, options);
-        this.key = key;
+        this.key = key as ParseKeys;
         this.variables = variables;
         this.logLevel = logLevel;
     }
