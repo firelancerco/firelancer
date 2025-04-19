@@ -44,13 +44,15 @@ export class User extends FirelancerEntity implements SoftDeletable {
     getNativeAuthenticationMethod(strict?: boolean): NativeAuthenticationMethod | undefined;
     getNativeAuthenticationMethod(strict?: boolean): NativeAuthenticationMethod | undefined {
         if (!this.authenticationMethods) {
-            throw new InternalServerException('error.user-authentication-methods-not-loaded');
+            // TODO
+            throw new InternalServerException('error.user-authentication-methods-not-loaded' as any);
         }
         const match = this.authenticationMethods.find(
             (m): m is NativeAuthenticationMethod => m instanceof NativeAuthenticationMethod,
         );
         if (!match && (strict === undefined || strict)) {
-            throw new InternalServerException('error.native-authentication-methods-not-found');
+            // TODO
+            throw new InternalServerException('error.native-authentication-methods-not-found' as any);
         }
         return match;
     }

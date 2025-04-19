@@ -38,7 +38,10 @@
         "verification-token-invalid": "رمز التحقق غير معترف به"
     },
     "errorResult": {
-        "MIME_TYPE_ERROR": "نوع MIME \"{ mimeType }\" غير مسموح به."
+        "MIME_TYPE_ERROR": "نوع MIME \"{ mimeType }\" غير مسموح به.",
+        "NATIVE_AUTH_STRATEGY_ERROR": "Native auth strategy not recognized",
+        "IDENTIFIER_CHANGE_TOKEN_INVALID_ERROR": "رمز تغيير الهوية غير معترف به",
+        "IDENTIFIER_CHANGE_TOKEN_EXPIRED_ERROR": "رمز تغيير الهوية منتهي الصلاحية"
     },
     "message": {
         "cannot-transition-job-post-from-to": "لا يمكن للمشروع الانتفال من \"{ fromState }\" إلى \"{ toState }\""

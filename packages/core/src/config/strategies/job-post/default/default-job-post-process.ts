@@ -120,7 +120,7 @@ export function configureDefaultJobPostProcess(options: DefaultJobPostProcessOpt
         ];
 
         for (const { value, error } of fields) {
-            if (!value) throw new UserInputException(error);
+            if (!value) throw new UserInputException(error as any);
         }
     }
 

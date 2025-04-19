@@ -53,7 +53,8 @@ export class AuthService {
         const authenticationStrategy = this.getAuthenticationStrategy(apiType, authenticationMethod);
         const authenticateResult = await authenticationStrategy.authenticate(ctx, authenticationData);
         if (typeof authenticateResult === 'string') {
-            throw new InvalidCredentialsException(authenticateResult);
+            // TODO
+            throw new InvalidCredentialsException(authenticateResult as any);
         }
         if (!authenticateResult) {
             throw new InvalidCredentialsException();
@@ -135,7 +136,8 @@ export class AuthService {
             apiType === 'admin' ? authOptions.adminAuthenticationStrategy : authOptions.shopAuthenticationStrategy;
         const match = strategies.find(s => s.name === method);
         if (!match) {
-            throw new InternalServerException('error.unrecognized-authentication-strategy');
+            // TODO
+            throw new InternalServerException('error.unrecognized-authentication-strategy' as any);
         }
         return match;
     }

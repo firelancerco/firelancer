@@ -153,7 +153,8 @@ export class FacetService {
         const hasUsages = !!jobPostsCount;
         const deletedFacet = new Facet(facet);
         if (hasUsages && !force) {
-            throw new UserInputException('message.facet-used');
+            // TODO
+            throw new UserInputException('message.facet-used' as any);
         }
         await this.connection.getRepository(ctx, Facet).remove(facet);
         await this.eventBus.publish(new FacetEvent(ctx, deletedFacet, 'deleted', id));

@@ -106,19 +106,23 @@ export class BalanceEntry extends FirelancerEntity {
 
     validate() {
         if (this.debit < 0) {
-            throw new UserInputException('entry.debit-cannot-be-negative-number');
+            // TODO
+            throw new UserInputException('entry.debit-cannot-be-negative-number' as any);
         }
 
         if (this.credit < 0) {
-            throw new UserInputException('entry.credit-cannot-be-negative-number');
+            // TODO
+            throw new UserInputException('entry.credit-cannot-be-negative-number' as any);
         }
 
         if (!Number.isInteger(this.debit)) {
-            throw new UserInputException('entry.debit-must-be-integer-number');
+            // TODO
+            throw new UserInputException('entry.debit-must-be-integer-number' as any);
         }
 
         if (!Number.isInteger(this.credit)) {
-            throw new UserInputException('entry.credit-must-be-integer-number');
+            // TODO
+            throw new UserInputException('entry.credit-must-be-integer-number' as any);
         }
     }
 }

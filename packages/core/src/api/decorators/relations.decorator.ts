@@ -23,7 +23,8 @@ export const Relations: <T extends FirelancerEntity>(data: FieldsDecoratorConfig
     createParamDecorator<FieldsDecoratorConfig<any>>((data, ctx: ExecutionContext) => {
         const request = ctx.switchToHttp().getRequest();
         if (data == null) {
-            throw new InternalServerException('The @Relations() decorator requires an entity type argument');
+            // TODO
+            throw new InternalServerException('The @Relations() decorator requires an entity type argument' as any);
         }
 
         // Get relations from query parameters

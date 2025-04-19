@@ -38,7 +38,10 @@
         "verification-token-invalid": "Verification token not recognized"
     },
     "errorResult": {
-        "MIME_TYPE_ERROR": "The MIME type \"{ mimeType }\" is not permitted."
+        "MIME_TYPE_ERROR": "The MIME type \"{ mimeType }\" is not permitted.",
+        "NATIVE_AUTH_STRATEGY_ERROR": "Native auth strategy not recognized",
+        "IDENTIFIER_CHANGE_TOKEN_INVALID_ERROR": "Identifier change token not recognized",
+        "IDENTIFIER_CHANGE_TOKEN_EXPIRED_ERROR": "Identifier change token has expired"
     },
     "message": {
         "cannot-transition-job-post-from-to": "Cannot transition Job Post from \"{ fromState }\" to \"{ toState }\""

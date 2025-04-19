@@ -80,7 +80,8 @@ export class ConfigurableOperationCodec {
             case CollectionFilter:
                 return this.configService.catalogOptions.collectionFilters;
             default:
-                throw new InternalServerException('error.unknown-configurable-operation-definition', {
+                // TODO
+                throw new InternalServerException('The configurable operation definition type is unknown' as any, {
                     name: defType.name,
                 });
         }

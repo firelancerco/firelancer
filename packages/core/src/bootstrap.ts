@@ -293,7 +293,8 @@ function getAllEntities(userConfig: Partial<FirelancerConfig>): Array<Type<unkno
     // Check to ensure that no plugins are defining entities with names which conflict with existing entities.
     for (const pluginEntity of pluginEntities) {
         if (allEntities.find(e => e.name === pluginEntity.name)) {
-            throw new InternalServerException('error.entity-name-conflict');
+            // TODO
+            throw new InternalServerException('The entity name conflicts with an existing entity' as any);
         } else {
             allEntities.push(pluginEntity);
         }
@@ -330,7 +331,7 @@ function checkPluginCompatibility(config: RuntimeFirelancerConfig): void {
                         `It specifies a semver range of "${compatibility}" but the current version is "${FIRELANCER_VERSION}".`,
                 );
                 throw new InternalServerException(
-                    `Plugin "${pluginName}" is not compatible with this version of Firelancer.`,
+                    `Plugin "${pluginName}" is not compatible with this version of Firelancer.` as any,
                 );
             }
         }

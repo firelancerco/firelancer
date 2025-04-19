@@ -15,6 +15,7 @@ export function parseContext(context: ExecutionContext | ArgumentsHost): RestCon
             res: httpContext.getResponse(),
         };
     } else {
-        throw new InternalServerException(`Context "${context.getType()}" is not supported.`);
+        // TODO
+        throw new InternalServerException('Context "' + context.getType() + '" is not supported.' as any);
     }
 }

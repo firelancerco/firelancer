@@ -64,7 +64,7 @@ export class TranslationDiffer<Entity extends Translatable> {
                     newTranslation = await this.connection.getRepository(ctx, this.translationCtor).save(translation);
                 } catch (err) {
                     throw new InternalServerException(
-                        err instanceof Error ? err.message : "Couldn't save translation entity",
+                        (err instanceof Error ? err.message : "Couldn't save translation entity") as any,
                     );
                 }
                 entity.translations.push(newTranslation);

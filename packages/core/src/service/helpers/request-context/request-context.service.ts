@@ -96,7 +96,8 @@ export class RequestContextService {
     private getCurrencyCode(req: Request): CurrencyCode | undefined {
         const queryCurrencyCode = req.query && (req.query.currencyCode as CurrencyCode);
         if (queryCurrencyCode && this.configService.availableCurrencyCodes.includes(queryCurrencyCode)) {
-            throw new UserInputException('error.currency-not-available');
+            // TODO
+            throw new UserInputException('error.currency-not-available' as any);
         }
         return queryCurrencyCode;
     }

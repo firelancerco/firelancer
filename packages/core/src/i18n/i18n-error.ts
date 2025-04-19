@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpException, HttpExceptionOptions } from '@nestjs/common';
 import { LogLevel } from '../config';
+import { TMessages } from '../../i18next';
+import { ParseKeys, TFunction } from 'i18next';
 
 export interface I18nExceptionOptions extends HttpExceptionOptions {
     variables?: { [key: string]: string | number };
@@ -18,7 +20,7 @@ export interface I18nExceptionOptions extends HttpExceptionOptions {
  * a more specific Error class.
  */
 export abstract class I18nException extends HttpException {
-    private readonly key: string;
+    private readonly key: ParseKeys;
     private readonly variables: { [key: string]: string | number };
     private readonly logLevel: LogLevel;
 
@@ -29,7 +31,7 @@ export abstract class I18nException extends HttpException {
      * @param options Additional HTTP exception options
      */
     constructor(
-        key: string,
+        key: ParseKeys,
         status: number,
         variables: Record<string, any> = {},
         logLevel: LogLevel = LogLevel.Warn,

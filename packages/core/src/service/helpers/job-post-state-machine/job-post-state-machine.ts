@@ -87,7 +87,8 @@ export class JobPostStateMachine {
                         await awaitPromiseOrObservable(process.onTransitionError(fromState, toState, message));
                     }
                 }
-                throw new IllegalOperationException(message || 'message.cannot-transition-job-post-from-to', {
+                // TODO
+                throw new IllegalOperationException((message || 'message.cannot-transition-job-post-from-to') as any, {
                     fromState,
                     toState,
                 });

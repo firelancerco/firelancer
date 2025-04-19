@@ -2,7 +2,7 @@ import { JsonCompatible } from '@firelancerco/common/lib/shared-types';
 import { intersect, isObject } from '@firelancerco/common/lib/shared-utils';
 import { ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
-import { TFunction } from 'i18next';
+import { ParseKeys, TFunction } from 'i18next';
 import { EntityManager } from 'typeorm';
 
 import { CachedSession } from '../config/strategies/session-cache/session-cache-strategy';
@@ -350,7 +350,7 @@ export class RequestContext {
      * @description
      * Translate the given i18n key
      */
-    translate(key: string, variables?: { [k: string]: unknown }): string {
+    translate(key: ParseKeys, variables?: { [k: string]: unknown }): string {
         try {
             return this._translationFn(key, variables);
         } catch (e) {

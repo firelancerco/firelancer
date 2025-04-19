@@ -137,7 +137,8 @@ export class RoleService {
     async getSuperAdminRole(ctx?: RequestContext): Promise<Role> {
         return this.getRoleByCode(ctx, SUPER_ADMIN_ROLE_CODE).then(role => {
             if (!role) {
-                throw new InternalServerException('error.super-admin-role-not-found');
+                // TODO
+                throw new InternalServerException('error.super-admin-role-not-found' as any);
             }
             return role;
         });
@@ -150,7 +151,8 @@ export class RoleService {
     async getBuyerRole(ctx?: RequestContext): Promise<Role> {
         return this.getRoleByCode(ctx, BUYER_ROLE_CODE).then(role => {
             if (!role) {
-                throw new InternalServerException('error.buyer-role-not-found');
+                // TODO
+                throw new InternalServerException('error.buyer-role-not-found' as any);
             }
             return role;
         });
@@ -163,7 +165,8 @@ export class RoleService {
     async getSellerRole(ctx?: RequestContext): Promise<Role> {
         return this.getRoleByCode(ctx, SELLER_ROLE_CODE).then(role => {
             if (!role) {
-                throw new InternalServerException('error.seller-role-not-found');
+                // TODO
+                throw new InternalServerException('error.seller-role-not-found' as any);
             }
             return role;
         });

@@ -5,13 +5,14 @@ import { LogLevel } from '../../config';
 import { coreEntitiesMap } from '../../entity';
 import { I18nException } from '../../i18n';
 import { JobPostState } from '../../service';
+import { ParseKeys } from 'i18next';
 
 /**
  * @description
  * This error should be thrown when some unexpected and exceptional case is encountered.
  */
 export class InternalServerException extends I18nException {
-    constructor(key: string, variables: { [key: string]: string | number } = {}) {
+    constructor(key: ParseKeys, variables: { [key: string]: string | number } = {}) {
         super(key, HttpStatus.INTERNAL_SERVER_ERROR, variables, LogLevel.Error);
     }
 }
@@ -21,7 +22,7 @@ export class InternalServerException extends I18nException {
  * This error should be thrown when user input is not as expected.
  */
 export class UserInputException extends I18nException {
-    constructor(key: string, variables: { [key: string]: string | number } = {}) {
+    constructor(key: ParseKeys, variables: { [key: string]: string | number } = {}) {
         super(key, HttpStatus.BAD_REQUEST, variables, LogLevel.Warn);
     }
 }
@@ -31,8 +32,8 @@ export class UserInputException extends I18nException {
  * This error should be thrown when an operation is attempted which is not allowed.
  */
 export class IllegalOperationException extends I18nException {
-    constructor(message: string, variables: { [key: string]: string | number } = {}) {
-        super(message, HttpStatus.FORBIDDEN, variables, LogLevel.Warn);
+    constructor(key: ParseKeys, variables: { [key: string]: string | number } = {}) {
+        super(key, HttpStatus.FORBIDDEN, variables, LogLevel.Warn);
     }
 }
 
@@ -69,7 +70,7 @@ export class EntityNotFoundException extends I18nException {
 }
 
 export class InvalidCredentialsException extends I18nException {
-    constructor(authenticationError: string = 'error.invalid-credentials') {
+    constructor(authenticationError: ParseKeys = 'error.invalid-credentials') {
         super(authenticationError, HttpStatus.UNAUTHORIZED, {});
     }
 }
@@ -91,7 +92,7 @@ export class PasswordValidationException extends I18nException {
 
 export class NativeAuthStrategyException extends I18nException {
     constructor() {
-        super('error.native-auth-strategy', HttpStatus.BAD_REQUEST, {}, LogLevel.Warn);
+        super('errorResult.NATIVE_AUTH_STRATEGY_ERROR', HttpStatus.BAD_REQUEST, {}, LogLevel.Warn);
     }
 }
 
@@ -139,18 +140,18 @@ export class PasswordResetTokenExpiredException extends I18nException {
 
 export class IdentifierChangeTokenInvalidException extends I18nException {
     constructor() {
-        super('error.identifier-change-token-invalid', HttpStatus.BAD_REQUEST, {}, LogLevel.Warn);
+        super('errorResult.IDENTIFIER_CHANGE_TOKEN_INVALID_ERROR', HttpStatus.BAD_REQUEST, {}, LogLevel.Warn);
     }
 }
 
 export class IdentifierChangeTokenExpiredException extends I18nException {
     constructor() {
-        super('error.identifier-change-token-expired', HttpStatus.GONE, {}, LogLevel.Warn);
+        super('errorResult.IDENTIFIER_CHANGE_TOKEN_EXPIRED_ERROR', HttpStatus.GONE, {}, LogLevel.Warn);
     }
 }
 
 export class JobPostStateTransitionException extends I18nException {
-    constructor(input: { fromState: JobPostState; toState: JobPostState; transitionError: string }) {
+    constructor(input: { fromState: JobPostState; toState: JobPostState; transitionError: ParseKeys }) {
         super(input.transitionError, HttpStatus.BAD_REQUEST, input, LogLevel.Warn);
     }
 }

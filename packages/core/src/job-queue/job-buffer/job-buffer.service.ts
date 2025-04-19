@@ -25,7 +25,7 @@ export class JobBufferService {
         const idAlreadyExists = Array.from(this.buffers).find(p => p.id === buffer.id);
         if (idAlreadyExists) {
             throw new InternalServerException(
-                `There is already a JobBufferProcessor with the id "${buffer.id}". Ids must be unique`,
+                `There is already a JobBufferProcessor with the id "${buffer.id}". Ids must be unique` as any,
             );
         }
         this.buffers.add(buffer);

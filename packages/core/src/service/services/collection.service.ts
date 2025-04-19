@@ -725,7 +725,8 @@ export class CollectionService implements OnModuleInit {
             .getRepository(Collection)
             .metadata.relations.find(r => r.propertyName === relationName);
         if (!relation || typeof relation.type === 'string' || relation.type !== entityType) {
-            throw new InternalServerException('error.could-not-find-matching-relation');
+            // TODO
+            throw new InternalServerException('error.could-not-find-matching-relation' as any);
         }
 
         return relationName;

@@ -7,6 +7,7 @@ import { AssetPreviewStrategy } from '../asset-preview-strategy';
  */
 export class NoAssetPreviewStrategy implements AssetPreviewStrategy {
     generatePreviewImage(ctx: RequestContext, mimeType: string, data: Buffer): Promise<Buffer> {
-        throw new InternalServerException('error.no-asset-preview-strategy-configured');
+        // TODO
+        throw new InternalServerException('The asset preview strategy is not configured' as any);
     }
 }

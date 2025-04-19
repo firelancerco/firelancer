@@ -362,7 +362,8 @@ function coerceValueToType<T extends ConfigArgs>(
         try {
             return (JSON.parse(value) as string[]).map(v => coerceValueToType(v, type, false)) as any;
         } catch (err: any) {
-            throw new InternalServerException(`Could not parse list value "${value}": ` + JSON.stringify(err.message));
+            // TODO
+            throw new InternalServerException('Could not parse list value' as any, { value });
         }
     }
     switch (type) {

@@ -89,7 +89,8 @@ export class I18nService implements OnModuleInit {
      */
     translateError(req: I18nRequest, error: I18nException) {
         const t: TFunction = req.t;
-        let translation = error.getKey();
+        t('error.active-user-does-not-have-sufficient-permissions');
+        let translation: string = error.getKey();
         try {
             translation = t(error.getKey(), error.getVariables());
         } catch (e) {

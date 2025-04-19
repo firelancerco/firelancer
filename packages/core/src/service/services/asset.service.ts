@@ -149,7 +149,8 @@ export class AssetService {
         input: EntityAssetInput,
     ): Promise<T> {
         if (!entity.id) {
-            throw new InternalServerException('error.entity-must-have-an-id');
+            // TODO
+            throw new InternalServerException('error.entity-must-have-an-id' as any);
         }
         const { assetIds } = input;
 
@@ -358,7 +359,8 @@ export class AssetService {
                       : RequestContext.empty();
             return this.createAssetInternal(ctx, stream, filename, mimetype);
         } else {
-            throw new InternalServerException('error.path-should-be-a-string-got-buffer');
+            // TODO
+            throw new InternalServerException('error.path-should-be-a-string-got-buffer' as any);
         }
     }
 
@@ -447,7 +449,8 @@ export class AssetService {
             .getRepository(ctx, entity.constructor)
             .metadata.relations.find(r => r.propertyName === 'assets');
         if (!assetRelation || typeof assetRelation.type === 'string') {
-            throw new InternalServerException('error.could-not-find-matching-orderable-asset');
+            // TODO
+            throw new InternalServerException('error.could-not-find-matching-orderable-asset' as any);
         }
         return assetRelation.type as Type<OrderableAsset>;
     }

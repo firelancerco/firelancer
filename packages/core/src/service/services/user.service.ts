@@ -369,7 +369,8 @@ export class UserService {
         }
         const pendingIdentifier = nativeAuthMethod.pendingIdentifier;
         if (!pendingIdentifier) {
-            throw new InternalServerException('error.pending-identifier-missing');
+            // TODO
+            throw new InternalServerException('error.pending-identifier-missing' as any);
         }
         const oldIdentifier = nativeAuthMethod.user.identifier;
         nativeAuthMethod.user.identifier = pendingIdentifier;

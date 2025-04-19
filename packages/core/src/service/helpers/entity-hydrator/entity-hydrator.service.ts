@@ -166,7 +166,8 @@ export class EntityHydrator {
         const { entityMetadatas } = this.connection.rawConnection;
         const targetMetadata = entityMetadatas.find(m => m.target === entity.constructor);
         if (!targetMetadata) {
-            throw new InternalServerException(`Cannot find entity metadata for entity "${entity.constructor.name}"`);
+            // TODO
+            throw new InternalServerException(`Cannot find entity metadata for entity "${entity.constructor.name}"` as any);
         }
         let currentMetadata = targetMetadata;
         for (const pathPart of path.split('.')) {
@@ -174,8 +175,9 @@ export class EntityHydrator {
             if (relationMetadata) {
                 currentMetadata = relationMetadata.inverseEntityMetadata;
             } else {
+                // TODO
                 throw new InternalServerException(
-                    `Cannot find relation metadata for entity "${currentMetadata.targetName}" at path "${pathPart}"`,
+                    `Cannot find relation metadata for entity "${currentMetadata.targetName}" at path "${pathPart}"` as any,
                 );
             }
         }

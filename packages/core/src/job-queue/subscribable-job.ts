@@ -72,7 +72,7 @@ export class SubscribableJob<T extends JobData<T> = any> extends Job<T> {
         const strategy = this.jobQueueStrategy;
         if (!isInspectableJobQueueStrategy(strategy)) {
             throw new InternalServerException(
-                `The configured JobQueueStrategy (${strategy.constructor.name}) is not inspectable, so Job updates cannot be subscribed to`,
+                `The configured JobQueueStrategy (${strategy.constructor.name}) is not inspectable, so Job updates cannot be subscribed to` as any,
             );
         } else {
             return interval(pollInterval).pipe(

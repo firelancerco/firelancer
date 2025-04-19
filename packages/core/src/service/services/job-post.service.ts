@@ -161,9 +161,9 @@ export class JobPostService {
             relations: ['facetValues', 'facetValues.facet'],
         });
 
-        // TODO: Add a more specific error message
         if (jobPost.state !== 'DRAFT') {
-            throw new IllegalOperationException('Job post can only be updated in DRAFT state');
+            // TODO
+            throw new IllegalOperationException('Job post can only be updated in DRAFT state' as any);
         }
 
         const updatedJobPost = patchEntity(jobPost, input);
@@ -214,7 +214,8 @@ export class JobPostService {
         });
 
         if (jobPost.state !== 'OPEN') {
-            throw new IllegalOperationException('Job post can only be updated in OPEN state');
+            // TODO
+            throw new IllegalOperationException('Job post can only be updated in OPEN state' as any);
         }
 
         const updatedJobPost = patchEntity(jobPost, { ...input, editedAt: new Date() });
@@ -320,7 +321,8 @@ export class JobPostService {
                     skills.length < PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS ||
                     skills.length > PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS
                 ) {
-                    throw new UserInputException('error.invalid-skill-count', {
+                    // TODO
+                    throw new UserInputException('error.invalid-skill-count' as any, {
                         min: PUBLISH_JOB_POST_CONSTRAINTS_MIN_SKILLS,
                         max: PUBLISH_JOB_POST_CONSTRAINTS_MAX_SKILLS,
                     });
@@ -337,7 +339,8 @@ export class JobPostService {
             newFacetValueIds: requiredCategoryId ? [requiredCategoryId] : null,
             validateConstraints: (category: FacetValue[]) => {
                 if (category.length !== 1) {
-                    throw new UserInputException('error.invalid-category-count');
+                    // TODO
+                    throw new UserInputException('error.invalid-category-count' as any);
                 }
             },
         });
@@ -355,7 +358,8 @@ export class JobPostService {
             newFacetValueIds: requiredExperienceLevelId ? [requiredExperienceLevelId] : null,
             validateConstraints: (experienceLevel: FacetValue[]) => {
                 if (experienceLevel.length !== 1) {
-                    throw new UserInputException('error.invalid-experience-level-count');
+                    // TODO
+                    throw new UserInputException('error.invalid-experience-level-count' as any);
                 }
             },
         });
@@ -369,7 +373,8 @@ export class JobPostService {
             newFacetValueIds: requiredJobDurationId ? [requiredJobDurationId] : null,
             validateConstraints: (duration: FacetValue[]) => {
                 if (duration.length !== 1) {
-                    throw new UserInputException('error.invalid-job-duration-count');
+                    // TODO
+                    throw new UserInputException('error.invalid-job-duration-count' as any);
                 }
             },
         });
@@ -383,7 +388,8 @@ export class JobPostService {
             newFacetValueIds: requiredJobScopeId ? [requiredJobScopeId] : null,
             validateConstraints: (scope: FacetValue[]) => {
                 if (scope.length !== 1) {
-                    throw new UserInputException('error.invalid-job-scope-count');
+                    // TODO
+                    throw new UserInputException('error.invalid-job-scope-count' as any);
                 }
             },
         });
@@ -418,8 +424,8 @@ export class JobPostService {
         // Validate that all new facet values belong to the correct facet
         const invalidFacetValues = newFacetValues.filter(fv => fv.facet?.code !== facetCode);
         if (invalidFacetValues.length > 0) {
-            // TODO: Add a more specific error message
-            throw new UserInputException(`error.invalid-facet-values`, { facetCode });
+            // TODO
+            throw new UserInputException('error.invalid-facet-values' as any, { facetCode });
         }
         validateConstraints(newFacetValues);
         // Add the new facet values
