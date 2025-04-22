@@ -913,7 +913,7 @@ export type AuthenticationInput = {
         | undefined;
 };
 export type MutationAuthenticateArgs = {
-    input: {};
+    input: AuthenticationInput;
     rememberMe?: boolean | undefined;
 };
 export type MutationLoginArgs = {

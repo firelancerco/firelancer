@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { CurrentUser, MutationAuthenticateArgs } from '@firelancerco/common/lib/generated-schema';
 
-import { ForbiddenException, InvalidCredentialsException } from '../../../common/error/errors';
+import { ForbiddenException, InvalidCredentialsException, UserInputException } from '../../../common/error/errors';
 import { extractSessionToken } from '../../../common/extract-session-token';
 import { ApiType } from '../../../common/get-api-type';
 import { RequestContext } from '../../../common/request-context';
@@ -15,6 +15,7 @@ import { getUserPermissions } from '../../../service/helpers/utils/get-user-perm
 import { AdministratorService } from '../../../service/services/administrator.service';
 import { AuthService } from '../../../service/services/auth.service';
 import { UserService } from '../../../service/services/user.service';
+import { BadRequestException } from '@nestjs/common';
 
 export class BaseAuthController {
     constructor(
@@ -89,6 +90,10 @@ export class BaseAuthController {
         req: Request,
         res: Response,
     ) {
+        if (!args.input || Object.keys(args.input).length === 0) {
+            throw new BadRequestException('Validation error: No authentication method provided');
+        }
+
         const [method, data] = Object.entries(args.input)[0];
         const { apiType } = ctx;
 

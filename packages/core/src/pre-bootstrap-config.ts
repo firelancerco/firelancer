@@ -4,13 +4,13 @@ import { EntitySubscriberInterface } from 'typeorm';
 
 import { coreSchemas } from './api/schema/core-schemas';
 import { InternalServerException } from './common/error/errors';
+import { AuthenticationStrategy } from './config';
 import { getConfig, setConfig } from './config/config-helpers';
 import { FirelancerConfig, RuntimeFirelancerConfig } from './config/firelancer-config';
 import { Logger } from './config/strategies/logger/firelancer-logger';
 import { setEntityIdStrategy, setMoneyStrategy } from './entity';
 import { coreEntitiesMap } from './entity/core-entities';
 import { getConfigurationFunction, getEntitiesFromPlugins, getPluginAPIExtensions } from './plugin/plugin-metadata';
-import { AuthenticationStrategy } from 'config';
 
 /**
  * Setting the global config must be done prior to loading the AppModule.
@@ -39,12 +39,10 @@ export async function preBootstrapConfig(
     // logger (which may depend on config coming from a plugin) being set.
     Logger.useLogger(config.logger);
     config = await runPluginConfigurations(config);
-
     setEntityIdStrategy(config.entityOptions.entityIdStrategy, entities);
     setMoneyStrategy(config.entityOptions.moneyStrategy, entities);
     setExposedHeaders(config);
     setSchemaExtensions(config);
-
     return config;
 }
 
@@ -78,8 +76,8 @@ function setSchemaExtensions(config: RuntimeFirelancerConfig) {
         ...processPluginSchemas('shop'),
     };
 
-    mutateAuthenticationSchemas('shop', adminAuthenticationStrategy);
-    mutateAuthenticationSchemas('admin', shopAuthenticationStrategy);
+    mutateAuthenticationSchemas('shop', shopAuthenticationStrategy);
+    mutateAuthenticationSchemas('admin', adminAuthenticationStrategy);
 }
 
 /**
