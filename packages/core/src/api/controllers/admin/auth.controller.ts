@@ -52,8 +52,6 @@ export class AdminAuthController extends BaseAuthController {
         @Body(new ZodValidationPipe(coreSchemas.admin.MutationAuthenticateArgs))
         args: MutationAuthenticateArgs,
     ) {
-        console.log(coreSchemas.admin.MutationAuthenticateArgs.shape.input.shape);
-        console.log(args);
         const result = await this.authenticateAndCreateSession(ctx, args, req, res);
         res.send({ login: result });
     }
