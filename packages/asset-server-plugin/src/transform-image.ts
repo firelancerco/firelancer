@@ -17,12 +17,12 @@ export async function transformImage(
     queryParams: TransformImageOptions,
     presets: ImageTransformPreset[],
 ): Promise<sharp.Sharp> {
-    let targetWidth = Math.round(+queryParams.w) || undefined;
-    let targetHeight = Math.round(+queryParams.h) || undefined;
+    let targetWidth = Math.round(queryParams?.w ?? 0) || undefined;
+    let targetHeight = Math.round(queryParams?.h ?? 0) || undefined;
     const quality = queryParams.q != null ? Math.round(Math.max(Math.min(+queryParams.q, 100), 1)) : undefined;
     let mode = queryParams.mode || 'crop';
-    const fpx = +queryParams.fpx || undefined;
-    const fpy = +queryParams.fpy || undefined;
+    const fpx = queryParams?.fpx || undefined;
+    const fpy = queryParams?.fpy || undefined;
     const imageFormat = getValidFormat(queryParams.format);
     if (queryParams.preset) {
         const matchingPreset = presets.find(p => p.name === queryParams.preset);
