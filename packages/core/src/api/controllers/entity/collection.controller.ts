@@ -7,8 +7,8 @@ import {
 } from '@firelancerco/common/lib/generated-schema';
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ZodValidationPipe } from 'nestjs-zod';
 
+import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import { Api } from '../../../api/decorators/api.decorator';
 import { FieldsDecoratorConfig, RelationPaths, Relations } from '../../../api/decorators/relations.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';

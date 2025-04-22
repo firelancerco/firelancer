@@ -10,6 +10,7 @@ import { Logger } from './config/strategies/logger/firelancer-logger';
 import { setEntityIdStrategy, setMoneyStrategy } from './entity';
 import { coreEntitiesMap } from './entity/core-entities';
 import { getConfigurationFunction, getEntitiesFromPlugins, getPluginAPIExtensions } from './plugin/plugin-metadata';
+import { AuthenticationStrategy } from 'config';
 
 /**
  * Setting the global config must be done prior to loading the AppModule.
@@ -56,6 +57,17 @@ function setSchemaExtensions(config: RuntimeFirelancerConfig) {
             .filter(notNullOrUndefined)
             .reduce((acc, schema) => ({ ...acc, ...schema }), {});
 
+    const mutateAuthenticationSchemas = (apiType: 'admin' | 'shop', strategies: AuthenticationStrategy[]) =>
+        strategies?.forEach(strategy => {
+            coreSchemas[apiType].AuthenticationInput = coreSchemas[apiType].AuthenticationInput.extend({
+                [strategy.name]: strategy.getInputSchema().optional(),
+            });
+
+            coreSchemas[apiType].MutationAuthenticateArgs = coreSchemas[apiType].MutationAuthenticateArgs.extend({
+                input: coreSchemas[apiType].AuthenticationInput,
+            });
+        });
+
     coreSchemas.admin = {
         ...coreSchemas.admin,
         ...processPluginSchemas('admin'),
@@ -66,17 +78,8 @@ function setSchemaExtensions(config: RuntimeFirelancerConfig) {
         ...processPluginSchemas('shop'),
     };
 
-    adminAuthenticationStrategy?.forEach(strategy => {
-        coreSchemas.admin.AuthenticationInput = coreSchemas.admin.AuthenticationInput.extend({
-            [strategy.name]: strategy.getInputSchema().optional(),
-        });
-    });
-
-    shopAuthenticationStrategy?.forEach(strategy => {
-        coreSchemas.shop.AuthenticationInput = coreSchemas.shop.AuthenticationInput.extend({
-            [strategy.name]: strategy.getInputSchema().optional(),
-        });
-    });
+    mutateAuthenticationSchemas('shop', adminAuthenticationStrategy);
+    mutateAuthenticationSchemas('admin', shopAuthenticationStrategy);
 }
 
 /**

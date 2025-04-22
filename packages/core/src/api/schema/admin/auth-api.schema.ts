@@ -4,7 +4,7 @@ export let AuthenticationInput = z.object({
     // Populated at run-time
 });
 
-export const MutationAuthenticateArgs = z.object({
+export let MutationAuthenticateArgs = z.object({
     input: AuthenticationInput,
     rememberMe: z.boolean().optional(),
 });

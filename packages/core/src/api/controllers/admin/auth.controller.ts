@@ -1,7 +1,6 @@
 import { MutationAuthenticateArgs, MutationLoginArgs, Permission } from '@firelancerco/common/lib/generated-schema';
-import { Body, Controller, Get, Post, Request, Response, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
-import { ZodValidationPipe } from 'nestjs-zod';
 
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
@@ -15,6 +14,7 @@ import { NATIVE_AUTH_STRATEGY_NAME } from '../../../config/strategies/authentica
 import { AdministratorService } from '../../../service/services/administrator.service';
 import { AuthService } from '../../../service/services/auth.service';
 import { UserService } from '../../../service/services/user.service';
+import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import { BaseAuthController } from '../base/base-auth.controller';
 
 @Controller('/auth')
@@ -52,6 +52,8 @@ export class AdminAuthController extends BaseAuthController {
         @Body(new ZodValidationPipe(coreSchemas.admin.MutationAuthenticateArgs))
         args: MutationAuthenticateArgs,
     ) {
+        console.log(coreSchemas.admin.MutationAuthenticateArgs.shape.input.shape);
+        console.log(args);
         const result = await this.authenticateAndCreateSession(ctx, args, req, res);
         res.send({ login: result });
     }

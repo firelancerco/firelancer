@@ -10,8 +10,8 @@ import {
     Permission,
 } from '@firelancerco/common/lib/generated-shop-schema';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ZodValidationPipe } from 'nestjs-zod';
 
+import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { EntityNotFoundException, ForbiddenException, RequestContext } from '../../../common';
 import { CustomerService } from '../../../service';

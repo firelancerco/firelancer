@@ -7,8 +7,8 @@ import {
     Permission,
 } from '@firelancerco/common/lib/generated-schema';
 import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes } from '@nestjs/common';
-import { ZodValidationPipe } from 'nestjs-zod';
 
+import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { RequestContext } from '../../../common';
 import { RoleService } from '../../../service';

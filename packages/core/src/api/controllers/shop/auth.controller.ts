@@ -15,8 +15,8 @@ import {
 import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
-import { ZodValidationPipe } from 'nestjs-zod';
 
+import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
