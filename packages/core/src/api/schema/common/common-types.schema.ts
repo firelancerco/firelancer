@@ -2,7 +2,7 @@ import z from 'zod';
 import { SortOrder } from './common-enums.schema';
 import { LanguageCode } from './language-code.schema';
 
-export const ID = z.union([z.string().uuid(), z.number()]);
+export const ID = z.string().uuid().or(z.coerce.number());
 
 export const PaginatedList = z.object({
     items: z.array(z.any()),
