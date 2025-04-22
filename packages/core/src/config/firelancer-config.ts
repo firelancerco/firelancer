@@ -456,7 +456,7 @@ export interface EntityOptions {
      * :::
      */
 
-    entityIdStrategy?: EntityIdStrategy<'increment' | 'uuid'>;
+    entityIdStrategy?: EntityIdStrategy<any>;
     /**
      * @description
      * Defines the strategy used to store and round monetary values.

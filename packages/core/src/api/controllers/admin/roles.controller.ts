@@ -6,15 +6,16 @@ import {
     MutationUpdateRoleArgs,
     Permission,
 } from '@firelancerco/common/lib/generated-schema';
-import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { RequestContext } from '../../../common';
 import { RoleService } from '../../../service';
 import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';
 import { Transaction } from '../../decorators/transaction.decorator';
+import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
+import * as schema from '../../schema/common';
 
 @Controller('roles')
 export class RoleController {
@@ -29,7 +30,7 @@ export class RoleController {
 
     @Get(':id')
     @Allow(Permission.ReadAdministrator)
-    async role(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
+    async role(@Ctx() ctx: RequestContext, @Param('id', new ZodValidationPipe(schema.ID)) id: ID) {
         const role = await this.roleService.findOne(ctx, id);
         return { role };
     }

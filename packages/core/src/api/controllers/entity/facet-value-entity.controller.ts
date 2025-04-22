@@ -1,10 +1,13 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-
 import { FacetValueListOptions, ID } from '@firelancerco/common/lib/generated-shop-schema';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import z from 'zod';
+
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { EntityNotFoundException, RequestContext } from '../../../common';
 import { FacetService, FacetValueService } from '../../../service';
 import { Ctx } from '../../decorators/request-context.decorator';
+import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
+import * as schema from '../../schema/common';
 
 @Controller('facet-values')
 export class FacetValueEntityController {
@@ -23,14 +26,14 @@ export class FacetValueEntityController {
     }
 
     @Get(':id')
-    async getFacetValue(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
+    async getFacetValue(@Ctx() ctx: RequestContext, @Param('id', new ZodValidationPipe(schema.ID)) id: ID) {
         return this.facetValueService.findOne(ctx, id);
     }
 
     @Get('facet/:facetId')
     async getFacetValuesListByFacetId(
         @Ctx() ctx: RequestContext,
-        @Param('facetId') facetId: ID,
+        @Param('facetId', new ZodValidationPipe(schema.ID)) facetId: ID,
         @Query(coreSchemas.common.FacetValueListOptions)
         options: FacetValueListOptions,
     ) {
@@ -42,7 +45,7 @@ export class FacetValueEntityController {
         @Ctx() ctx: RequestContext,
         @Query(coreSchemas.common.FacetValueListOptions)
         options: FacetValueListOptions,
-        @Param('facetCode') facetCode: string,
+        @Param('facetCode', new ZodValidationPipe(z.string())) facetCode: string,
     ) {
         const facet = await this.facetService.findByCode(ctx, facetCode, []);
         if (!facet) {

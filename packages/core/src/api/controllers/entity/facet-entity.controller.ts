@@ -5,6 +5,9 @@ import { coreSchemas } from '../../../api/schema/core-schemas';
 import { RequestContext } from '../../../common';
 import { FacetService } from '../../../service';
 import { Ctx } from '../../decorators/request-context.decorator';
+import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
+import * as schema from '../../schema/common';
+import z from 'zod';
 
 @Controller('facets')
 export class FacetEntityController {
@@ -20,17 +23,20 @@ export class FacetEntityController {
     }
 
     @Get(':id')
-    async getFacet(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
+    async getFacet(@Ctx() ctx: RequestContext, @Param('id', new ZodValidationPipe(schema.ID)) id: ID) {
         return this.facetService.findOne(ctx, id, []);
     }
 
     @Get('code/:code')
-    async getFacetByCode(@Ctx() ctx: RequestContext, @Param('code') code: string) {
+    async getFacetByCode(@Ctx() ctx: RequestContext, @Param('code', new ZodValidationPipe(z.string())) code: string) {
         return this.facetService.findByCode(ctx, code, []);
     }
 
     @Get('facet-values/:facetValueId')
-    async getFacetByFacetValueId(@Ctx() ctx: RequestContext, @Param('facetValueId') facetValueId: ID) {
+    async getFacetByFacetValueId(
+        @Ctx() ctx: RequestContext,
+        @Param('facetValueId', new ZodValidationPipe(schema.ID)) facetValueId: ID,
+    ) {
         return this.facetService.findByFacetValueId(ctx, facetValueId);
     }
 }

@@ -19,6 +19,7 @@ import { JobPostService } from '../../../service/services/job-post.service';
 import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';
 import { Transaction } from '../../decorators/transaction.decorator';
+import * as schema from '../../../api/schema/common';
 
 @Controller('hiring/job-posts')
 export class ShopHiringJobPostController {
@@ -43,7 +44,7 @@ export class ShopHiringJobPostController {
 
     @Get(':id')
     @Allow(Permission.PublishJobPost)
-    async getJobPost(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
+    async getJobPost(@Ctx() ctx: RequestContext, @Param('id', new ZodValidationPipe(schema.ID)) id: ID) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, id);
         if (!jobPost) {

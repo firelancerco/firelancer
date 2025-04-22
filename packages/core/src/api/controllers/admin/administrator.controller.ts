@@ -1,4 +1,5 @@
 import {
+    ID,
     MutationAssignRoleToAdministratorArgs,
     MutationCreateAdministratorArgs,
     MutationDeleteAdministratorArgs,
@@ -9,6 +10,7 @@ import {
 } from '@firelancerco/common/lib/generated-schema';
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 
+import * as schema from '../../schema/common';
 import { RequestContext } from '../../../common';
 import { Administrator } from '../../../entity/administrator/administrator.entity';
 import { AdministratorService } from '../../../service';
@@ -43,7 +45,7 @@ export class AdministratorController {
 
     @Get(':id')
     @Allow(Permission.ReadAdministrator)
-    async getAdministrator(@Ctx() ctx: RequestContext, @Param('id') id: string) {
+    async getAdministrator(@Ctx() ctx: RequestContext, @Param('id', new ZodValidationPipe(schema.ID)) id: ID) {
         return this.administratorService.findOne(ctx, id);
     }
 

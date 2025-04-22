@@ -8,7 +8,7 @@ import {
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
+import z from 'zod';
 import { Api } from '../../../api/decorators/api.decorator';
 import { FieldsDecoratorConfig, RelationPaths, Relations } from '../../../api/decorators/relations.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
@@ -16,6 +16,8 @@ import { coreSchemas } from '../../../api/schema/core-schemas';
 import { ApiType, RequestContext, Translated } from '../../../common';
 import { Collection, JobPost } from '../../../entity';
 import { CollectionService, JobPostService } from '../../../service';
+import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
+import * as schema from '../../schema/common';
 
 const relationsOptions: FieldsDecoratorConfig<Collection> = {
     entity: Collection,
@@ -47,7 +49,7 @@ export class CollectionEntityController {
     async collection(
         @Ctx() ctx: RequestContext,
         @Api() apiType: ApiType,
-        @Param('id') id: ID,
+        @Param('id', new ZodValidationPipe(schema.ID)) id: ID,
         @Relations(relationsOptions) relations?: RelationPaths<Collection>,
     ): Promise<Translated<Collection> | undefined> {
         const collection = await this.collectionService.findOne(ctx, id, relations);
@@ -62,7 +64,7 @@ export class CollectionEntityController {
     async collectionBySlug(
         @Ctx() ctx: RequestContext,
         @Api() apiType: ApiType,
-        @Param('slug') slug: string,
+        @Param('slug', new ZodValidationPipe(z.string())) slug: string,
         @Relations(relationsOptions) relations?: RelationPaths<Collection>,
     ): Promise<Translated<Collection> | undefined> {
         const collection = await this.collectionService.findOneBySlug(ctx, slug, relations);
@@ -77,7 +79,7 @@ export class CollectionEntityController {
     async getJobPostsByCollectionId(
         @Ctx() ctx: RequestContext,
         @Api() apiType: ApiType,
-        @Param('id') id: ID,
+        @Param('id', new ZodValidationPipe(schema.ID)) id: ID,
         @Query(new ZodValidationPipe(coreSchemas.shop.JobPostListOptions)) options: JobPostListOptions,
         @Relations({ entity: JobPost, omit: ['assets'] }) relations: RelationPaths<JobPost>,
     ): Promise<PaginatedList<JobPost>> {
