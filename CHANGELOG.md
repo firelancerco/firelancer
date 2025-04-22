@@ -1,3 +1,24 @@
+## 1.3.0-alpha.0 (2025-04-22)
+
+
+#### Features
+
+*
+    **cli**
+add schema-types command for generating API schema types([d9ef24a](https://github.com/firelancerco/firelancer    /commit/d9ef24a))*
+    **core**
+create custom ZodValidationPipe([cedfd71](https://github.com/firelancerco/firelancer    /commit/cedfd71))*
+    **core**
+enhance error handling and type definitions across services([3acc037](https://github.com/firelancerco/firelancer    /commit/3acc037))*
+    **core**
+enhance schema management and service definitions([7afbdc5](https://github.com/firelancerco/firelancer    /commit/7afbdc5))*
+    **core**
+implement API schema building([0d5cfbf](https://github.com/firelancerco/firelancer    /commit/0d5cfbf))
+#### Fixes
+
+*
+    **core**
+resolve issue with ID schema not inferring UUID (string) or number correctly([4365600](https://github.com/firelancerco/firelancer    /commit/4365600))
 ## <small>1.2.2 (2025-04-14)</small>
 
 
