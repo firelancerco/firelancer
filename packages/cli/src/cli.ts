@@ -29,4 +29,13 @@ program
         process.exit(0);
     });
 
+program
+    .command('schema-types')
+    .description('Generate api schema types')
+    .action(async () => {
+        const { schemaTypesCommand } = await import('./commands/generate-schema-types/schema-types');
+        await schemaTypesCommand();
+        process.exit(0);
+    });
+
 void program.parseAsync(process.argv);

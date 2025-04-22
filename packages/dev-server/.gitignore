@@ -1,3 +1,4 @@
 static/
 test-emails/
 generated-schema.ts
+generated-shop-schema.ts
