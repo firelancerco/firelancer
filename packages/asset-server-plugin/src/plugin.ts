@@ -20,6 +20,7 @@ import { HashedAssetNamingStrategy } from './hashed-asset-naming-strategy';
 import { SharpAssetPreviewStrategy } from './sharp-asset-preview-strategy';
 import { transformImage } from './transform-image';
 import { AssetServerOptions, ImageTransformPreset } from './types';
+import { TransformImageOptions } from './schema';
 
 async function getFileType(buffer: Buffer) {
     const { fileTypeFromBuffer } = await import('file-type');
@@ -141,10 +142,10 @@ async function getFileType(buffer: Buffer) {
 @FirelancerPlugin({
     imports: [PluginCommonModule],
     shopApiExtensions: {
-        schemaPath: resolve(__dirname, './schema.d.ts'),
+        schemas: { TransformImageOptions },
     },
     adminApiExtensions: {
-        schemaPath: resolve(__dirname, './schema.d.ts'),
+        schemas: { TransformImageOptions },
     },
     configuration: config => AssetServerPlugin.configure(config),
     compatibility: '>=1.0.0',
@@ -267,6 +268,8 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
     private generateTransformedImage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return async (err: any, req: Request, res: Response, next: NextFunction) => {
+            const transformImageOpts = TransformImageOptions.parse(req.query);
+
             if (err && (err.status === 404 || err.statusCode === 404)) {
                 if (req.query) {
                     const decodedReqPath = this.sanitizeFilePath(req.path);
@@ -280,7 +283,7 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
                         return;
                     }
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const image = await transformImage(file, req.query as any, this.presets || []);
+                    const image = await transformImage(file, transformImageOpts, this.presets || []);
                     try {
                         const imageBuffer = await image.toBuffer();
                         const cachedFileName = this.getFileNameFromRequest(req);

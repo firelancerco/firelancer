@@ -1,3 +1,4 @@
+import { AssetType, CreateAssetInput, ID, UpdateAssetInput } from '@firelancerco/common/lib/generated-schema';
 import { PaginatedList, Type } from '@firelancerco/common/lib/shared-types';
 import { getAssetType, idsAreEqual, notNullOrUndefined } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
@@ -10,9 +11,9 @@ import path from 'path';
 import { Readable, Stream } from 'stream';
 import { FindOneOptions, In, IsNull } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils';
+
 import { RelationPaths } from '../../api';
 import { InternalServerException, ListQueryOptions, MimeTypeException, RequestContext } from '../../common';
-import { AssetType, CreateAssetInput, ID, UpdateAssetInput } from '../../common/shared-schema';
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { Asset, FirelancerEntity, JobPost, OrderableAsset } from '../../entity';
@@ -177,7 +178,7 @@ export class AssetService {
         const { originalname, mimetype, buffer } = input.file;
 
         try {
-            const stream = Readable.from(buffer);
+            const stream = Readable.from(buffer as any);
             stream.on('error', err => {
                 throw err;
             });

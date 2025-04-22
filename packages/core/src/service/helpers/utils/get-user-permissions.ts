@@ -1,4 +1,4 @@
-import { Permission } from '../../../common/shared-schema';
+import { Permission } from '@firelancerco/common/lib/generated-schema';
 import { Role } from '../../../entity/role/role.entity';
 import { User } from '../../../entity/user/user.entity';
 

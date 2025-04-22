@@ -7,3 +7,4 @@ export * from './decorators/transaction.decorator';
 export * from './middlewares/auth.guard';
 export * from './middlewares/exception-handler.filter';
 export * from './middlewares/transaction.interceptor';
+export * from './schema/core-schemas';

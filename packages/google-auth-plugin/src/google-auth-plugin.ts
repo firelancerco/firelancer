@@ -1,7 +1,6 @@
 import { FirelancerPlugin, I18nService, PluginCommonModule } from '@firelancerco/core';
-import { resolve } from 'path';
 
-import { GoogleAuthenticationStrategy } from './google-authentication-strategy';
+import { GoogleAuthData, GoogleAuthenticationStrategy } from './google-authentication-strategy';
 
 export type GoogleAuthPluginOptions = {
     clientId: string;
@@ -14,7 +13,7 @@ export type GoogleAuthPluginOptions = {
     compatibility: '>=1.0.0',
     imports: [PluginCommonModule],
     shopApiExtensions: {
-        schemaPath: resolve(__dirname, './schema.d.ts'),
+        schemas: { GoogleAuthData },
     },
     configuration: config => {
         config.authOptions.shopAuthenticationStrategy = [

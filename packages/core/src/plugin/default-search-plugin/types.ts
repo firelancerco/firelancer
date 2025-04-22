@@ -1,5 +1,5 @@
+import { ID } from '@firelancerco/common/lib/generated-schema';
 import { SerializedRequestContext } from '../../common';
-import { ID } from '@firelancerco/common/lib/shared-schema';
 import { SearchStrategy } from './search-strategy/search-strategy';
 
 /**

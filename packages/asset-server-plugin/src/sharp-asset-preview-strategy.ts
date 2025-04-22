@@ -1,4 +1,4 @@
-import { AssetType } from '@firelancerco/common/lib/shared-schema';
+import { AssetType } from '@firelancerco/common/lib/generated-schema';
 import { getAssetType } from '@firelancerco/common/lib/shared-utils';
 import { AssetPreviewStrategy, Logger, RequestContext } from '@firelancerco/core';
 import path from 'path';

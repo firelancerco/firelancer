@@ -1,7 +1,16 @@
+import {
+    CreateCustomerInput,
+    CustomerType,
+    HistoryEntryType,
+    ID,
+    UpdateCustomerInput,
+} from '@firelancerco/common/lib/generated-schema';
+import { RegisterCustomerInput } from '@firelancerco/common/lib/generated-shop-schema';
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { assertFound, normalizeEmailAddress } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
+
 import { RelationPaths } from '../../api';
 import { ListQueryOptions } from '../../common';
 import {
@@ -12,14 +21,6 @@ import {
     UnauthorizedException,
 } from '../../common/error/errors';
 import { RequestContext } from '../../common/request-context';
-import {
-    CreateCustomerInput,
-    CustomerType,
-    HistoryEntryType,
-    ID,
-    RegisterCustomerInput,
-    UpdateCustomerInput,
-} from '../../common/shared-schema';
 import { ConfigService } from '../../config/config.service';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../config/strategies/authentication/default/native-authentication-strategy';
 import { TransactionalConnection } from '../../connection/transactional-connection';

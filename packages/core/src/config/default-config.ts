@@ -4,7 +4,7 @@ import {
     SUPER_ADMIN_USER_PASSWORD,
 } from '@firelancerco/common/lib/shared-constants';
 import { randomBytes } from 'crypto';
-import { CurrencyCode, LanguageCode } from '../common/shared-schema';
+
 import { InMemoryJobBufferStorageStrategy } from '../job-queue';
 import { InMemoryJobQueueStrategy } from '../job-queue/in-memory-job-queue-strategy';
 import { RuntimeFirelancerConfig } from './firelancer-config';
@@ -18,10 +18,11 @@ import { NativeAuthenticationStrategy } from './strategies/authentication/defaul
 import { defaultCollectionFilters } from './strategies/catalog/default/default-collection-filters';
 import { AutoIncrementIdStrategy } from './strategies/entity/default/auto-increment-id-strategy';
 import { DefaultMoneyStrategy } from './strategies/entity/default/default-money-strategy';
+import { defaultJobPostProcess } from './strategies/job-post/default/default-job-post-process';
 import { DefaultLogger } from './strategies/logger/default/default-logger';
 import { InMemorySessionCacheStrategy } from './strategies/session-cache/default/in-memory-session-cache-strategy';
 import { InMemoryCacheStrategy } from './strategies/system/default/in-memory-cache-strategy';
-import { defaultJobPostProcess } from './strategies/job-post/default/default-job-post-process';
+import { CurrencyCode, LanguageCode } from '@firelancerco/common/lib/generated-schema';
 
 /**
  * @description

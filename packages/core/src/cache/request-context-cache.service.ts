@@ -1,4 +1,4 @@
-/* eslint @typescript-eslint/no-explicit-any: 0 */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RequestContext } from '../common/request-context';
 
 /**

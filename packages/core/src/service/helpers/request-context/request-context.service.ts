@@ -1,10 +1,11 @@
 import { intersect } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
+import { CurrencyCode, LanguageCode, Permission } from '@firelancerco/common/lib/generated-schema';
+
 import { UserInputException } from '../../../common';
 import { ApiType, getApiType } from '../../../common/get-api-type';
 import { RequestContext } from '../../../common/request-context';
-import { CurrencyCode, LanguageCode, Permission } from '../../../common/shared-schema';
 import { ConfigService } from '../../../config/config.service';
 import { CachedSession, CachedSessionUser } from '../../../config/strategies/session-cache/session-cache-strategy';
 import { User } from '../../../entity';

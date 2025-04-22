@@ -1,6 +1,7 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { getApiType } from '../../common/get-api-type';
 import { Request } from 'express';
+
+import { getApiType } from '../../common/get-api-type';
 
 /**
  * @description

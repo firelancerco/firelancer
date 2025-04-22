@@ -1,3 +1,4 @@
+import { ConfigurableOperation, ID } from '@firelancerco/common/lib/generated-schema';
 import { DeepPartial } from '@firelancerco/common/lib/shared-types';
 import {
     Column,
@@ -12,7 +13,6 @@ import {
     TreeParent,
 } from 'typeorm';
 import { LocaleString, Orderable, Translatable, Translation } from '../../common';
-import { ConfigurableOperation, ID } from '../../common/shared-schema';
 import { Asset } from '../asset/asset.entity';
 import { FirelancerEntity } from '../base/base.entity';
 import { EntityId } from '../entity-id.decorator';

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/no-unsafe-function-type */
-import { LanguageCode } from './shared-schema';
+import { LanguageCode } from './generated-schema';
 
 export interface Type<T = any> extends Function {
     new (...args: any[]): T;
@@ -33,6 +33,8 @@ export type DeepRequired<T, U extends object | undefined = undefined> = T extend
               : DeepRequired<NonNullable<T[P]>, U>;
       }
     : T;
+
+export type ConfigArgType = 'string' | 'int' | 'float' | 'boolean' | 'datetime' | 'ID';
 
 export type TimeSpanUnit = 'ms' | 's' | 'm' | 'h' | 'd' | 'w';
 

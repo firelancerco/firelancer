@@ -1,6 +1,6 @@
 import { Observable, Observer, lastValueFrom } from 'rxjs';
 import { TypedArray } from './shared-types';
-import { ID, AssetType } from './shared-schema';
+import { ID, AssetType } from './generated-schema';
 
 /**
  * Identity function which asserts to the type system that a promise which can resolve to T or undefined

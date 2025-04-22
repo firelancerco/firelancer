@@ -1,5 +1,10 @@
+import {
+    CreateJobPostInput,
+    EditDraftJobPostInput,
+    EditPublishedJobPostInput,
+    ID,
+} from '@firelancerco/common/lib/generated-shop-schema';
 import { RequestContext } from '../../common';
-import { CreateJobPostInput, EditDraftJobPostInput, EditPublishedJobPostInput, ID } from '../../common/shared-schema';
 import { JobPost } from '../../entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 

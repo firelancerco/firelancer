@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { ClientState } from '../client-state/client-state.service';
-import { Permission } from '@firelancerco/common/lib/shared-schema';
+import { Permission } from '@firelancerco/common/lib/generated-schema';
 
 export class ClientDataService {
     private clientState = inject(ClientState);

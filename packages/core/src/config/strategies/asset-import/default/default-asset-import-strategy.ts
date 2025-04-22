@@ -6,10 +6,11 @@ import { from, lastValueFrom } from 'rxjs';
 import { delay, retryWhen, take, tap } from 'rxjs/operators';
 import { Readable } from 'stream';
 import { URL } from 'url';
-import { AssetImportStrategy } from '../asset-import-strategy';
-import { Logger } from '../../../strategies/logger/firelancer-logger';
-import { ConfigService } from '../../../../config';
+
 import { Injector } from '../../../../common';
+import { ConfigService } from '../../../../config';
+import { Logger } from '../../../strategies/logger/firelancer-logger';
+import { AssetImportStrategy } from '../asset-import-strategy';
 
 function fetchUrl(urlString: string): Promise<Readable> {
     return new Promise((resolve, reject) => {

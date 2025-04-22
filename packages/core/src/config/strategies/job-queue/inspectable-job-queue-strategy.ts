@@ -1,4 +1,5 @@
-import { ID } from '../../../common/shared-schema';
+import { ID } from '@firelancerco/common/lib/generated-schema';
+
 import { Job } from '../../../job-queue';
 import { JobQueueStrategy } from './job-queue-strategy';
 

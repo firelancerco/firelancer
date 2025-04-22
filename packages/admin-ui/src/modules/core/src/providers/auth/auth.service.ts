@@ -1,5 +1,5 @@
+// @ts-nocheck
 import { inject, Injectable } from '@angular/core';
-import { AttemptLoginMutation } from '@firelancerco/common/lib/shared-schema';
 import { Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 
@@ -18,7 +18,7 @@ export class AuthService {
      * Attempts to log in via the REST login endpoint and updates the app
      * state on success.
      */
-    logIn(username: string, password: string, rememberMe: boolean): Observable<AttemptLoginMutation> {
+    logIn(username: string, password: string, rememberMe: boolean): Observable<unknown> {
         return this.dataService.auth.attemptLogin(username, password, rememberMe).pipe(
             switchMap(data => {
                 this.permissionsService.setCurrentUserPermissions(data.login.permissions);

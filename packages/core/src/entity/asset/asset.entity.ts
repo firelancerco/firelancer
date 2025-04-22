@@ -1,4 +1,4 @@
-import { AssetType } from '../../common/shared-schema';
+import { AssetType } from '@firelancerco/common/lib/generated-schema';
 import { Column, DeepPartial, Entity, OneToMany } from 'typeorm';
 import { FirelancerEntity } from '../base/base.entity';
 import { Collection } from '../collection/collection.entity';

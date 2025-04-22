@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Module, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
+import { Module, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ConfigArgs, ConfigurableOperationDef } from '../common';
 import { InjectableStrategy } from '../common/injectable-strategy';

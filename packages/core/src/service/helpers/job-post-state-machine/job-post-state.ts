@@ -1,5 +1,5 @@
+import { JobPostState as JobPostStateEnum } from '@firelancerco/common/lib/generated-schema';
 import { RequestContext } from '../../../common/request-context';
-import type { JobPostState as JobPostStateEnum } from '../../../common/shared-schema';
 import { JobPost } from '../../../entity/job-post/job-post.entity';
 
 /**

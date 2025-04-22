@@ -1,4 +1,4 @@
-import { JobState } from '@firelancerco/common/lib/shared-schema';
+import { JobState } from '@firelancerco/common/lib/generated-schema';
 import { DeepPartial } from '@firelancerco/common/lib/shared-types';
 import { Column, Entity } from 'typeorm';
 import { FirelancerEntity } from '../../../entity/base/base.entity';

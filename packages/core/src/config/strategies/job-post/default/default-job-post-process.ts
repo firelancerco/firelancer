@@ -1,5 +1,6 @@
+import { ID } from '@firelancerco/common/lib/generated-schema';
+
 import { RequestContext, UserInputException } from '../../../../common';
-import { ID } from '../../../../common/shared-schema';
 import { TransactionalConnection } from '../../../../connection';
 import { JobPost } from '../../../../entity';
 import { JobPostState } from '../../../../service/helpers/job-post-state-machine/job-post-state';

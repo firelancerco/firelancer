@@ -1,7 +1,7 @@
 import { Column, Entity, Index } from 'typeorm';
-
 import { DeepPartial } from '@firelancerco/common/lib/shared-types';
-import { SearchIndex } from '../../../common/shared-schema';
+import { SearchIndex } from '@firelancerco/common/lib/generated-schema';
+
 import { SearchIndexItem } from './search-index-item.entity';
 
 @Entity('profile_search_index')

@@ -1,22 +1,20 @@
 import { Brackets, SelectQueryBuilder } from 'typeorm';
 
+import {
+    ID,
+    SearchInput,
+    SearchResult,
+    JobPostSearchResultSortParameter,
+} from '@firelancerco/common/lib/generated-schema';
 import { Injector, RequestContext } from '../../../common';
 import { UserInputException } from '../../../common/error/errors';
 import { TransactionalConnection } from '../../../connection/transactional-connection';
 import { PLUGIN_INIT_OPTIONS } from '../constants';
-import { JobPostSearchIndexItem } from '../entities/job-post-search-index-item.entity';
 import { DefaultSearchPluginInitOptions } from '../types';
 import { SearchStrategy } from './search-strategy';
-import {
-    ID,
-    JobPostSearchResultSortParameter,
-    SearchIndex,
-    SearchInput,
-    SearchResult,
-    BaseSearchResult,
-} from '../../../common/shared-schema';
-import { searchIndexes } from '../entities/search-indexes';
+
 import { SearchIndexItem } from '../entities/search-index-item.entity';
+import { searchIndexes } from '../entities/search-indexes';
 import { createCollectionIdCountMap, createFacetIdCountMap, createPlaceholderFromId } from './search-strategy-utils';
 
 /**
@@ -82,7 +80,7 @@ export class PostgresSearchStrategy implements SearchStrategy {
         this.applyTermAndFilters(ctx, qb, input, enabledOnly);
 
         if (sort) {
-            if (sort instanceof JobPostSearchResultSortParameter) {
+            if (sort.title) {
                 if (sort.title) {
                     qb.addOrderBy('"si"."title"', sort.title);
                 }

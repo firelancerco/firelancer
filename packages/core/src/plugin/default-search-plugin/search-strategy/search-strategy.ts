@@ -1,4 +1,4 @@
-import { ID, SearchInput, SearchResult } from '../../../common/shared-schema';
+import { ID, SearchInput, SearchResult } from '@firelancerco/common/lib/generated-schema';
 import { InjectableStrategy, RequestContext } from '../../../common';
 
 /**

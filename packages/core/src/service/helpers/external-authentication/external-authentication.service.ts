@@ -1,7 +1,5 @@
-import { HistoryEntryType } from '@firelancerco/common/lib/shared-schema';
 import { Injectable } from '@nestjs/common';
 
-import { CustomerType } from '../../../common/shared-schema';
 import { RequestContext } from '../../../common/request-context';
 import { TransactionalConnection } from '../../../connection/transactional-connection';
 import { Administrator } from '../../../entity/administrator/administrator.entity';
@@ -13,6 +11,7 @@ import { AdministratorService } from '../../services/administrator.service';
 import { CustomerService } from '../../services/customer.service';
 import { HistoryService } from '../../services/history.service';
 import { RoleService } from '../../services/role.service';
+import { CustomerType, HistoryEntryType } from '@firelancerco/common/lib/generated-schema';
 
 /**
  * @description

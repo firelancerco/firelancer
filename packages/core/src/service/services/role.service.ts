@@ -1,3 +1,4 @@
+import { CreateRoleInput, ID, Permission, UpdateRoleInput } from '@firelancerco/common/lib/generated-schema';
 import {
     BUYER_ROLE_CODE,
     BUYER_ROLE_DESCRIPTION,
@@ -9,7 +10,6 @@ import {
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { assertFound, unique } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
-
 import { RelationPaths } from '../../api';
 import { RequestContextCacheService } from '../../cache';
 import {
@@ -20,7 +20,6 @@ import {
     UserInputException,
 } from '../../common';
 import { getAllPermissionsMetadata } from '../../common/constants';
-import { CreateRoleInput, ID, Permission, UpdateRoleInput } from '../../common/shared-schema';
 import { ConfigService } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { Role, User } from '../../entity';

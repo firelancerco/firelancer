@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LanguageCode } from '@firelancerco/common/lib/shared-schema';
+import { LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { RequestContext } from '@firelancerco/core';
 import { Request, Router } from 'express';
 import fs from 'fs-extra';

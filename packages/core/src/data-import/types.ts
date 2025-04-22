@@ -1,4 +1,4 @@
-import { LanguageCode, Permission } from '../common/shared-schema';
+import { LanguageCode, Permission } from '@firelancerco/common/lib/generated-schema';
 
 export interface CountryDefinition {
     code: string;

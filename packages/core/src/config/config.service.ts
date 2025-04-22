@@ -1,6 +1,7 @@
+import { CurrencyCode, LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { DynamicModule, Injectable, Type } from '@nestjs/common';
 import { DataSourceOptions } from 'typeorm';
-import { CurrencyCode, LanguageCode } from '../common/shared-schema';
+
 import { getConfig } from './config-helpers';
 import {
     ApiOptions,

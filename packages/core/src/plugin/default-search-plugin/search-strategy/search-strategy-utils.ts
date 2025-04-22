@@ -1,6 +1,6 @@
 import { unique } from '@firelancerco/common/lib/shared-utils';
 
-import { Coordinate, ID } from '../../../common/shared-schema';
+import { Coordinate, ID } from '@firelancerco/common/lib/generated-schema';
 
 /**
  * Maps a raw database result to a SearchResult.

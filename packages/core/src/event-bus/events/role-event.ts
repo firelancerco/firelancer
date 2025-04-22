@@ -1,5 +1,5 @@
-import { ID } from '../../common/shared-schema';
-import { CreateRoleInput, UpdateRoleInput } from '../../common/shared-schema';
+import { CreateRoleInput, ID, UpdateRoleInput } from '@firelancerco/common/lib/generated-schema';
+
 import { RequestContext } from '../../common/request-context';
 import { Role } from '../../entity/role/role.entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';

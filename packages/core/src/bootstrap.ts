@@ -1,20 +1,20 @@
 import { DEFAULT_COOKIE_NAME } from '@firelancerco/common/lib/shared-constants';
-import { INestApplication, INestApplicationContext, NestApplicationOptions, Type } from '@nestjs/common';
+import { INestApplication, INestApplicationContext, NestApplicationOptions } from '@nestjs/common';
 import { NestApplicationContextOptions } from '@nestjs/common/interfaces/nest-application-context-options.interface';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { satisfies } from 'semver';
-import { DataSourceOptions, EntitySubscriberInterface } from 'typeorm';
+import { DataSourceOptions } from 'typeorm';
+
 import { InternalServerException } from './common/error/errors';
-import { getConfig, setConfig } from './config/config-helpers';
 import { FirelancerConfig, RuntimeFirelancerConfig } from './config/firelancer-config';
 import { DefaultLogger } from './config/strategies/logger/default/default-logger';
 import { Logger } from './config/strategies/logger/firelancer-logger';
-import { Administrator, setEntityIdStrategy, setMoneyStrategy } from './entity';
-import { coreEntitiesMap } from './entity/core-entities';
+import { Administrator } from './entity';
 import { getPluginStartupMessages } from './plugin';
-import { getCompatibility, getConfigurationFunction, getEntitiesFromPlugins } from './plugin/plugin-metadata';
+import { getCompatibility } from './plugin/plugin-metadata';
+import { preBootstrapConfig } from './pre-bootstrap-config';
 import { setProcessContext } from './process-context/process-context';
 import { FIRELANCER_VERSION } from './version';
 import { FirelancerWorker } from './worker';
@@ -152,40 +152,6 @@ export async function bootstrapWorker(
 }
 
 /**
- * Setting the global config must be done prior to loading the AppModule.
- */
-export async function preBootstrapConfig(
-    userConfig: Partial<FirelancerConfig> = {},
-): Promise<Readonly<RuntimeFirelancerConfig>> {
-    if (userConfig) {
-        await setConfig(userConfig);
-    }
-
-    const entities = getAllEntities(userConfig);
-    const { coreSubscribersMap } = await import('./entity/subscribers.js');
-    await setConfig({
-        dbConnectionOptions: {
-            entities,
-            subscribers: [
-                ...((userConfig.dbConnectionOptions?.subscribers ?? []) as Array<Type<EntitySubscriberInterface>>),
-                ...(Object.values(coreSubscribersMap) as Array<Type<EntitySubscriberInterface>>),
-            ],
-        },
-    });
-
-    let config = getConfig();
-    // The logger is set here so that we are able to log any messages prior to the final
-    // logger (which may depend on config coming from a plugin) being set.
-    Logger.useLogger(config.logger);
-    config = await runPluginConfigurations(config);
-
-    setEntityIdStrategy(config.entityOptions.entityIdStrategy, entities);
-    setMoneyStrategy(config.entityOptions.moneyStrategy, entities);
-    setExposedHeaders(config);
-    return config;
-}
-
-/**
  * Fix race condition when modifying DB
  */
 function disableSynchronize(userConfig: Readonly<RuntimeFirelancerConfig>): Readonly<RuntimeFirelancerConfig> {
@@ -238,68 +204,6 @@ async function validateDbTablesForWorker(worker: INestApplicationContext) {
         await new Promise(resolve1 => setTimeout(resolve1, pollIntervalMs));
     }
     throw new Error('Could not validate DB table structure. Aborting bootstrap.');
-}
-
-/**
- * If the 'bearer' tokenMethod is being used, then we automatically expose the authTokenHeaderKey header
- * in the CORS options, making sure to preserve any user-configured exposedHeaders.
- */
-function setExposedHeaders(config: Readonly<RuntimeFirelancerConfig>) {
-    const { tokenMethod } = config.authOptions;
-    const isUsingBearerToken =
-        tokenMethod === 'bearer' || (Array.isArray(tokenMethod) && tokenMethod.includes('bearer'));
-    if (isUsingBearerToken) {
-        const authTokenHeaderKey = config.authOptions.authTokenHeaderKey;
-        const corsOptions = config.apiOptions.cors;
-        if (typeof corsOptions !== 'boolean') {
-            const { exposedHeaders } = corsOptions;
-            let exposedHeadersWithAuthKey: string[];
-            if (!exposedHeaders) {
-                exposedHeadersWithAuthKey = [authTokenHeaderKey];
-            } else if (typeof exposedHeaders === 'string') {
-                exposedHeadersWithAuthKey = exposedHeaders
-                    .split(',')
-                    .map(x => x.trim())
-                    .concat(authTokenHeaderKey);
-            } else {
-                exposedHeadersWithAuthKey = exposedHeaders.concat(authTokenHeaderKey);
-            }
-            corsOptions.exposedHeaders = exposedHeadersWithAuthKey;
-        }
-    }
-}
-
-/**
- * Initialize any configured plugins.
- */
-async function runPluginConfigurations(config: RuntimeFirelancerConfig): Promise<RuntimeFirelancerConfig> {
-    for (const plugin of config.plugins) {
-        const configFn = getConfigurationFunction(plugin);
-        if (typeof configFn === 'function') {
-            const result = await configFn(config);
-            Object.assign(config, result);
-        }
-    }
-    return config;
-}
-
-/**
- * Returns an array of core entities and any additional entities defined in plugins.
- */
-function getAllEntities(userConfig: Partial<FirelancerConfig>): Array<Type<unknown>> {
-    const coreEntities = Object.values(coreEntitiesMap) as Array<Type<unknown>>;
-    const pluginEntities = getEntitiesFromPlugins(userConfig.plugins);
-    const allEntities: Array<Type<unknown>> = coreEntities;
-    // Check to ensure that no plugins are defining entities with names which conflict with existing entities.
-    for (const pluginEntity of pluginEntities) {
-        if (allEntities.find(e => e.name === pluginEntity.name)) {
-            // TODO
-            throw new InternalServerException('The entity name conflicts with an existing entity' as any);
-        } else {
-            allEntities.push(pluginEntity);
-        }
-    }
-    return allEntities;
 }
 
 function configureSessionCookies(app: INestApplication, userConfig: Readonly<RuntimeFirelancerConfig>): void {

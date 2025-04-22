@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ID, JobState } from '@firelancerco/common/lib/generated-schema';
 import { isClassInstance } from '@firelancerco/common/lib/shared-utils';
 import { isObject } from 'class-validator';
-import { ID, JobState } from '../common/shared-schema';
 import { Logger } from '../config';
 import { JobConfig, JobData } from './types';
+import { coreSchemas } from '../api/schema/core-schemas';
 
 /**
  * @description

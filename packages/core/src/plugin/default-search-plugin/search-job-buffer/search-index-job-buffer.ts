@@ -1,4 +1,4 @@
-import { ID } from '@firelancerco/common/lib/shared-schema';
+import { ID } from '@firelancerco/common/lib/generated-schema';
 
 import { Job } from '../../../job-queue/job';
 import { JobBuffer } from '../../../job-queue/job-buffer/job-buffer';

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { CustomerType } from '@firelancerco/common/lib/generated-schema';
 import {
     AuthenticationStrategy,
+    coreSchemas,
     ExternalAuthenticationService,
     Injector,
     RequestContext,
@@ -9,8 +11,34 @@ import {
 } from '@firelancerco/core';
 import axios from 'axios';
 import { OAuth2Client } from 'google-auth-library';
+import z from 'zod';
 
-import { GoogleAuthData } from './schema';
+export const GoogleAuthData = z
+    .object({
+        action: z.enum(['register', 'login']),
+        id_token: z.string().optional(),
+        access_token: z.string().optional(),
+        customer_type: coreSchemas.common.CustomerType.optional(),
+    })
+    .superRefine((data, ctx) => {
+        if (data.action === 'register' && !data.customer_type) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'customer_type is required when action is register',
+                path: ['customer_type'],
+            });
+        }
+
+        if (!data.id_token && !data.access_token) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Either id_token or access_token must be provided',
+                path: [], // global error
+            });
+        }
+    });
+
+export type GoogleAuthData = z.infer<typeof GoogleAuthData>;
 
 export class GoogleAuthenticationStrategy implements AuthenticationStrategy<GoogleAuthData> {
     readonly name = 'google';
@@ -25,8 +53,8 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
         this.externalAuthenticationService = injector.get(ExternalAuthenticationService);
     }
 
-    getInputType(): string {
-        return 'GoogleAuthData';
+    getInputSchema() {
+        return GoogleAuthData;
     }
 
     async authenticate(ctx: RequestContext, data: GoogleAuthData): Promise<User | string> {
@@ -73,7 +101,7 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
                 emailAddress: profile.email,
                 firstName: profile.given_name ?? '',
                 lastName: profile.family_name ?? '',
-                type: data.customer_type,
+                type: data.customer_type as CustomerType,
             });
         } catch (error: any) {
             return error.message ?? 'error.unkown-error';

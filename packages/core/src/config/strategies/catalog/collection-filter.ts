@@ -1,11 +1,12 @@
+import { ConfigArg } from '@firelancerco/common/lib/generated-schema';
 import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
+
 import {
     ConfigArgs,
     ConfigArgValues,
     ConfigurableOperationDef,
     ConfigurableOperationDefOptions,
 } from '../../../common/configurable-operation';
-import { ConfigArg } from '../../../common/shared-schema';
 import { CollectableEntity } from '../../../entity';
 
 type Entity = CollectableEntity['entityType'];

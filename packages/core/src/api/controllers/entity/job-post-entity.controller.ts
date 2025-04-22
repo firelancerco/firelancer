@@ -1,19 +1,25 @@
-import { Controller, Get, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { JobPostListOptions, JobPostState, JobPostVisibility } from '@firelancerco/common/lib/generated-shop-schema';
+import { Controller, Get, Query } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
 
-import { RequestContext } from '../../../common/request-context';
-import { JobPostListOptions, JobPostState, JobPostVisibility } from '../../../common/shared-schema';
-import { JobPostService } from '../../../service';
-import { Ctx } from '../../decorators/request-context.decorator';
-import { Api } from '../../decorators/api.decorator';
+import { coreSchemas } from '../../../api/schema/core-schemas';
 import { ApiType } from '../../../common';
+import { RequestContext } from '../../../common/request-context';
+import { JobPostService } from '../../../service';
+import { Api } from '../../decorators/api.decorator';
+import { Ctx } from '../../decorators/request-context.decorator';
 
 @Controller('job-posts')
 export class JobPostEntityController {
     constructor(private jobPostService: JobPostService) {}
 
     @Get()
-    @UsePipes(new ValidationPipe({ whitelist: true }))
-    async jobPostsList(@Ctx() ctx: RequestContext, @Api() apiType: ApiType, @Query() options: JobPostListOptions) {
+    async jobPostsList(
+        @Ctx() ctx: RequestContext,
+        @Api() apiType: ApiType,
+        @Query(new ZodValidationPipe(coreSchemas.shop.JobPostListOptions))
+        options: JobPostListOptions,
+    ) {
         if (apiType === 'shop') {
             options = {
                 ...options,

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Permission } from '@firelancerco/common/lib/shared-schema';
+import { Permission } from '@firelancerco/common/lib/generated-schema';
 import { BehaviorSubject } from 'rxjs';
 
 /**

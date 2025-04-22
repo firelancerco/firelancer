@@ -1,9 +1,10 @@
-import { Controller, Get, Param, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 
-import { Ctx } from '../../decorators/request-context.decorator';
+import { FacetValueListOptions, ID } from '@firelancerco/common/lib/generated-shop-schema';
+import { coreSchemas } from '../../../api/schema/core-schemas';
 import { EntityNotFoundException, RequestContext } from '../../../common';
-import { FacetValueListOptions, ID } from '../../../common/shared-schema';
 import { FacetService, FacetValueService } from '../../../service';
+import { Ctx } from '../../decorators/request-context.decorator';
 
 @Controller('facet-values')
 export class FacetValueEntityController {
@@ -13,34 +14,39 @@ export class FacetValueEntityController {
     ) {}
 
     @Get()
-    @UsePipes(new ValidationPipe({ whitelist: true }))
-    async getFacetValuesList(@Ctx() ctx: RequestContext, @Query() options: FacetValueListOptions) {
+    async getFacetValuesList(
+        @Ctx() ctx: RequestContext,
+        @Query(coreSchemas.common.FacetValueListOptions)
+        options: FacetValueListOptions,
+    ) {
         return this.facetValueService.findAll(ctx, options, []);
     }
 
     @Get(':id')
-    async getFacetValue(@Ctx() ctx: RequestContext, @Param() params: { id: ID }) {
-        return this.facetValueService.findOne(ctx, params.id);
+    async getFacetValue(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
+        return this.facetValueService.findOne(ctx, id);
     }
 
     @Get('facet/:facetId')
     async getFacetValuesListByFacetId(
         @Ctx() ctx: RequestContext,
-        @Query() options: FacetValueListOptions,
-        @Param() params: { facetId: ID },
+        @Param('facetId') facetId: ID,
+        @Query(coreSchemas.common.FacetValueListOptions)
+        options: FacetValueListOptions,
     ) {
-        return this.facetValueService.findByFacetId(ctx, params.facetId, options);
+        return this.facetValueService.findByFacetId(ctx, facetId, options);
     }
 
     @Get('facet-code/:facetCode')
     async getFacetValuesListByFacetCode(
         @Ctx() ctx: RequestContext,
-        @Query() options: FacetValueListOptions,
-        @Param() params: { facetCode: string },
+        @Query(coreSchemas.common.FacetValueListOptions)
+        options: FacetValueListOptions,
+        @Param('facetCode') facetCode: string,
     ) {
-        const facet = await this.facetService.findByCode(ctx, params.facetCode, []);
+        const facet = await this.facetService.findByCode(ctx, facetCode, []);
         if (!facet) {
-            throw new EntityNotFoundException('Facet', params.facetCode);
+            throw new EntityNotFoundException('Facet', facetCode);
         }
         return this.facetValueService.findByFacetId(ctx, facet.id, options);
     }

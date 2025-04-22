@@ -9,7 +9,7 @@ import {
     LogicalOperator,
     NumberOperators,
     StringOperators,
-} from './shared-schema';
+} from '@firelancerco/common/lib/generated-schema';
 
 export type MiddlewareHandler = Type<unknown> | ((req: Request, res: Response, next: () => void) => void);
 

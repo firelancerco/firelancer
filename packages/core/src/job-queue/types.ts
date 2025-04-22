@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any*/
 import { JsonCompatible } from '@firelancerco/common/lib/shared-types';
 import { RequestContext } from '../common';
-import { ID, JobState } from '../common/shared-schema';
+import { ID, JobState } from '@firelancerco/common/lib/generated-schema';
 import { Job } from './job';
 
 /**

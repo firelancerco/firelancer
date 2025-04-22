@@ -1,6 +1,5 @@
 export { bootstrap, bootstrapWorker } from './bootstrap';
 export { generateMigration, revertLastMigration, runMigrations } from './migrate';
-export { buildApiSchema } from './build-api-schema';
 export * from './api/index';
 export * from './cache/index';
 export * from './common/index';
@@ -15,6 +14,8 @@ export * from './job-queue/index';
 export * from './worker/index';
 export * from './process-context/index';
 export * from './i18n/index';
+export * from './get-schemas-for-api';
+export * from './zod-schemas-to-ts';
 export * from '@firelancerco/common/lib/shared-types';
 export {
     Permission,
@@ -22,5 +23,5 @@ export {
     CurrencyCode,
     AssetType,
     BalanceEntryType,
-    BalanceEntryStatus,
-} from '@firelancerco/common/lib/shared-schema';
+    BalanceEntryState,
+} from '@firelancerco/common/lib/generated-schema';

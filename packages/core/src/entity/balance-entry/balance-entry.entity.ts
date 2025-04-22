@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { BalanceEntryState, BalanceEntryType, CurrencyCode, ID } from '@firelancerco/common/lib/generated-schema';
+
 import date from 'date-fns';
 import { Check, Column, DeepPartial, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Calculated, UserInputException } from '../../common';
-import { BalanceEntryStatus, BalanceEntryType, CurrencyCode, ID } from '../../common/shared-schema';
 import { FirelancerEntity } from '../base/base.entity';
 import { Customer } from '../customer/customer.entity';
 import { EntityId } from '../entity-id.decorator';
@@ -84,24 +85,24 @@ export class BalanceEntry extends FirelancerEntity {
             END
         `,
     })
-    get status(): BalanceEntryStatus | undefined {
+    get status(): BalanceEntryState | undefined {
         if (this.balance !== null && this.settledAt !== null) {
-            return BalanceEntryStatus.SETTLED;
+            return BalanceEntryState.SETTLED;
         }
 
         if (this.balance === null && this.settledAt === null) {
-            return BalanceEntryStatus.PENDING;
+            return BalanceEntryState.PENDING;
         }
 
         if (this.rejectedAt !== null) {
-            return BalanceEntryStatus.REJECTED;
+            return BalanceEntryState.REJECTED;
         }
     }
 
     isEligibleForSettlement() {
         const reviewExpiryDate = date.addDays(this.createdAt, this.reviewDays);
         const hasReviewPeriodElapsed = this.reviewDays === 0 || date.isBefore(reviewExpiryDate, new Date());
-        return this.status === BalanceEntryStatus.PENDING && hasReviewPeriodElapsed;
+        return this.status === 'PENDING' && hasReviewPeriodElapsed;
     }
 
     validate() {

@@ -1,3 +1,4 @@
+import { CurrencyCode, ID, JobPostVisibility } from '@firelancerco/common/lib/generated-schema';
 import {
     CATEGORY_FACET_CODE,
     DURATION_FACET_CODE,
@@ -8,7 +9,6 @@ import {
 import { Column, DeepPartial, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 
 import { Calculated, Collectable, Draftable, SoftDeletable } from '../../common';
-import { CurrencyCode, ID, JobPostVisibility } from '../../common/shared-schema';
 import { JobPostState } from '../../service/helpers/job-post-state-machine/job-post-state';
 import { FirelancerEntity } from '../base/base.entity';
 import { Collection } from '../collection/collection.entity';

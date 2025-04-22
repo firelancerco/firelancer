@@ -1,3 +1,4 @@
+import { ID } from '@firelancerco/common/lib/generated-schema';
 import { Injectable, Type } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import {
@@ -15,7 +16,6 @@ import { TRANSACTION_MANAGER_KEY } from '../common/constants';
 import { EntityNotFoundException } from '../common/error/errors';
 import { RequestContext } from '../common/request-context';
 import { SoftDeletable } from '../common/shared-types';
-import { ID } from '../common/shared-schema';
 import { FirelancerEntity } from '../entity';
 import { TransactionWrapper } from './transaction-wrapper';
 

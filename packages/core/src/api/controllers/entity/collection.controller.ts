@@ -1,17 +1,19 @@
-import { PaginatedList } from '@firelancerco/common/lib/shared-types';
-import { Controller, Get, Param, Query, UsePipes, ValidationPipe } from '@nestjs/common';
-
-import { Api } from '../../../api/decorators/api.decorator';
-import { FieldsDecoratorConfig, RelationPaths, Relations } from '../../../api/decorators/relations.decorator';
-import { Ctx } from '../../../api/decorators/request-context.decorator';
-import { ApiType, RequestContext, Translated } from '../../../common';
 import {
     CollectionListOptions,
     ID,
     JobPostListOptions,
     JobPostState,
     JobPostVisibility,
-} from '../../../common/shared-schema';
+} from '@firelancerco/common/lib/generated-schema';
+import { PaginatedList } from '@firelancerco/common/lib/shared-types';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
+
+import { Api } from '../../../api/decorators/api.decorator';
+import { FieldsDecoratorConfig, RelationPaths, Relations } from '../../../api/decorators/relations.decorator';
+import { Ctx } from '../../../api/decorators/request-context.decorator';
+import { coreSchemas } from '../../../api/schema/core-schemas';
+import { ApiType, RequestContext, Translated } from '../../../common';
 import { Collection, JobPost } from '../../../entity';
 import { CollectionService, JobPostService } from '../../../service';
 
@@ -28,12 +30,11 @@ export class CollectionEntityController {
         private jobPostService: JobPostService,
     ) {}
 
-    @UsePipes(new ValidationPipe({ whitelist: true }))
     @Get()
     async collections(
         @Ctx() ctx: RequestContext,
         @Api() apiType: ApiType,
-        @Query() options: CollectionListOptions,
+        @Query(new ZodValidationPipe(coreSchemas.shop.CollectionListOptions)) options: CollectionListOptions,
         @Relations(relationsOptions) relations?: RelationPaths<Collection>,
     ): Promise<PaginatedList<Translated<Collection>>> {
         options = { ...options, filter: { ...(options && options.filter), isPrivate: { eq: false } } };
@@ -42,7 +43,6 @@ export class CollectionEntityController {
         return result;
     }
 
-    @UsePipes(new ValidationPipe({ whitelist: true }))
     @Get(':id')
     async collection(
         @Ctx() ctx: RequestContext,
@@ -58,7 +58,6 @@ export class CollectionEntityController {
         return collection;
     }
 
-    @UsePipes(new ValidationPipe({ whitelist: true }))
     @Get('slug/:slug')
     async collectionBySlug(
         @Ctx() ctx: RequestContext,
@@ -75,11 +74,11 @@ export class CollectionEntityController {
     }
 
     @Get(':id/job-posts')
-    async productVariants(
+    async getJobPostsByCollectionId(
         @Ctx() ctx: RequestContext,
         @Api() apiType: ApiType,
         @Param('id') id: ID,
-        @Query() options: JobPostListOptions,
+        @Query(new ZodValidationPipe(coreSchemas.shop.JobPostListOptions)) options: JobPostListOptions,
         @Relations({ entity: JobPost, omit: ['assets'] }) relations: RelationPaths<JobPost>,
     ): Promise<PaginatedList<JobPost>> {
         if (apiType === 'shop') {

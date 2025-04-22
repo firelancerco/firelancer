@@ -1,3 +1,12 @@
+import {
+    ConfigurableOperation,
+    ConfigurableOperationDefinition,
+    CreateCollectionInput,
+    ID,
+    JobState,
+    MoveCollectionInput,
+    UpdateCollectionInput,
+} from '@firelancerco/common/lib/generated-schema';
 import { ROOT_COLLECTION_NAME } from '@firelancerco/common/lib/shared-constants';
 import { PaginatedList, Type } from '@firelancerco/common/lib/shared-types';
 import { assertFound, idsAreEqual, pick } from '@firelancerco/common/lib/shared-utils';
@@ -5,6 +14,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { debounceTime, merge } from 'rxjs';
 import { In } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils.js';
+
 import { RelationPaths } from '../../api';
 import {
     IllegalOperationException,
@@ -14,15 +24,6 @@ import {
     SerializedRequestContext,
     Translated,
 } from '../../common';
-import {
-    ConfigurableOperation,
-    ConfigurableOperationDefinition,
-    CreateCollectionInput,
-    ID,
-    JobState,
-    MoveCollectionInput,
-    UpdateCollectionInput,
-} from '../../common/shared-schema';
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { collectableEntities, Collection, CollectionTranslation, FirelancerEntity } from '../../entity';

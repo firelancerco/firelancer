@@ -1,9 +1,9 @@
+import { BalanceEntryType, ID } from '@firelancerco/common/lib/generated-schema';
 import { RequestContext } from '../../common/request-context';
-import { BalanceEntryType, CreateBalanceEntryInput, ID } from '../../common/shared-schema';
 import { BalanceEntry } from '../../entity/balance-entry/balance-entry.entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 
-type BalanceInput = CreateBalanceEntryInput | ID;
+type BalanceInput = ID;
 
 /**
  * @description

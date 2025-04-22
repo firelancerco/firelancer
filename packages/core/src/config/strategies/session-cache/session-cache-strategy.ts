@@ -1,5 +1,6 @@
+import { ID } from '@firelancerco/common/lib/generated-schema';
+
 import { InjectableStrategy } from '../../../common/injectable-strategy';
-import { ID } from '../../../common/shared-schema';
 import { Role } from '../../../entity/role/role.entity';
 
 /**

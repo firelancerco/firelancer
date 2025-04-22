@@ -1,5 +1,5 @@
+import { CreateCollectionInput, ID, UpdateCollectionInput } from '@firelancerco/common/lib/generated-schema';
 import { RequestContext } from '../../common';
-import { CreateCollectionInput, ID, UpdateCollectionInput } from '../../common/shared-schema';
 import { Collection } from '../../entity/collection/collection.entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 

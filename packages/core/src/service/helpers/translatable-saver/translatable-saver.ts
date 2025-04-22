@@ -1,9 +1,9 @@
+import { ID } from '@firelancerco/common/lib/generated-schema';
 import { Type } from '@firelancerco/common/lib/shared-types';
 import { omit } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
 import { RequestContext, Translatable, TranslatedInput, Translation } from '../../../common';
-import { ID } from '../../../common/shared-schema';
 import { TransactionalConnection } from '../../../connection';
 import { FirelancerEntity } from '../../../entity';
 import { InputPatch, patchEntity } from '../utils/patch-entity';

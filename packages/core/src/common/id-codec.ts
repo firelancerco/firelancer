@@ -1,5 +1,6 @@
+import { ID } from '@firelancerco/common/lib/generated-schema';
+
 import { EntityIdStrategy } from '../config';
-import { ID } from './shared-schema';
 
 const ID_KEYS = ['id'];
 

@@ -1,4 +1,4 @@
-import { LanguageCode } from '@firelancerco/common/lib/shared-schema';
+import { LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { getAppConfig } from '../app.config';
 
 export function getDefaultUiLanguage(): LanguageCode {

@@ -1,12 +1,13 @@
 import { notNullOrUndefined, pick } from '@firelancerco/common/lib/shared-utils';
 import { interval, Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, takeWhile, tap } from 'rxjs/operators';
+
 import { InternalServerException } from '../common';
-import { JobState } from '../common/shared-schema';
 import { isInspectableJobQueueStrategy } from '../config/strategies/job-queue/inspectable-job-queue-strategy';
 import { JobQueueStrategy } from '../config/strategies/job-queue/job-queue-strategy';
 import { Job } from './job';
 import { JobConfig, JobData } from './types';
+import { JobState } from '@firelancerco/common/lib/generated-schema';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const ms = require('ms');

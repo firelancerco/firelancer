@@ -1,8 +1,8 @@
+import { Permission } from '@firelancerco/common/lib/generated-schema';
 import { Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
 import { RequestContext } from '../../../common';
-import { Permission } from '../../../common/shared-schema';
 import { AssetService } from '../../../service';
 import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';

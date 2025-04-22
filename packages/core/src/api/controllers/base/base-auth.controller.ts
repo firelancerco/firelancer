@@ -1,17 +1,11 @@
 import { Request, Response } from 'express';
+import { CurrentUser, MutationAuthenticateArgs } from '@firelancerco/common/lib/generated-schema';
+
 import { ForbiddenException, InvalidCredentialsException } from '../../../common/error/errors';
 import { extractSessionToken } from '../../../common/extract-session-token';
 import { ApiType } from '../../../common/get-api-type';
 import { RequestContext } from '../../../common/request-context';
 import { setSessionToken } from '../../../common/set-session-token';
-import {
-    AttemptLoginMutation,
-    CurrentUser,
-    GetCurrentUserQuery,
-    LogOutMutation,
-    MutationAuthenticateArgs,
-    MutationLoginArgs,
-} from '../../../common/shared-schema';
 import { LogLevel } from '../../../config';
 import { ConfigService } from '../../../config/config.service';
 import { AuthOptions } from '../../../config/firelancer-config';
@@ -34,7 +28,7 @@ export class BaseAuthController {
      * Attempts a login given the username and password of a user. If successful, returns
      * the user data and returns the token either in a cookie or in the response body.
      */
-    async baseLogin(args: MutationLoginArgs, ctx: RequestContext, req: Request, res: Response) {
+    async baseLogin(args: any, ctx: RequestContext, req: Request, res: Response) {
         const result = await this.authenticateAndCreateSession(
             ctx,
             {
@@ -45,14 +39,14 @@ export class BaseAuthController {
             res,
         );
 
-        return res.send({ login: result } satisfies AttemptLoginMutation);
+        return res.send({ login: result });
     }
 
     async logout(ctx: RequestContext, req: Request, res: Response) {
         const authOptions = this.configService.authOptions;
         const token = extractSessionToken(req, authOptions.tokenMethod);
         if (!token) {
-            return res.send({ logout: { success: false } } satisfies LogOutMutation);
+            return res.send({ logout: { success: false } });
         }
 
         await this.authService.destroyAuthenticatedSession(ctx, token);
@@ -65,13 +59,13 @@ export class BaseAuthController {
             sessionToken: '',
         });
 
-        return res.send({ logout: { success: true } } satisfies LogOutMutation);
+        return res.send({ logout: { success: true } });
     }
 
     /**
      * Returns information about the current authenticated user.
      */
-    async me(ctx: RequestContext, apiType: ApiType): Promise<GetCurrentUserQuery> {
+    async me(ctx: RequestContext, apiType: ApiType) {
         const userId = ctx.activeUserId;
         if (!userId) {
             throw new ForbiddenException(LogLevel.Verbose);
@@ -94,7 +88,7 @@ export class BaseAuthController {
         args: MutationAuthenticateArgs,
         req: Request,
         res: Response,
-    ): Promise<CurrentUser> {
+    ) {
         const [method, data] = Object.entries(args.input)[0];
         const { apiType } = ctx;
 

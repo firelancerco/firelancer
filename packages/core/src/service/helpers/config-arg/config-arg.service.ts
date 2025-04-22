@@ -1,7 +1,7 @@
+import { ConfigurableOperation } from '@firelancerco/common/lib/generated-schema';
 import { Injectable } from '@nestjs/common';
 import { ConfigurableOperationDef } from '../../../common/configurable-operation';
 import { UserInputException } from '../../../common/error/errors';
-import { ConfigurableOperation } from '../../../common/shared-schema';
 import { ConfigService } from '../../../config';
 import { CollectionFilter } from '../../../config/strategies/catalog/collection-filter';
 

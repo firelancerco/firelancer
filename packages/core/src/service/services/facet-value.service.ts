@@ -1,10 +1,10 @@
-import { assertFound } from '@firelancerco/common/lib/shared-utils';
+import { CreateFacetValueInput, ID, UpdateFacetValueInput } from '@firelancerco/common/lib/generated-schema';
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
+import { assertFound } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { In, IsNull } from 'typeorm';
 import { RelationPaths } from '../../api';
 import { ListQueryOptions, RequestContext, Translated } from '../../common';
-import { CreateFacetValueInput, ID, UpdateFacetValueInput } from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { FacetValueTranslation, JobPost } from '../../entity';
 import { FacetValue } from '../../entity/facet-value/facet-value.entity';

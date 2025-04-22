@@ -1,7 +1,3 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { Allow } from '../../../api/decorators/allow.decorator';
-import { Ctx } from '../../../api/decorators/request-context.decorator';
-import { Transaction } from '../../../api/decorators/transaction.decorator';
 import {
     MutationAssignRoleToAdministratorArgs,
     MutationCreateAdministratorArgs,
@@ -10,8 +6,14 @@ import {
     MutationUpdateActiveAdministratorArgs,
     MutationUpdateAdministratorArgs,
     Permission,
-    QueryAdministratorArgs,
-} from '../../../common/shared-schema';
+} from '@firelancerco/common/lib/generated-schema';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
+
+import { Allow } from '../../../api/decorators/allow.decorator';
+import { Ctx } from '../../../api/decorators/request-context.decorator';
+import { Transaction } from '../../../api/decorators/transaction.decorator';
+import { coreSchemas } from '../../../api/schema/core-schemas';
 import { RequestContext } from '../../../common';
 import { Administrator } from '../../../entity/administrator/administrator.entity';
 import { AdministratorService } from '../../../service';
@@ -22,13 +24,13 @@ export class AdministratorController {
 
     @Get()
     @Allow(Permission.ReadAdministrator)
-    async administratorsList(@Ctx() ctx: RequestContext) {
+    async getAdministratorsList(@Ctx() ctx: RequestContext) {
         return this.administratorService.findAll(ctx);
     }
 
     @Get('active')
     @Allow(Permission.Owner)
-    async activeAdministrator(@Ctx() ctx: RequestContext) {
+    async getActiveAdministrator(@Ctx() ctx: RequestContext) {
         if (ctx.activeUserId) {
             const activeAdministrator = await this.administratorService.findOneByUserId(ctx, ctx.activeUserId, [
                 'user',
@@ -41,14 +43,18 @@ export class AdministratorController {
 
     @Get(':id')
     @Allow(Permission.ReadAdministrator)
-    async administrator(@Ctx() ctx: RequestContext, @Param() params: QueryAdministratorArgs) {
-        return this.administratorService.findOne(ctx, params.id);
+    async getAdministrator(@Ctx() ctx: RequestContext, @Param('id') id: string) {
+        return this.administratorService.findOne(ctx, id);
     }
 
     @Transaction()
     @Post('create')
     @Allow(Permission.CreateAdministrator)
-    async createAdministrator(@Ctx() ctx: RequestContext, @Body() args: MutationCreateAdministratorArgs) {
+    async createAdministrator(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.admin.MutationCreateAdministratorArgs))
+        args: MutationCreateAdministratorArgs,
+    ) {
         const createAdministrator = await this.administratorService.create(ctx, args.input);
         return { createAdministrator };
     }
@@ -56,7 +62,11 @@ export class AdministratorController {
     @Transaction()
     @Put()
     @Allow(Permission.UpdateAdministrator)
-    async updateAdministrator(@Ctx() ctx: RequestContext, @Body() args: MutationUpdateAdministratorArgs) {
+    async updateAdministrator(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.admin.MutationUpdateAdministratorArgs))
+        args: MutationUpdateAdministratorArgs,
+    ) {
         const updateAdministrator = await this.administratorService.update(ctx, args.input);
         return { updateAdministrator };
     }
@@ -64,7 +74,11 @@ export class AdministratorController {
     @Transaction()
     @Put('active')
     @Allow(Permission.Owner)
-    async updateActiveAdministrator(@Ctx() ctx: RequestContext, @Body() args: MutationUpdateActiveAdministratorArgs) {
+    async updateActiveAdministrator(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.admin.MutationUpdateActiveAdministratorArgs))
+        args: MutationUpdateActiveAdministratorArgs,
+    ) {
         if (ctx.activeUserId) {
             const administrator = await this.administratorService.findOneByUserId(ctx, ctx.activeUserId);
             if (administrator) {
@@ -84,23 +98,32 @@ export class AdministratorController {
     @Allow(Permission.UpdateAdministrator)
     async assignRoleToAdministrator(
         @Ctx() ctx: RequestContext,
-        @Body() args: MutationAssignRoleToAdministratorArgs,
+        @Body(new ZodValidationPipe(coreSchemas.admin.MutationAssignRoleToAdministratorArgs))
+        args: MutationAssignRoleToAdministratorArgs,
     ): Promise<Administrator> {
-        return this.administratorService.assignRole(ctx, args.administratorId, args.roleId);
+        return this.administratorService.assignRole(ctx, args.input.administratorId, args.input.roleId);
     }
 
     @Transaction()
     @Delete(':id')
     @Allow(Permission.DeleteAdministrator)
-    async deleteAdministrator(@Ctx() ctx: RequestContext, @Param() params: MutationDeleteAdministratorArgs) {
-        const deleteAdministrator = await this.administratorService.softDelete(ctx, params.id);
+    async deleteAdministrator(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.admin.MutationDeleteAdministratorArgs))
+        args: MutationDeleteAdministratorArgs,
+    ) {
+        const deleteAdministrator = await this.administratorService.softDelete(ctx, args.input.id);
         return { deleteAdministrator };
     }
 
     @Transaction()
     @Delete()
     @Allow(Permission.DeleteAdministrator)
-    deleteAdministrators(@Ctx() ctx: RequestContext, @Body() args: MutationDeleteAdministratorsArgs) {
-        return Promise.all(args.ids.map(id => this.administratorService.softDelete(ctx, id)));
+    deleteAdministrators(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.admin.MutationDeleteAdministratorsArgs))
+        args: MutationDeleteAdministratorsArgs,
+    ) {
+        return Promise.all(args.input.ids.map(id => this.administratorService.softDelete(ctx, id)));
     }
 }

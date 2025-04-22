@@ -1,4 +1,4 @@
-import { Permission } from '@firelancerco/common/lib/shared-schema';
+import { Permission } from '@firelancerco/common/lib/generated-schema';
 
 export interface UserStatus {
     administratorId?: string | null;

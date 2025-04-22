@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { AssetFragment } from '@firelancerco/common/lib/shared-schema';
+import { Asset } from '@firelancerco/common/lib/generated-schema';
 
 /**
  * @description
@@ -18,7 +18,7 @@ import { AssetFragment } from '@firelancerco/common/lib/shared-schema';
     standalone: false,
 })
 export class AssetPreviewPipe implements PipeTransform {
-    transform(asset?: AssetFragment, preset: string | number = 'thumb'): string {
+    transform(asset?: Asset, preset: string | number = 'thumb'): string {
         if (!asset) {
             return '';
         }

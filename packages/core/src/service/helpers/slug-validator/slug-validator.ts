@@ -1,8 +1,8 @@
 import { Type } from '@firelancerco/common/lib/shared-types';
 import { normalizeString } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
+import { ID, LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { RequestContext } from '../../../common';
-import { ID, LanguageCode } from '../../../common/shared-schema';
 import { TransactionalConnection } from '../../../connection/';
 import { FirelancerEntity } from '../../../entity';
 

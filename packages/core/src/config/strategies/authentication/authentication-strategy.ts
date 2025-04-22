@@ -1,3 +1,5 @@
+import z from 'zod';
+
 import { InjectableStrategy } from '../../../common/injectable-strategy';
 import { RequestContext } from '../../../common/request-context';
 import { User } from '../../../entity';
@@ -25,9 +27,9 @@ export interface AuthenticationStrategy<Data = unknown> extends InjectableStrate
 
     /**
      * @description
-     * Get the type name of the Input object expected by the `authenticate` mutation.
+     * Get the zod schema object expected by the `authenticate` mutation.
      */
-    getInputType(): string;
+    getInputSchema(): z.ZodType;
 
     /**
      * @description

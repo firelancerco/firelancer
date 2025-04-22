@@ -1,14 +1,12 @@
-import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
+import { MutationAuthenticateArgs, MutationLoginArgs, Permission } from '@firelancerco/common/lib/generated-schema';
+import { Body, Controller, Get, Post, Request, Response, UsePipes } from '@nestjs/common';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
+import { ZodValidationPipe } from 'nestjs-zod';
+
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
-import {
-    AttemptLoginMutation,
-    MutationAuthenticateArgs,
-    MutationLoginArgs,
-    Permission,
-} from '../../../common/shared-schema';
+import { coreSchemas } from '../../../api/schema/core-schemas';
 import { NativeAuthStrategyException } from '../../../common/error/errors';
 import { RequestContext } from '../../../common/request-context';
 import { Logger } from '../../../config';
@@ -37,7 +35,8 @@ export class AdminAuthController extends BaseAuthController {
         @Ctx() ctx: RequestContext,
         @Request() req: ExpressRequest,
         @Response() res: ExpressResponse,
-        @Body() args: MutationLoginArgs,
+        @Body(new ZodValidationPipe(coreSchemas.admin.MutationLoginArgs))
+        args: MutationLoginArgs,
     ) {
         this.requireNativeAuthStrategy();
         return super.baseLogin(args, ctx, req, res);
@@ -47,13 +46,14 @@ export class AdminAuthController extends BaseAuthController {
     @Post('authenticate')
     @Allow(Permission.Public)
     async authenticate(
-        @Body() args: MutationAuthenticateArgs,
         @Ctx() ctx: RequestContext,
         @Request() req: ExpressRequest,
         @Response() res: ExpressResponse,
+        @Body(new ZodValidationPipe(coreSchemas.admin.MutationAuthenticateArgs))
+        args: MutationAuthenticateArgs,
     ) {
         const result = await this.authenticateAndCreateSession(ctx, args, req, res);
-        res.send({ login: result } satisfies AttemptLoginMutation);
+        res.send({ login: result });
     }
 
     @Transaction()
@@ -64,7 +64,6 @@ export class AdminAuthController extends BaseAuthController {
     }
 
     @Get('me')
-    @Allow(Permission.Public)
     @Allow(Permission.Authenticated, Permission.Owner)
     me(@Ctx() ctx: RequestContext) {
         return super.me(ctx, 'admin');

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { Injectable } from '@nestjs/common';
 import { FindOneOptions } from 'typeorm';
 
 import { RequestContextCacheService } from '../../../cache/request-context-cache.service';
 import { RequestContext, Translatable, TranslatableKeys, Translated } from '../../../common';
-import { LanguageCode } from '../../../common/shared-schema';
 import { TransactionalConnection } from '../../../connection/transactional-connection';
 import { FirelancerEntity } from '../../../entity';
 import { TranslatorService } from '../translator/translator.service';

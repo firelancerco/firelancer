@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { assertNever } from '@firelancerco/common/lib/shared-utils';
+import { ConfigArgType } from '@firelancerco/common/lib/shared-types';
+import {
+    ConfigArg,
+    ConfigArgDefinition,
+    ID,
+    LanguageCode,
+    LocalizedString,
+    ConfigurableOperationDefinition,
+} from '@firelancerco/common/lib/generated-schema';
 
 import { DEFAULT_LANGUAGE_CODE } from './constants';
 import { InternalServerException } from './error/errors';
 import { InjectableStrategy } from './injectable-strategy';
 import { Injector } from './injector';
 import { RequestContext } from './request-context';
-import {
-    ConfigArg,
-    ConfigArgDefinition,
-    ConfigArgType,
-    ConfigurableOperationDefinition,
-    ID,
-    LanguageCode,
-    LocalizedString,
-} from './shared-schema';
 
 /**
  * @description

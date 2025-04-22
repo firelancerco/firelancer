@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
+import { ConfigurableOperation, ID, LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { normalizeString, notNullOrUndefined } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 
 import { RequestContext, Translated } from '../../../common';
-import { ConfigurableOperation, ID, LanguageCode } from '../../../common/shared-schema';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
 import { User } from '../../../entity';

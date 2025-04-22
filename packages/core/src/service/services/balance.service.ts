@@ -1,10 +1,10 @@
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { IsNull, Not } from 'typeorm';
+import { ID } from '@firelancerco/common/lib/generated-schema';
 
 import { RelationPaths } from '../../api/decorators/relations.decorator';
 import { ListQueryOptions, RequestContext } from '../../common';
-import { CreateBalanceEntryInput, ID } from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { BalanceEntry } from '../../entity/balance-entry/balance-entry.entity';
 import { Customer } from '../../entity/customer/customer.entity';
@@ -23,6 +23,7 @@ export class BalanceService implements OnModuleInit {
         private listQueryBuilder: ListQueryBuilder,
         private eventBus: EventBus,
     ) {}
+
     onModuleInit() {
         this.eventBus.ofType(BalanceEntryEvent).subscribe(async event => {
             if (event.type == 'created') {
@@ -48,7 +49,7 @@ export class BalanceService implements OnModuleInit {
             }));
     }
 
-    async create(ctx: RequestContext, input: CreateBalanceEntryInput): Promise<BalanceEntry> {
+    async create(ctx: RequestContext, input: any): Promise<BalanceEntry> {
         return this.connection.withTransaction(ctx, async ctx => {
             // TODO: perform some constraints checking for customer
             const entry = new BalanceEntry(input);

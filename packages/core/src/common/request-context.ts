@@ -5,11 +5,11 @@ import { Request } from 'express';
 import { ParseKeys, TFunction } from 'i18next';
 import { EntityManager } from 'typeorm';
 
+import { CurrencyCode, ID, LanguageCode, Permission } from '@firelancerco/common/lib/generated-schema';
 import { CachedSession } from '../config/strategies/session-cache/session-cache-strategy';
 import { getPermissions } from '../service/helpers/utils/get-user-permissions';
 import { REQUEST_CONTEXT_KEY, REQUEST_CONTEXT_MAP_KEY, TRANSACTION_MANAGER_KEY } from './constants';
 import { ApiType } from './get-api-type';
-import { CurrencyCode, ID, LanguageCode, Permission } from './shared-schema';
 
 export type SerializedRequestContext = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

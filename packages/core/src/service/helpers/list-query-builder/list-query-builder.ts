@@ -1,3 +1,4 @@
+import { LogicalOperator } from '@firelancerco/common/lib/generated-schema';
 import { Type } from '@firelancerco/common/lib/shared-types';
 import { unique } from '@firelancerco/common/lib/shared-utils';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
@@ -22,7 +23,6 @@ import {
     SortParameter,
     UserInputException,
 } from '../../../common';
-import { LogicalOperator } from '../../../common/shared-schema';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
 import { FirelancerEntity } from '../../../entity';

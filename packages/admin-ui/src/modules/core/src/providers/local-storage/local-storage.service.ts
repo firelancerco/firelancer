@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
-import { LanguageCode } from '@firelancerco/common/lib/shared-schema';
+import { LanguageCode } from '@firelancerco/common/lib/generated-schema';
 
 export type DataTableConfig = {
     [id: string]: {

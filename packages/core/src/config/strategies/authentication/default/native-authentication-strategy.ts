@@ -1,14 +1,18 @@
-import { ID } from '../../../../common/shared-schema';
+import { ID } from '@firelancerco/common/lib/generated-schema';
+import z from 'zod';
+
 import { Injector } from '../../../../common/injector';
 import { RequestContext } from '../../../../common/request-context';
 import { TransactionalConnection } from '../../../../connection/transactional-connection';
 import { NativeAuthenticationMethod, User } from '../../../../entity';
 import { AuthenticationStrategy } from '../authentication-strategy';
 
-export interface NativeAuthenticationData {
-    username: string;
-    password: string;
-}
+export const NativeAuthInput = z.object({
+    username: z.string(),
+    password: z.string(),
+});
+
+export type NativeAuthenticationData = z.infer<typeof NativeAuthInput>;
 
 export const NATIVE_AUTH_STRATEGY_NAME = 'native';
 
@@ -34,8 +38,8 @@ export class NativeAuthenticationStrategy implements AuthenticationStrategy<Nati
         this.userService = injector.get(UserService);
     }
 
-    getInputType(): string {
-        return 'NativeAuthInput';
+    getInputSchema() {
+        return NativeAuthInput;
     }
 
     async authenticate(ctx: RequestContext, data: NativeAuthenticationData): Promise<User | false> {

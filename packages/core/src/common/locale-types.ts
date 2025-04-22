@@ -1,7 +1,8 @@
+import { ID, LanguageCode } from '@firelancerco/common/lib/generated-schema';
+
 import { FirelancerEntity } from '../entity';
 import { UnwrappedArray } from './shared-types';
 import { TranslatableRelationsKeys } from '../service';
-import { ID, LanguageCode } from './shared-schema';
 
 /**
  * This type should be used in any interfaces where the value is to be

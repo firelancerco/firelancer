@@ -1,3 +1,10 @@
+import {
+    BooleanOperators,
+    DateOperators,
+    LogicalOperator,
+    NumberOperators,
+    StringOperators,
+} from '@firelancerco/common/lib/generated-schema';
 import { Type } from '@firelancerco/common/lib/shared-types';
 import { assertNever } from '@firelancerco/common/lib/shared-utils';
 import { DataSource, DataSourceOptions } from 'typeorm';
@@ -5,13 +12,6 @@ import { DateUtils } from 'typeorm/util/DateUtils';
 
 import { FilterParameter, ListOperators, NullOptionals } from '../../../common';
 import { InternalServerException, UserInputException } from '../../../common/error/errors';
-import {
-    BooleanOperators,
-    DateOperators,
-    LogicalOperator,
-    NumberOperators,
-    StringOperators,
-} from '../../../common/shared-schema';
 import { FirelancerEntity } from '../../../entity';
 import { escapeCalculatedColumnExpression, getColumnMetadata } from './connection-utils';
 import { getCalculatedColumns } from './get-calculated-columns';

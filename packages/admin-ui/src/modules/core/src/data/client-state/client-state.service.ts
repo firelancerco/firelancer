@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Permission } from '@firelancerco/common/lib/shared-schema';
+import { Permission } from '@firelancerco/common/lib/generated-schema';
 import { map, of } from 'rxjs';
 import { LocalStorageService } from '../../providers/local-storage/local-storage.service';
 import { getClientDefaults } from './client-defaults';

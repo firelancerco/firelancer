@@ -1,6 +1,6 @@
 import { DeepPartial } from '@firelancerco/common/lib/shared-types';
+import { ID } from '@firelancerco/common/lib/generated-schema';
 import { Column, Entity, Index, ManyToOne } from 'typeorm';
-import { ID } from '../../common/shared-schema';
 import { OrderableAsset } from '../asset/orderable-asset.entity';
 import { Collection } from './collection.entity';
 

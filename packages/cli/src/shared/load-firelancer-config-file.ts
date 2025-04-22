@@ -3,9 +3,9 @@
 import { FirelancerConfig } from '@firelancerco/core';
 import path from 'node:path';
 import { register } from 'ts-node';
-import { FirelancerConfigRef } from '../../shared/firelancer-config-ref';
-import { selectTsConfigFile } from '../../utilities/ast-utils';
-import { isRunningInTsNode } from '../../utilities/utils';
+import { FirelancerConfigRef } from './firelancer-config-ref';
+import { selectTsConfigFile } from '../utilities/ast-utils';
+import { isRunningInTsNode } from '../utilities/utils';
 
 export async function loadFirelancerConfigFile(
     firelancerConfig: FirelancerConfigRef,

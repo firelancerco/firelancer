@@ -1,4 +1,4 @@
-import { HistoryEntryType, ID, UpdateCustomerInput } from '../../common/shared-schema';
+import { HistoryEntryType, ID, UpdateCustomerInput } from '@firelancerco/common/lib/generated-schema';
 import { Injectable } from '@nestjs/common';
 import { RequestContext } from '../../common';
 import { TransactionalConnection } from '../../connection';

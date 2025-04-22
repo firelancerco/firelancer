@@ -1,4 +1,4 @@
-import { ID, JobState } from '@firelancerco/common/lib/shared-schema';
+import { ID, JobState } from '@firelancerco/common/lib/generated-schema';
 import { Brackets, DataSource, EntityManager, FindOptionsWhere, In, LessThan } from 'typeorm';
 
 import { Injector } from '../../../../common/injector';

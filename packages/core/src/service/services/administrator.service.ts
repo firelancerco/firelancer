@@ -1,7 +1,9 @@
-import { assertFound, idsAreEqual, normalizeEmailAddress } from '@firelancerco/common/lib/shared-utils';
+import { CreateAdministratorInput, ID, UpdateAdministratorInput } from '@firelancerco/common/lib/generated-schema';
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
+import { assertFound, idsAreEqual, normalizeEmailAddress } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { In, IsNull } from 'typeorm';
+
 import { RelationPaths } from '../../api';
 import {
     EntityNotFoundException,
@@ -10,7 +12,6 @@ import {
     RequestContext,
     UserInputException,
 } from '../../common';
-import { CreateAdministratorInput, ID, UpdateAdministratorInput } from '../../common/shared-schema';
 import { ConfigService } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { Administrator, NativeAuthenticationMethod, Role, User } from '../../entity';
@@ -19,10 +20,10 @@ import { ProcessContext } from '../../process-context';
 import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
 import { PasswordCipher } from '../helpers/password-cipher/password-cipher';
 import { RequestContextService } from '../helpers/request-context/request-context.service';
+import { getPermissions } from '../helpers/utils/get-user-permissions';
 import { patchEntity } from '../helpers/utils/patch-entity';
 import { RoleService } from './role.service';
 import { UserService } from './user.service';
-import { getPermissions } from '../helpers/utils/get-user-permissions';
 
 /**
  * @description

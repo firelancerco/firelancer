@@ -1,8 +1,9 @@
+import { CurrencyCode, LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { DynamicModule, Type } from '@nestjs/common';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { DataSourceOptions } from 'typeorm';
+
 import { PermissionDefinition } from '../common/permission-definition';
-import { CurrencyCode, LanguageCode } from '../common/shared-schema';
 import { Middleware } from '../common/shared-types';
 import { JobBufferStorageStrategy } from '../job-queue';
 import { AssetImportStrategy } from './strategies/asset-import/asset-import-strategy';
@@ -15,12 +16,12 @@ import { PasswordValidationStrategy } from './strategies/authentication/password
 import { CollectionFilter } from './strategies/catalog/collection-filter';
 import { EntityIdStrategy } from './strategies/entity/entity-id-strategy';
 import { MoneyStrategy } from './strategies/entity/money-strategy';
+import { JobPostProcess } from './strategies/job-post/job-post-process';
 import { JobQueueStrategy } from './strategies/job-queue/job-queue-strategy';
 import { FirelancerLogger } from './strategies/logger/firelancer-logger';
 import { SessionCacheStrategy } from './strategies/session-cache/session-cache-strategy';
-import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
 import { CacheStrategy } from './strategies/system/cache-strategy';
-import { JobPostProcess } from './strategies/job-post/job-post-process';
+import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
 
 /**
  * @description

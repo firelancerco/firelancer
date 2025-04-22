@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Directive, Input, TemplateRef, ViewContainerRef } fr
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { IfDirectiveBase } from './if-directive-base';
-import { Permission } from '@firelancerco/common/lib/shared-schema';
+import { Permission } from '@firelancerco/common/lib/generated-schema';
 import { PermissionsService } from '../../providers/permissions/permissions.service';
 
 /**

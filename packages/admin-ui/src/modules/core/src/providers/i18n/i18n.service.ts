@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
-import { LanguageCode } from '@firelancerco/common/lib/shared-schema';
+import { LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })

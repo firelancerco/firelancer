@@ -1,4 +1,4 @@
-import { JobState } from '../../common/shared-schema';
+import { JobState } from '@firelancerco/common/lib/generated-schema';
 import { Injectable } from '@nestjs/common';
 import { RequestContext } from '../../common';
 import { Logger } from '../../config';

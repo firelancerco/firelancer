@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSourceOptions } from 'typeorm';
+
 import { TypeOrmLogger } from '../config';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';

@@ -1,4 +1,15 @@
 import {
+    CloseJobPostInput,
+    CreateJobPostInput,
+    DeleteDraftJobPostInput,
+    EditDraftJobPostInput,
+    EditPublishedJobPostInput,
+    ID,
+    JobPostProcessState,
+    JobPostVisibility,
+    PublishJobPostInput,
+} from '@firelancerco/common/lib/generated-shop-schema';
+import {
     CATEGORY_FACET_CODE,
     DURATION_FACET_CODE,
     EXPERIENCE_LEVEL_FACET_CODE,
@@ -15,17 +26,6 @@ import { IsNull } from 'typeorm';
 import { RelationPaths } from '../../api';
 import { JobPostStateTransitionException, ListQueryOptions, RequestContext, UserInputException } from '../../common';
 import { IllegalOperationException } from '../../common/error/errors';
-import {
-    CloseJobPostInput,
-    CreateJobPostInput,
-    DeleteDraftJobPostInput,
-    EditDraftJobPostInput,
-    EditPublishedJobPostInput,
-    ID,
-    JobPostProcessState,
-    JobPostVisibility,
-    PublishJobPostInput,
-} from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { FacetValue, JobPost } from '../../entity';
 import { EventBus, JobPostEvent, JobPostStateTransitionEvent } from '../../event-bus';

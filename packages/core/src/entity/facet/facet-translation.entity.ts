@@ -1,5 +1,5 @@
+import { LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { DeepPartial } from '@firelancerco/common/lib/shared-types';
-import { LanguageCode } from '../../common/shared-schema';
 import { Column, Entity, Index, ManyToOne } from 'typeorm';
 import { Translation } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';

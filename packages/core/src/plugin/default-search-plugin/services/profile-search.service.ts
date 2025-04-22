@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ID, SearchIndex } from '../../../common/shared-schema';
+import { ID, SearchIndex } from '@firelancerco/common/lib/generated-schema';
 import { ProfileSearchIndexItem } from '../entities/profile-search-index-item.entity';
 
 @Injectable()

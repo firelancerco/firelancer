@@ -3,6 +3,8 @@ import { Type } from '@firelancerco/common/lib/shared-types';
 import { Module, Type as NestType, Provider } from '@nestjs/common';
 import { MODULE_METADATA } from '@nestjs/common/constants';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
+import z from 'zod';
+
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { RuntimeFirelancerConfig } from '../config/firelancer-config';
 import { PLUGIN_METADATA } from './plugin-metadata';
@@ -66,7 +68,7 @@ export interface APIExtensionDefinition {
      * @description
      * Extensions to the schema.
      */
-    schemaPath?: string | (() => string | undefined);
+    schemas?: Record<string, z.ZodTypeAny> | (() => Record<string, z.ZodTypeAny> | undefined);
     /**
      * @description
      * An array of controllers. Should be defined as [Nestjs REST Controller](https://docs.nestjs.com/controllers)

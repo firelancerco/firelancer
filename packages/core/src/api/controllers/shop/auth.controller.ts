@@ -1,15 +1,4 @@
-import { Body, Controller, Get, Post, Request, Response, UsePipes, ValidationPipe } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
-import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
-
-import { Allow } from '../../../api/decorators/allow.decorator';
-import { Ctx } from '../../../api/decorators/request-context.decorator';
-import { Transaction } from '../../../api/decorators/transaction.decorator';
-import { ForbiddenException, NativeAuthStrategyException } from '../../../common/error/errors';
-import { RequestContext } from '../../../common/request-context';
-import { setSessionToken } from '../../../common/set-session-token';
 import {
-    AttemptLoginMutation,
     HistoryEntryType,
     MutationAuthenticateArgs,
     MutationLoginArgs,
@@ -22,7 +11,19 @@ import {
     MutationUpdateCustomerPasswordArgs,
     MutationVerifyCustomerAccountArgs,
     Permission,
-} from '../../../common/shared-schema';
+} from '@firelancerco/common/lib/generated-shop-schema';
+import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
+import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
+import { ZodValidationPipe } from 'nestjs-zod';
+
+import { coreSchemas } from '../../../api/schema/core-schemas';
+import { Allow } from '../../../api/decorators/allow.decorator';
+import { Ctx } from '../../../api/decorators/request-context.decorator';
+import { Transaction } from '../../../api/decorators/transaction.decorator';
+import { ForbiddenException, NativeAuthStrategyException } from '../../../common/error/errors';
+import { RequestContext } from '../../../common/request-context';
+import { setSessionToken } from '../../../common/set-session-token';
 import { Logger } from '../../../config';
 import { ConfigService } from '../../../config/config.service';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../../config/strategies/authentication/default/native-authentication-strategy';
@@ -53,7 +54,8 @@ export class ShopAuthController extends BaseAuthController {
         @Ctx() ctx: RequestContext,
         @Request() req: ExpressRequest,
         @Response() res: ExpressResponse,
-        @Body() args: MutationLoginArgs,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationLoginArgs))
+        args: MutationLoginArgs,
     ) {
         this.requireNativeAuthStrategy();
         return super.baseLogin(args, ctx, req, res);
@@ -66,10 +68,11 @@ export class ShopAuthController extends BaseAuthController {
         @Ctx() ctx: RequestContext,
         @Request() req: ExpressRequest,
         @Response() res: ExpressResponse,
-        @Body() args: MutationAuthenticateArgs,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationAuthenticateArgs))
+        args: MutationAuthenticateArgs,
     ) {
         const result = await this.authenticateAndCreateSession(ctx, args, req, res);
-        return res.send({ login: result } satisfies AttemptLoginMutation);
+        return res.send({ login: result });
     }
 
     @Transaction()
@@ -88,7 +91,11 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('register')
     @Allow(Permission.Public)
-    async registerCustomerAccount(@Ctx() ctx: RequestContext, @Body() args: MutationRegisterCustomerAccountArgs) {
+    async registerCustomerAccount(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationRegisterCustomerAccountArgs))
+        args: MutationRegisterCustomerAccountArgs,
+    ) {
         this.requireNativeAuthStrategy();
         await this.customerService.registerCustomerAccount(ctx, args.input);
         return { sucess: true };
@@ -100,9 +107,10 @@ export class ShopAuthController extends BaseAuthController {
     @Allow(Permission.Public)
     async verifyCustomerAccount(
         @Ctx() ctx: RequestContext,
-        @Body() args: MutationVerifyCustomerAccountArgs,
         @Request() req: ExpressRequest,
         @Response() res: ExpressResponse,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationVerifyCustomerAccountArgs))
+        args: MutationVerifyCustomerAccountArgs,
     ): Promise<void> {
         this.requireNativeAuthStrategy();
         const { token, password } = args;
@@ -131,7 +139,8 @@ export class ShopAuthController extends BaseAuthController {
     @Allow(Permission.Public)
     async refreshCustomerVerification(
         @Ctx() ctx: RequestContext,
-        @Body() args: MutationRefreshCustomerVerificationArgs,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationRefreshCustomerVerificationArgs))
+        args: MutationRefreshCustomerVerificationArgs,
     ): Promise<{ success: boolean }> {
         this.requireNativeAuthStrategy();
         await this.customerService.refreshVerificationToken(ctx, args.emailAddress);
@@ -143,7 +152,8 @@ export class ShopAuthController extends BaseAuthController {
     @Allow(Permission.Public)
     async requestPasswordReset(
         @Ctx() ctx: RequestContext,
-        @Body() args: MutationRequestPasswordResetArgs,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationRequestPasswordResetArgs))
+        args: MutationRequestPasswordResetArgs,
     ): Promise<{ success: boolean }> {
         this.requireNativeAuthStrategy();
         await this.customerService.requestPasswordReset(ctx, args.emailAddress);
@@ -156,9 +166,10 @@ export class ShopAuthController extends BaseAuthController {
     @Allow(Permission.Public)
     async resetPassword(
         @Ctx() ctx: RequestContext,
-        @Body() args: MutationResetPasswordArgs,
         @Request() req: ExpressRequest,
         @Response() res: ExpressResponse,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationRequestPasswordResetArgs))
+        args: MutationResetPasswordArgs,
     ): Promise<void> {
         this.requireNativeAuthStrategy();
         const { token, password } = args;
@@ -185,7 +196,8 @@ export class ShopAuthController extends BaseAuthController {
     @Allow(Permission.Owner)
     async updateCustomerPassword(
         @Ctx() ctx: RequestContext,
-        @Body() args: MutationUpdateCustomerPasswordArgs,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationUpdateCustomerPasswordArgs))
+        args: MutationUpdateCustomerPasswordArgs,
     ): Promise<{ success: boolean }> {
         this.requireNativeAuthStrategy();
 
@@ -211,7 +223,8 @@ export class ShopAuthController extends BaseAuthController {
     @Allow(Permission.Owner)
     async requestUpdateCustomerEmailAddress(
         @Ctx() ctx: RequestContext,
-        @Body() args: MutationRequestUpdateCustomerEmailAddressArgs,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationRequestUpdateCustomerEmailAddressArgs))
+        args: MutationRequestUpdateCustomerEmailAddressArgs,
     ): Promise<{ success: boolean }> {
         this.requireNativeAuthStrategy();
         if (!ctx.activeUserId) {
@@ -234,7 +247,8 @@ export class ShopAuthController extends BaseAuthController {
     @Allow(Permission.Owner)
     async updateCustomerEmailAddress(
         @Ctx() ctx: RequestContext,
-        @Body() args: MutationUpdateCustomerEmailAddressArgs,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationUpdateCustomerEmailAddressArgs))
+        args: MutationUpdateCustomerEmailAddressArgs,
     ): Promise<{ success: boolean }> {
         this.requireNativeAuthStrategy();
         const result = await this.customerService.updateEmailAddress(ctx, args.token);

@@ -1,10 +1,10 @@
+import { ConfigurableOperation, ConfigurableOperationInput } from '@firelancerco/common/lib/generated-schema';
 import { forwardRef, Inject, Injectable, Type } from '@nestjs/common';
 
 import { CollectionFilter, ConfigService } from '../config';
 import { ConfigurableOperationDef } from './configurable-operation';
 import { InternalServerException } from './error/errors';
 import { IdCodecService } from './id-codec.service';
-import { ConfigurableOperation, ConfigurableOperationInput } from './shared-schema';
 
 @Injectable()
 export class ConfigurableOperationCodec {

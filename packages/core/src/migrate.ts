@@ -4,9 +4,9 @@ import pc from 'picocolors';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { MysqlDriver } from 'typeorm/driver/mysql/MysqlDriver';
 import { camelCase } from 'typeorm/util/StringUtils';
-import { preBootstrapConfig } from './bootstrap';
 import { resetConfig } from './config/config-helpers';
 import { FirelancerConfig } from './config/firelancer-config';
+import { preBootstrapConfig } from './pre-bootstrap-config';
 
 /**
  * @description

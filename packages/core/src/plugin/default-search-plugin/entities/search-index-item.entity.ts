@@ -1,6 +1,6 @@
 import { Column } from 'typeorm';
+import { ID, SearchIndex } from '@firelancerco/common/lib/generated-schema';
 
-import { ID, SearchIndex } from '../../../common/shared-schema';
 import { EntityId } from '../../../entity/entity-id.decorator';
 
 export abstract class SearchIndexItem {

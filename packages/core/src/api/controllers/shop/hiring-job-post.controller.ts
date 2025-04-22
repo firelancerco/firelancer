@@ -1,7 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
-
-import { EntityNotFoundException, ForbiddenException, RequestContext } from '../../../common';
 import {
+    ID,
     JobPostListOptions,
     MutationCloseJobPostArgs,
     MutationCreateJobPostArgs,
@@ -10,7 +8,12 @@ import {
     MutationEditPublishedJobPostArgs,
     MutationPublishJobPostArgs,
     Permission,
-} from '../../../common/shared-schema';
+} from '@firelancerco/common/lib/generated-shop-schema';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
+
+import { coreSchemas } from '../../../api/schema/core-schemas';
+import { EntityNotFoundException, ForbiddenException, RequestContext } from '../../../common';
 import { CustomerService } from '../../../service';
 import { JobPostService } from '../../../service/services/job-post.service';
 import { Allow } from '../../decorators/allow.decorator';
@@ -26,8 +29,11 @@ export class ShopHiringJobPostController {
 
     @Get()
     @Allow(Permission.PublishJobPost)
-    @UsePipes(new ValidationPipe({ whitelist: true }))
-    async getJobPostsList(@Ctx() ctx: RequestContext, @Query() options: JobPostListOptions) {
+    async getJobPostsList(
+        @Ctx() ctx: RequestContext,
+        @Query(new ZodValidationPipe(coreSchemas.shop.JobPostListOptions))
+        options: JobPostListOptions,
+    ) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const customerFilter = { customerId: { eq: String(customer.id) } };
         const mergedFilter = options.filter ? { _and: [options.filter, customerFilter] } : customerFilter;
@@ -37,12 +43,11 @@ export class ShopHiringJobPostController {
 
     @Get(':id')
     @Allow(Permission.PublishJobPost)
-    @UsePipes(new ValidationPipe({ whitelist: true }))
-    async getJobPost(@Ctx() ctx: RequestContext, @Param() params: { id: string }) {
+    async getJobPost(@Ctx() ctx: RequestContext, @Param('id') id: ID) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-        const jobPost = await this.jobPostService.findOne(ctx, params.id);
+        const jobPost = await this.jobPostService.findOne(ctx, id);
         if (!jobPost) {
-            throw new EntityNotFoundException('JobPost', params.id);
+            throw new EntityNotFoundException('JobPost', id);
         }
         if (jobPost.customerId !== customer.id) {
             throw new ForbiddenException();
@@ -53,7 +58,11 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Post('create')
     @Allow(Permission.PublishJobPost)
-    async createJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCreateJobPostArgs) {
+    async createJobPost(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationCreateJobPostArgs))
+        args: MutationCreateJobPostArgs,
+    ) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         return this.jobPostService.createDraft(ctx, { ...args.input, customerId: customer.id });
     }
@@ -61,7 +70,11 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Patch('edit-draft')
     @Allow(Permission.PublishJobPost)
-    async editDraftJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationEditDraftJobPostArgs) {
+    async editDraftJobPost(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationEditDraftJobPostArgs))
+        args: MutationEditDraftJobPostArgs,
+    ) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
         if (!jobPost) {
@@ -76,8 +89,11 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Delete('delete-draft')
     @Allow(Permission.PublishJobPost)
-    @UsePipes(new ValidationPipe({ whitelist: true }))
-    async deleteDraftJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationDeleteDraftJobPostArgs) {
+    async deleteDraftJobPost(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationDeleteDraftJobPostArgs))
+        args: MutationDeleteDraftJobPostArgs,
+    ) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
         if (!jobPost) {
@@ -93,7 +109,11 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Post('publish')
     @Allow(Permission.PublishJobPost)
-    async requestPublishDraft(@Ctx() ctx: RequestContext, @Body() args: MutationPublishJobPostArgs) {
+    async requestPublishDraft(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationPublishJobPostArgs))
+        args: MutationPublishJobPostArgs,
+    ) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
         if (!jobPost) {
@@ -108,7 +128,11 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Patch('edit-published')
     @Allow(Permission.PublishJobPost)
-    async editPublishedJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationEditPublishedJobPostArgs) {
+    async editPublishedJobPost(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationEditPublishedJobPostArgs))
+        args: MutationEditPublishedJobPostArgs,
+    ) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
         if (!jobPost) {
@@ -123,7 +147,11 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Post('close')
     @Allow(Permission.PublishJobPost)
-    async closePublishedJobPost(@Ctx() ctx: RequestContext, @Body() args: MutationCloseJobPostArgs) {
+    async closePublishedJobPost(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationCloseJobPostArgs))
+        args: MutationCloseJobPostArgs,
+    ) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, args.input.id);
         if (!jobPost) {

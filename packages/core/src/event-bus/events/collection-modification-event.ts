@@ -1,6 +1,6 @@
+import { ID } from '@firelancerco/common/lib/generated-schema';
 import { Type } from '@firelancerco/common/lib/shared-types';
 import { RequestContext } from '../../common';
-import { ID } from '../../common/shared-schema';
 import { Collection } from '../../entity/collection/collection.entity';
 import { FirelancerEvent } from '../firelancer-event';
 

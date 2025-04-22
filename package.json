@@ -14,7 +14,7 @@
         "start": "lerna run start",
         "test": "lerna run test --stream --no-bail",
         "version": "npm run check-imports && npm run build && npm run generate-changelog && git add CHANGELOG* && git add */version.ts",
-        "codegen": "ts-node scripts/build-api-shared-schema.ts",
+        "codegen": "ts-node scripts/generate-schema-types.ts",
         "check-imports": "ts-node scripts/check-imports.ts",
         "generate-changelog": "ts-node scripts/changelogs/generate-changelog.ts",
         "publish-local": "lerna version --force-publish --no-git-tag-version && cd scripts && ./publish-to-verdaccio.sh",
@@ -29,12 +29,18 @@
         "@types/find": "^0.2.4",
         "conventional-changelog-core": "^9.0.0",
         "find": "^0.3.0",
+        "fs-extra": "^11.3.0",
         "globals": "^15.13.0",
         "lerna": "^8.1.9",
         "nx": "19.6.5",
         "prettier": "^3.3.3",
         "ts-node": "^10.9.2",
+        "tsx": "^4.19.3",
         "typescript": "^5.7.2",
-        "typescript-eslint": "^8.18.0"
+        "typescript-eslint": "^8.18.0",
+        "zod": "^3.24.3"
+    },
+    "dependencies": {
+        "zod-to-ts": "^1.2.0"
     }
 }

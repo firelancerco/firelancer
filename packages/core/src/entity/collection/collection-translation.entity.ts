@@ -1,8 +1,8 @@
+import { LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import { Column, DeepPartial, Entity, Index, ManyToOne } from 'typeorm';
 import { Collection } from './collection.entity';
 import { FirelancerEntity } from '../base/base.entity';
 import { Translation } from '../../common';
-import { LanguageCode } from '../../common/shared-schema';
 
 @Entity()
 export class CollectionTranslation extends FirelancerEntity implements Translation<Collection> {

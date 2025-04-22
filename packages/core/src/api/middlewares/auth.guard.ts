@@ -1,7 +1,8 @@
-import { Permission } from '@firelancerco/common/lib/shared-schema';
+import { Permission } from '@firelancerco/common/lib/generated-schema';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
+
 import { ForbiddenException } from '../../common/error/errors';
 import { extractSessionToken } from '../../common/extract-session-token';
 import { parseContext } from '../../common/parse-context';
@@ -34,10 +35,7 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const { req, res } = parseContext(context);
-        const permissions = this.reflector.get<Permission[] | undefined>(
-            PERMISSIONS_METADATA_KEY,
-            context.getHandler(),
-        );
+        const permissions = this.reflector.get(PERMISSIONS_METADATA_KEY, context.getHandler());
         const isAuthDisabled = this.configService.authOptions.disableAuth;
         const isPublicPermissionRequired = !!permissions && permissions.includes(Permission.Public);
         const isOwnerPermissionRequired = !!permissions && permissions.includes(Permission.Owner);
