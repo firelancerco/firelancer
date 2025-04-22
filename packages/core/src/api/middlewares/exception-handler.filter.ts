@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
 import { parseContext } from '../../common';
 import { ConfigService } from '../../config';
 import { I18nException, I18nService } from '../../i18n';
+import { fromError, isZodErrorLike } from 'zod-validation-error';
 
 @Catch()
 export class ExceptionHandlerFilter implements ExceptionFilter {
@@ -24,6 +25,10 @@ export class ExceptionHandlerFilter implements ExceptionFilter {
         let message: string;
         let error: string;
         let details: any;
+
+        if (isZodErrorLike(exception)) {
+            exception = new BadRequestException(fromError(exception).message);
+        }
 
         if (exception instanceof HttpException) {
             status = exception.getStatus();

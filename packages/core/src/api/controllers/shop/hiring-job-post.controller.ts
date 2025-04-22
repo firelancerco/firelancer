@@ -10,8 +10,9 @@ import {
     Permission,
 } from '@firelancerco/common/lib/generated-shop-schema';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
 
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
+import * as schema from '../../../api/schema/common';
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { EntityNotFoundException, ForbiddenException, RequestContext } from '../../../common';
 import { CustomerService } from '../../../service';
@@ -19,7 +20,6 @@ import { JobPostService } from '../../../service/services/job-post.service';
 import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';
 import { Transaction } from '../../decorators/transaction.decorator';
-import * as schema from '../../../api/schema/common';
 
 @Controller('hiring/job-posts')
 export class ShopHiringJobPostController {

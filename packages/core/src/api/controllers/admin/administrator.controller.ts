@@ -9,15 +9,15 @@ import {
     Permission,
 } from '@firelancerco/common/lib/generated-schema';
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
 
-import * as schema from '../../schema/common';
 import { RequestContext } from '../../../common';
 import { Administrator } from '../../../entity/administrator/administrator.entity';
 import { AdministratorService } from '../../../service';
 import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';
 import { Transaction } from '../../decorators/transaction.decorator';
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
+import * as schema from '../../schema/common';
 import { coreSchemas } from '../../schema/core-schemas';
 
 @Controller('admins')

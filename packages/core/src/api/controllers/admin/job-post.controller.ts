@@ -1,7 +1,7 @@
 import { MutationVerifyRequestedJobPostArgs, Permission } from '@firelancerco/common/lib/generated-schema';
 import { Body, Controller, Post } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
 
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { EntityNotFoundException, RequestContext } from '../../../common';
 import { JobPostService } from '../../../service/services/job-post.service';

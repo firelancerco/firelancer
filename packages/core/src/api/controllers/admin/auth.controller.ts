@@ -1,6 +1,7 @@
 import { MutationAuthenticateArgs, MutationLoginArgs, Permission } from '@firelancerco/common/lib/generated-schema';
 import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
@@ -14,7 +15,6 @@ import { NATIVE_AUTH_STRATEGY_NAME } from '../../../config/strategies/authentica
 import { AdministratorService } from '../../../service/services/administrator.service';
 import { AuthService } from '../../../service/services/auth.service';
 import { UserService } from '../../../service/services/user.service';
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import { BaseAuthController } from '../base/base-auth.controller';
 
 @Controller('/auth')

@@ -15,12 +15,12 @@ import {
 import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
+import { ZodValidationPipe } from 'nestjs-zod';
 
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
-import { coreSchemas } from '../../../api/schema/core-schemas';
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
+import { coreSchemas } from '../../../api/schema/core-schemas';
 import { ForbiddenException, NativeAuthStrategyException } from '../../../common/error/errors';
 import { RequestContext } from '../../../common/request-context';
 import { setSessionToken } from '../../../common/set-session-token';

@@ -1,12 +1,12 @@
 import { FacetValueListOptions, ID } from '@firelancerco/common/lib/generated-shop-schema';
 import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
 import z from 'zod';
 
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { EntityNotFoundException, RequestContext } from '../../../common';
 import { FacetService, FacetValueService } from '../../../service';
 import { Ctx } from '../../decorators/request-context.decorator';
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import * as schema from '../../schema/common';
 
 @Controller('facet-values')

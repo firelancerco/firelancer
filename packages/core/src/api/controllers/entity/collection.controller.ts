@@ -7,6 +7,7 @@ import {
 } from '@firelancerco/common/lib/generated-schema';
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 import z from 'zod';
 import { Api } from '../../../api/decorators/api.decorator';
@@ -16,7 +17,6 @@ import { coreSchemas } from '../../../api/schema/core-schemas';
 import { ApiType, RequestContext, Translated } from '../../../common';
 import { Collection, JobPost } from '../../../entity';
 import { CollectionService, JobPostService } from '../../../service';
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import * as schema from '../../schema/common';
 
 const relationsOptions: FieldsDecoratorConfig<Collection> = {

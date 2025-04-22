@@ -7,6 +7,7 @@ import {
     Permission,
 } from '@firelancerco/common/lib/generated-schema';
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { RequestContext } from '../../../common';
@@ -14,7 +15,6 @@ import { RoleService } from '../../../service';
 import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';
 import { Transaction } from '../../decorators/transaction.decorator';
-import { ZodValidationPipe } from '../../middlewares/zod-validation-pipe';
 import * as schema from '../../schema/common';
 
 @Controller('roles')

@@ -12,15 +12,16 @@ import { MiddlewareConsumer, NestModule, OnApplicationBootstrap } from '@nestjs/
 import { createHash } from 'crypto';
 import express, { NextFunction, Request, Response } from 'express';
 import fs from 'fs-extra';
-import path, { resolve } from 'path';
+import path from 'path';
+
 import { getValidFormat } from './common';
 import { DEFAULT_CACHE_HEADER, loggerCtx } from './constants';
 import { defaultAssetStorageStrategyFactory } from './default-asset-storage-strategy-factory';
 import { HashedAssetNamingStrategy } from './hashed-asset-naming-strategy';
+import { TransformImageOptions } from './schema';
 import { SharpAssetPreviewStrategy } from './sharp-asset-preview-strategy';
 import { transformImage } from './transform-image';
 import { AssetServerOptions, ImageTransformPreset } from './types';
-import { TransformImageOptions } from './schema';
 
 async function getFileType(buffer: Buffer) {
     const { fileTypeFromBuffer } = await import('file-type');
@@ -268,47 +269,51 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
     private generateTransformedImage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return async (err: any, req: Request, res: Response, next: NextFunction) => {
-            const transformImageOpts = TransformImageOptions.parse(req.query);
+            try {
+                const transformImageOpts = TransformImageOptions.parse(req.query);
 
-            if (err && (err.status === 404 || err.statusCode === 404)) {
-                if (req.query) {
-                    const decodedReqPath = this.sanitizeFilePath(req.path);
-                    Logger.debug(`Pre-cached Asset not found: ${decodedReqPath}`, loggerCtx);
-                    let file: Buffer;
-                    try {
-                        file = await AssetServerPlugin.assetStorage.readFileToBuffer(decodedReqPath);
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    } catch (err) {
-                        res.status(404).send('Resource not found');
-                        return;
-                    }
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const image = await transformImage(file, transformImageOpts, this.presets || []);
-                    try {
-                        const imageBuffer = await image.toBuffer();
-                        const cachedFileName = this.getFileNameFromRequest(req);
-                        if (!req.query.cache || req.query.cache === 'true') {
-                            await AssetServerPlugin.assetStorage.writeFileFromBuffer(cachedFileName, imageBuffer);
-                            Logger.debug(`Saved cached asset: ${cachedFileName}`, loggerCtx);
+                if (err && (err.status === 404 || err.statusCode === 404)) {
+                    if (req.query) {
+                        const decodedReqPath = this.sanitizeFilePath(req.path);
+                        Logger.debug(`Pre-cached Asset not found: ${decodedReqPath}`, loggerCtx);
+                        let file: Buffer;
+                        try {
+                            file = await AssetServerPlugin.assetStorage.readFileToBuffer(decodedReqPath);
+                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                        } catch (err) {
+                            res.status(404).send('Resource not found');
+                            return;
                         }
-                        let mimeType = this.getMimeType(cachedFileName);
-                        if (!mimeType) {
-                            mimeType = (await getFileType(imageBuffer))?.mime || 'image/jpeg';
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const image = await transformImage(file, transformImageOpts, this.presets || []);
+                        try {
+                            const imageBuffer = await image.toBuffer();
+                            const cachedFileName = this.getFileNameFromRequest(req);
+                            if (!req.query.cache || req.query.cache === 'true') {
+                                await AssetServerPlugin.assetStorage.writeFileFromBuffer(cachedFileName, imageBuffer);
+                                Logger.debug(`Saved cached asset: ${cachedFileName}`, loggerCtx);
+                            }
+                            let mimeType = this.getMimeType(cachedFileName);
+                            if (!mimeType) {
+                                mimeType = (await getFileType(imageBuffer))?.mime || 'image/jpeg';
+                            }
+                            res.set('Content-Type', mimeType);
+                            res.setHeader('content-security-policy', "default-src 'self'");
+                            res.send(imageBuffer);
+                            return;
+                        } catch (e) {
+                            if (e instanceof Error) {
+                                Logger.error(e.message, loggerCtx, e.stack);
+                            }
+                            res.status(500).send('An error occurred when generating the image');
+                            return;
                         }
-                        res.set('Content-Type', mimeType);
-                        res.setHeader('content-security-policy', "default-src 'self'");
-                        res.send(imageBuffer);
-                        return;
-                    } catch (e) {
-                        if (e instanceof Error) {
-                            Logger.error(e.message, loggerCtx, e.stack);
-                        }
-                        res.status(500).send('An error occurred when generating the image');
-                        return;
                     }
                 }
+                next();
+            } catch (err) {
+                return next(err);
             }
-            next();
         };
     }
 
