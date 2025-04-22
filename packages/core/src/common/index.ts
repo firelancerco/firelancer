@@ -2,7 +2,6 @@ export * from './calculated-decorator';
 export * from './configurable-operation';
 export * from './configurable-operation-codec';
 export * from './constants';
-export * from './entity-id-validator';
 export * from './error/errors';
 export * from './extract-session-token';
 export * from './finite-state-machine/finite-state-machine';

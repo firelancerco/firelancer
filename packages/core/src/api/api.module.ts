@@ -1,5 +1,5 @@
-import { Module, ValidationPipe } from '@nestjs/common';
-import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { Module } from '@nestjs/common';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 
 import { ConnectionModule } from '../connection/connection.module';
 import { DataImportModule } from '../data-import';
@@ -23,12 +23,6 @@ import { ExceptionHandlerFilter } from './middlewares/exception-handler.filter';
         ...createDynamicRestModulesForPlugins('shop'),
     ],
     providers: [
-        {
-            provide: APP_PIPE,
-            useValue: new ValidationPipe({
-                transform: true,
-            }),
-        },
         {
             provide: APP_GUARD,
             useClass: AuthGuard,
