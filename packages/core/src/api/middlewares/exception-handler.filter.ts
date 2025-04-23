@@ -5,6 +5,7 @@ import { parseContext } from '../../common';
 import { ConfigService } from '../../config';
 import { I18nException, I18nService } from '../../i18n';
 import { fromError, isZodErrorLike } from 'zod-validation-error';
+import { ZodSerializationException, ZodValidationException } from 'nestjs-zod';
 
 @Catch()
 export class ExceptionHandlerFilter implements ExceptionFilter {
@@ -25,6 +26,10 @@ export class ExceptionHandlerFilter implements ExceptionFilter {
         let message: string;
         let error: string;
         let details: any;
+
+        if (exception instanceof ZodValidationException || exception instanceof ZodSerializationException) {
+            exception = exception.getZodError();
+        }
 
         if (isZodErrorLike(exception)) {
             exception = new BadRequestException(fromError(exception).message);
