@@ -1,3 +1,11 @@
+## 1.3.0-alpha.1 (2025-04-23)
+
+
+#### Fixes
+
+*
+    **core**
+add handling for ZodValidationException and ZodSerializationException in ExceptionHandlerFilter to ensure proper error response([b81ebde](https://github.com/firelancerco/firelancer    /commit/b81ebde))
 ## 1.3.0-alpha.0 (2025-04-22)
 
 
