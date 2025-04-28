@@ -2,7 +2,7 @@
 import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 
 import { parseContext } from '../../common';
-import { ConfigService } from '../../config';
+import { ConfigService, Logger } from '../../config';
 import { I18nException, I18nService } from '../../i18n';
 import { fromError, isZodErrorLike } from 'zod-validation-error';
 import { ZodSerializationException, ZodValidationException } from 'nestjs-zod';
@@ -15,7 +15,8 @@ export class ExceptionHandlerFilter implements ExceptionFilter {
     ) {}
 
     catch(exception: Error, host: ArgumentsHost): void {
-        console.error(exception);
+        Logger.error(JSON.stringify(exception));
+
         const { req, res } = parseContext(host);
 
         for (const handler of this.configService.systemOptions.errorHandlers) {
