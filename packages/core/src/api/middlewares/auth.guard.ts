@@ -35,25 +35,30 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const { req, res } = parseContext(context);
-        const permissions = this.reflector.get(PERMISSIONS_METADATA_KEY, context.getHandler());
+        const requiredPermissions = this.reflector.get(PERMISSIONS_METADATA_KEY, context.getHandler());
         const isAuthDisabled = this.configService.authOptions.disableAuth;
-        const isPublicPermissionRequired = !!permissions && permissions.includes(Permission.Public);
-        const isOwnerPermissionRequired = !!permissions && permissions.includes(Permission.Owner);
+        const isPublicEndpoint = !!requiredPermissions && requiredPermissions.includes(Permission.Public);
+        const isOwnerEndpoint = !!requiredPermissions && requiredPermissions.includes(Permission.Owner);
 
-        const session = await this.getSession(req, res, isOwnerPermissionRequired);
-        const requestContext = this.requestContextService.fromRequest(req, session, permissions);
+        // Get session and set up request context
+        const session = await this.getSession(req, res, isOwnerEndpoint);
+        const requestContext = this.requestContextService.fromRequest(req, session, requiredPermissions);
         internal_setRequestContext(req, requestContext, context);
 
-        if (isAuthDisabled || !permissions || isPublicPermissionRequired) {
+        // No authentication required for these cases
+        if (isAuthDisabled || !requiredPermissions || isPublicEndpoint) {
             return true;
-        } else {
-            const canActivate = requestContext.userHasPermissions(permissions) || requestContext.authorizedAsOwnerOnly;
-            if (!canActivate) {
-                throw new ForbiddenException();
-            } else {
-                return canActivate;
-            }
         }
+
+        // Check if user has required permissions or is authorized as owner
+        const hasRequiredPermissions = requestContext.userHasPermissions(requiredPermissions);
+        const isAuthorizedAsOwner = requestContext.authorizedAsOwnerOnly;
+
+        if (!hasRequiredPermissions && !isAuthorizedAsOwner) {
+            throw new ForbiddenException();
+        }
+
+        return true;
     }
 
     private async getSession(
