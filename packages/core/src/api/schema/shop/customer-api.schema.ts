@@ -1,28 +1,28 @@
 import z from 'zod';
-import { CustomerType } from '../common/customer-type.schema';
-import { ID } from '../common/common-types.schema';
+import { CustomerRole } from '../common';
 
 export const RegisterCustomerInput = z.object({
+    firstName: z.string().min(2).max(50),
+    lastName: z.string().min(2).max(50),
     emailAddress: z.string().email(),
-    firstName: z.string(),
-    lastName: z.string(),
     phoneNumber: z.string().optional(),
+    role: CustomerRole.optional(),
     password: z.string(),
-    customerType: CustomerType,
 });
 
 // TODO: add avatar
 export const UpdateCustomerInput = z.object({
-    id: ID,
-    firstName: z.string().optional(),
-    lastName: z.string().optional(),
-    phoneNumber: z.string().optional(),
-    emailAddress: z.string().email().optional(),
-    customerType: CustomerType.optional(),
+    firstName: z.string().min(2).max(50).optional(),
+    lastName: z.string().min(2).max(50).optional(),
+    role: CustomerRole.optional(),
 });
 
 export const MutationRegisterCustomerAccountArgs = z.object({
     input: RegisterCustomerInput,
+});
+
+export const MutationUpdateCustomerArgs = z.object({
+    input: UpdateCustomerInput,
 });
 
 export const MutationVerifyCustomerAccountArgs = z.object({
@@ -55,4 +55,8 @@ export const MutationRequestUpdateCustomerEmailAddressArgs = z.object({
 
 export const MutationUpdateCustomerEmailAddressArgs = z.object({
     token: z.string(),
+});
+
+export const MutationValidateEmailAddressArgs = z.object({
+    emailAddress: z.string().email(),
 });

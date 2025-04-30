@@ -28,5 +28,4 @@ export const Permission = z.enum([
     'UpdateCustomer',
     'UpdateJobPost',
     'UpdateFacet',
-    'PublishJobPost',
 ]);

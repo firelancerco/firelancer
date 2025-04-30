@@ -1,3 +1,4 @@
+import { HistoryEntryType } from '@firelancerco/common/lib/generated-schema';
 import { Injectable } from '@nestjs/common';
 
 import { RequestContext } from '../../../common/request-context';
@@ -11,7 +12,6 @@ import { AdministratorService } from '../../services/administrator.service';
 import { CustomerService } from '../../services/customer.service';
 import { HistoryService } from '../../services/history.service';
 import { RoleService } from '../../services/role.service';
-import { CustomerType, HistoryEntryType } from '@firelancerco/common/lib/generated-schema';
 
 /**
  * @description
@@ -84,7 +84,6 @@ export class ExternalAuthenticationService {
             emailAddress: string;
             firstName: string;
             lastName: string;
-            type: CustomerType;
             verified?: boolean;
         },
     ): Promise<User> {
@@ -95,13 +94,9 @@ export class ExternalAuthenticationService {
         if (existingUser) {
             user = existingUser;
         } else {
-            const customerRole =
-                config.type === CustomerType.BUYER
-                    ? await this.roleService.getBuyerRole(ctx)
-                    : await this.roleService.getSellerRole(ctx);
             user = new User({
                 identifier: config.emailAddress,
-                roles: [customerRole],
+                roles: [],
                 verified: config.verified || false,
                 authenticationMethods: [],
             });

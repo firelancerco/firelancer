@@ -1,4 +1,4 @@
-import { CreateCustomerInput, CustomerType, ID, UpdateCustomerInput } from '@firelancerco/common/lib/generated-schema';
+import { CreateCustomerInput, ID, UpdateCustomerInput } from '@firelancerco/common/lib/generated-schema';
 
 import { RequestContext } from '../../common/request-context';
 import { Customer } from '../../entity/customer/customer.entity';
@@ -7,7 +7,7 @@ import { FirelancerEntityEvent } from '../firelancer-entity-event';
 type CustomerInputTypes =
     | CreateCustomerInput
     | UpdateCustomerInput
-    | (Partial<CreateCustomerInput> & { customerType: CustomerType; emailAddress: string })
+    | (Partial<CreateCustomerInput> & { emailAddress: string })
     | ID;
 
 /**

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ArgumentsHost, BadRequestException, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { fromError, isZodErrorLike } from 'zod-validation-error';
+import { ZodSerializationException, ZodValidationException } from 'nestjs-zod';
 
 import { parseContext } from '../../common';
 import { ConfigService, Logger } from '../../config';
 import { I18nException, I18nService } from '../../i18n';
-import { fromError, isZodErrorLike } from 'zod-validation-error';
-import { ZodSerializationException, ZodValidationException } from 'nestjs-zod';
 
 @Catch()
 export class ExceptionHandlerFilter implements ExceptionFilter {

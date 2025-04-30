@@ -3,6 +3,7 @@ import { SoftDeletable } from '../../common/shared-types';
 import { FirelancerEntity } from '../base/base.entity';
 import { JobPost } from '../job-post/job-post.entity';
 import { User } from '../user/user.entity';
+import { CustomerRole } from '@firelancerco/common/lib/generated-schema';
 
 /**
  * @description
@@ -30,6 +31,9 @@ export class Customer extends FirelancerEntity implements SoftDeletable {
 
     @Column()
     emailAddress: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    role: CustomerRole | null;
 
     @OneToOne(() => User, { eager: true })
     @JoinColumn()

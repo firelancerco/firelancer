@@ -1,6 +1,6 @@
-import { CustomerType, ID } from '@firelancerco/common/lib/generated-schema';
+import { ID } from '@firelancerco/common/lib/generated-schema';
 import { isEmailAddressLike, normalizeEmailAddress } from '@firelancerco/common/lib/shared-utils';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import {
@@ -20,7 +20,7 @@ import {
 import { RequestContext } from '../../common/request-context';
 import { ConfigService } from '../../config/config.service';
 import { TransactionalConnection } from '../../connection/transactional-connection';
-import { NativeAuthenticationMethod, Role, User } from '../../entity/index';
+import { NativeAuthenticationMethod, User } from '../../entity/index';
 import { PasswordCipher } from '../helpers/password-cipher/password-cipher';
 import { VerificationTokenGenerator } from '../helpers/verification-token-generator/verification-token-generator';
 import { RoleService } from './role.service';
@@ -81,22 +81,10 @@ export class UserService {
         return qb.getOne().then(result => result ?? undefined);
     }
 
-    async createCustomerUser(
-        ctx: RequestContext,
-        customerType: CustomerType,
-        identifier: string,
-        password?: string,
-    ): Promise<User> {
+    async createCustomerUser(ctx: RequestContext, identifier: string, password?: string): Promise<User> {
         const user = new User();
         user.identifier = normalizeEmailAddress(identifier);
-        let customerRole: Role | undefined;
-        if (customerType === CustomerType.SELLER) {
-            customerRole = await this.roleService.getSellerRole(ctx);
-        } else if (customerType === CustomerType.BUYER) {
-            customerRole = await this.roleService.getBuyerRole(ctx);
-        } else {
-            throw new BadRequestException('Invalid CustomerType');
-        }
+        const customerRole = await this.roleService.getCustomerRole(ctx);
         user.roles = [customerRole];
         const updatedUser = await this.addNativeAuthenticationMethod(ctx, user, identifier, password);
         return this.connection.getRepository(ctx, User).save(updatedUser);

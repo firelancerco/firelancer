@@ -3,5 +3,5 @@
     "compilerOptions": {
         "outDir": "../cli"
     },
-    "files": ["../src/cli/index.ts", "../typings.d.ts"]
+    "files": ["../src/cli/index.ts"]
 }

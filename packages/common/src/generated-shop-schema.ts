@@ -42,6 +42,7 @@ export type CurrentUserRole = {
 export type CurrentUser = {
     id: ID;
     identifier: string;
+    verified: boolean;
     roles: CurrentUserRole[];
     permissions: Permission[];
 };
@@ -126,7 +127,6 @@ export enum Permission {
     UpdateCustomer = 'UpdateCustomer',
     UpdateJobPost = 'UpdateJobPost',
     UpdateFacet = 'UpdateFacet',
-    PublishJobPost = 'PublishJobPost',
 }
 
 export type ID = string | number;
@@ -475,7 +475,7 @@ export enum CurrencyCode {
     ZWL = 'ZWL',
 }
 
-export enum CustomerType {
+export enum CustomerRole {
     SELLER = 'SELLER',
     BUYER = 'BUYER',
 }
@@ -894,23 +894,23 @@ export type CollectionListOptions = {
     topLevelOnly?: boolean | undefined;
 };
 export type RegisterCustomerInput = {
-    emailAddress: string;
     firstName: string;
     lastName: string;
+    emailAddress: string;
     phoneNumber?: string | undefined;
+    role?: CustomerRole | undefined;
     password: string;
-    customerType: CustomerType;
 };
 export type UpdateCustomerInput = {
-    id: ID;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    phoneNumber?: string | undefined;
-    emailAddress?: string | undefined;
-    customerType?: CustomerType | undefined;
+    role?: CustomerRole | undefined;
 };
 export type MutationRegisterCustomerAccountArgs = {
     input: RegisterCustomerInput;
+};
+export type MutationUpdateCustomerArgs = {
+    input: UpdateCustomerInput;
 };
 export type MutationVerifyCustomerAccountArgs = {
     token: string;
@@ -937,13 +937,17 @@ export type MutationRequestUpdateCustomerEmailAddressArgs = {
 export type MutationUpdateCustomerEmailAddressArgs = {
     token: string;
 };
+export type MutationValidateEmailAddressArgs = {
+    emailAddress: string;
+};
 export type Customer = {
-    deletedAt?: string | undefined;
     firstName: string;
     lastName: string;
     emailAddress: string;
-    phoneNumber?: string | undefined;
+    phoneNumber: string | null;
+    role: CustomerRole | null;
     user?: User | undefined;
+    deletedAt: string | null;
 };
 export type HistoryEntry = {
     id: ID;

@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CustomerType } from '@firelancerco/common/lib/generated-schema';
 import {
     AuthenticationStrategy,
-    coreSchemas,
     ExternalAuthenticationService,
     Injector,
     RequestContext,
@@ -17,7 +15,6 @@ export const GoogleAuthData = z
     .object({
         id_token: z.string().optional(),
         access_token: z.string().optional(),
-        customer_type: coreSchemas.common.CustomerType.optional(),
     })
     .superRefine((data, ctx) => {
         if (!data.id_token && !data.access_token) {
@@ -50,34 +47,28 @@ export class GoogleAuthenticationStrategy implements AuthenticationStrategy<Goog
 
     async authenticate(ctx: RequestContext, data: GoogleAuthData): Promise<User | string> {
         try {
-            const profile = await this.getGoogleProfile(data);
+            const googleProfile = await this.getGoogleProfile(data);
 
-            if (!profile?.email) {
+            if (!googleProfile?.email) {
                 return 'error.google-auth-profile-invalid';
             }
 
             // Try to find existing user
-            const user = await this.externalAuthenticationService.findCustomerUser(ctx, this.name, profile.sub);
+            const user = await this.externalAuthenticationService.findCustomerUser(ctx, this.name, googleProfile.sub);
 
             // If user exists. Log in
             if (user) {
                 return user;
             }
 
-            // if customer_type is not included. meaning a log in is intended, return error
-            if (!data.customer_type) {
-                return 'error.user-not-registered';
-            }
-
             // register a new user
             return await this.externalAuthenticationService.createCustomerAndUser(ctx, {
                 strategy: this.name,
-                externalIdentifier: profile.sub,
-                verified: profile.email_verified || false,
-                emailAddress: profile.email,
-                firstName: profile.given_name ?? '',
-                lastName: profile.family_name ?? '',
-                type: data.customer_type as CustomerType,
+                externalIdentifier: googleProfile.sub,
+                verified: googleProfile.email_verified || false,
+                emailAddress: googleProfile.email,
+                firstName: googleProfile.given_name ?? '',
+                lastName: googleProfile.family_name ?? '',
             });
         } catch (error: any) {
             return error.message ?? 'error.unkown-error';

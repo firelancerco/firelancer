@@ -9,7 +9,7 @@ import {
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ZodValidationPipe } from 'nestjs-zod';
 
-import { coreSchemas } from '../../../api/schema/core-schemas';
+import { coreSchemas } from '../../schema/core-schemas';
 import { RequestContext } from '../../../common';
 import { RoleService } from '../../../service';
 import { Allow } from '../../decorators/allow.decorator';

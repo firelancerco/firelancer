@@ -1,3 +1,3 @@
 import z from 'zod';
 
-export const CustomerType = z.enum(['SELLER', 'BUYER']);
+export const CustomerRole = z.enum(['SELLER', 'BUYER']);

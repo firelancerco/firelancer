@@ -1,15 +1,14 @@
 import { CreateRoleInput, ID, Permission, UpdateRoleInput } from '@firelancerco/common/lib/generated-schema';
 import {
-    BUYER_ROLE_CODE,
-    BUYER_ROLE_DESCRIPTION,
-    SELLER_ROLE_CODE,
-    SELLER_ROLE_DESCRIPTION,
+    CUSTOMER_ROLE_CODE,
+    CUSTOMER_ROLE_DESCRIPTION,
     SUPER_ADMIN_ROLE_CODE,
     SUPER_ADMIN_ROLE_DESCRIPTION,
 } from '@firelancerco/common/lib/shared-constants';
 import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { assertFound, unique } from '@firelancerco/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
+
 import { RelationPaths } from '../../api';
 import { RequestContextCacheService } from '../../cache';
 import {
@@ -44,8 +43,7 @@ export class RoleService {
 
     async initRoles() {
         await this.ensureSuperAdminRoleExists();
-        await this.ensureBuyerRoleExists();
-        await this.ensureSellerRoleExists();
+        await this.ensureCustomerRoleExists();
         this.ensureRolesHaveValidPermissions();
     }
 
@@ -104,7 +102,7 @@ export class RoleService {
         if (!role) {
             throw new EntityNotFoundException('Role', input.id);
         }
-        if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === SELLER_ROLE_CODE || role.code === BUYER_ROLE_CODE) {
+        if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === CUSTOMER_ROLE_CODE) {
             throw new InternalServerException('error.cannot-modify-role');
         }
         const updatedRole = patchEntity(role, {
@@ -122,7 +120,7 @@ export class RoleService {
         if (!role) {
             throw new EntityNotFoundException('Role', id);
         }
-        if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === SELLER_ROLE_CODE || role.code === BUYER_ROLE_CODE) {
+        if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === CUSTOMER_ROLE_CODE) {
             throw new InternalServerException('error.cannot-delete-role');
         }
         await this.connection.getRepository(ctx, Role).remove(role);
@@ -145,27 +143,13 @@ export class RoleService {
 
     /**
      * @description
-     * Returns the special Buyer, which always exists in Firelancer.
+     * Returns the special Customer Role, which always exists in Firelancer.
      */
-    async getBuyerRole(ctx?: RequestContext): Promise<Role> {
-        return this.getRoleByCode(ctx, BUYER_ROLE_CODE).then(role => {
+    async getCustomerRole(ctx?: RequestContext): Promise<Role> {
+        return this.getRoleByCode(ctx, CUSTOMER_ROLE_CODE).then(role => {
             if (!role) {
                 // TODO
-                throw new InternalServerException('error.buyer-role-not-found' as any);
-            }
-            return role;
-        });
-    }
-
-    /**
-     * @description
-     * Returns the special Buyer, which always exists in Firelancer.
-     */
-    async getSellerRole(ctx?: RequestContext): Promise<Role> {
-        return this.getRoleByCode(ctx, SELLER_ROLE_CODE).then(role => {
-            if (!role) {
-                // TODO
-                throw new InternalServerException('error.seller-role-not-found' as any);
+                throw new InternalServerException('error.customer-role-not-found' as any);
             }
             return role;
         });
@@ -217,29 +201,19 @@ export class RoleService {
         }
     }
 
-    private async ensureBuyerRoleExists() {
+    /**
+     * The Customer Role is a special case which must always exist.
+     */
+    private async ensureCustomerRoleExists() {
         try {
-            await this.getBuyerRole();
+            await this.getCustomerRole();
         } catch {
-            const buyerRole = new Role({
-                code: BUYER_ROLE_CODE,
-                description: BUYER_ROLE_DESCRIPTION,
-                permissions: [Permission.Authenticated, Permission.PublishJobPost],
-            });
-            await this.connection.rawConnection.getRepository(Role).save(buyerRole, { reload: false });
-        }
-    }
-
-    private async ensureSellerRoleExists() {
-        try {
-            await this.getSellerRole();
-        } catch {
-            const sellerRole = new Role({
-                code: SELLER_ROLE_CODE,
-                description: SELLER_ROLE_DESCRIPTION,
+            const customerRole = new Role({
+                code: CUSTOMER_ROLE_CODE,
+                description: CUSTOMER_ROLE_DESCRIPTION,
                 permissions: [Permission.Authenticated],
             });
-            await this.connection.rawConnection.getRepository(Role).save(sellerRole, { reload: false });
+            await this.connection.rawConnection.getRepository(Role).save(customerRole, { reload: false });
         }
     }
 

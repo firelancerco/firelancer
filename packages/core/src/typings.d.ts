@@ -13,7 +13,7 @@ declare module "i18next" {
     interface CustomTypeOptions {
         defaultNS: "en";
         resources: {
-            en: typeof import("./src/i18n/messages/en.json");
+            en: typeof import("./i18n/messages/en.json");
         };
     }
 }

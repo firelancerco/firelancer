@@ -42,6 +42,7 @@ export type CurrentUserRole = {
 export type CurrentUser = {
     id: ID;
     identifier: string;
+    verified: boolean;
     roles: CurrentUserRole[];
     permissions: Permission[];
 };
@@ -126,7 +127,6 @@ export enum Permission {
     UpdateCustomer = 'UpdateCustomer',
     UpdateJobPost = 'UpdateJobPost',
     UpdateFacet = 'UpdateFacet',
-    PublishJobPost = 'PublishJobPost',
 }
 
 export type ID = string | number;
@@ -475,7 +475,7 @@ export enum CurrencyCode {
     ZWL = 'ZWL',
 }
 
-export enum CustomerType {
+export enum CustomerRole {
     SELLER = 'SELLER',
     BUYER = 'BUYER',
 }
@@ -1032,12 +1032,13 @@ export type MutationUpdateCollectionArgs = {
     input: UpdateCollectionInput;
 };
 export type Customer = {
-    deletedAt?: string | undefined;
     firstName: string;
     lastName: string;
     emailAddress: string;
-    phoneNumber?: string | undefined;
+    role: CustomerRole | null;
+    phoneNumber: string | null;
     user?: User | undefined;
+    deletedAt: string | null;
     history: HistoryEntry[];
 };
 export type CustomerList = {
@@ -1075,7 +1076,7 @@ export type CreateCustomerInput = {
     firstName: string;
     lastName: string;
     emailAddress: string;
-    customerType: CustomerType;
+    role: CustomerRole;
     phoneNumber?: string | undefined;
 };
 export type UpdateCustomerInput = {
@@ -1083,8 +1084,8 @@ export type UpdateCustomerInput = {
     firstName?: string | undefined;
     lastName?: string | undefined;
     phoneNumber?: string | undefined;
+    role?: CustomerRole | undefined;
     emailAddress?: string | undefined;
-    customerType?: CustomerType | undefined;
 };
 export type MutationCreateCustomerArgs = {
     input: CreateCustomerInput;

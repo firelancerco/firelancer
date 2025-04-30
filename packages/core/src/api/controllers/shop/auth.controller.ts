@@ -9,6 +9,7 @@ import {
     MutationResetPasswordArgs,
     MutationUpdateCustomerEmailAddressArgs,
     MutationUpdateCustomerPasswordArgs,
+    MutationValidateEmailAddressArgs,
     MutationVerifyCustomerAccountArgs,
     Permission,
 } from '@firelancerco/common/lib/generated-shop-schema';
@@ -253,6 +254,17 @@ export class ShopAuthController extends BaseAuthController {
         this.requireNativeAuthStrategy();
         const result = await this.customerService.updateEmailAddress(ctx, args.token);
         return { success: result };
+    }
+
+    @Transaction()
+    @Post('validate-email')
+    async validateEmailAddress(
+        @Ctx() ctx: RequestContext,
+        @Body(new ZodValidationPipe(coreSchemas.shop.MutationValidateEmailAddressArgs))
+        args: MutationValidateEmailAddressArgs,
+    ) {
+        await this.customerService.validateEmailAddressAvailability(ctx, args.emailAddress);
+        return { success: true };
     }
 
     protected requireNativeAuthStrategy() {

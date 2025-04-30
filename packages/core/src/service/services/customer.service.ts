@@ -1,6 +1,5 @@
 import {
     CreateCustomerInput,
-    CustomerType,
     HistoryEntryType,
     ID,
     UpdateCustomerInput,
@@ -19,6 +18,7 @@ import {
     InternalServerException,
     MissingPasswordException,
     UnauthorizedException,
+    UserInputException,
 } from '../../common/error/errors';
 import { RequestContext } from '../../common/request-context';
 import { ConfigService } from '../../config/config.service';
@@ -104,10 +104,7 @@ export class CustomerService {
         const customer = new Customer(input);
 
         const existingCustomer = await this.connection.getRepository(ctx, Customer).findOne({
-            where: {
-                emailAddress: input.emailAddress,
-                deletedAt: IsNull(),
-            },
+            where: { emailAddress: input.emailAddress },
         });
         const existingUser = await this.userService.getUserByEmailAddress(ctx, input.emailAddress, 'customer');
 
@@ -120,12 +117,7 @@ export class CustomerService {
             throw new EmailAddressConflictException();
         }
 
-        const customerUser = await this.userService.createCustomerUser(
-            ctx,
-            input.customerType,
-            input.emailAddress,
-            password,
-        );
+        const customerUser = await this.userService.createCustomerUser(ctx, input.emailAddress, password);
         customer.user = customerUser;
         if (password && password !== '') {
             const verificationToken = customer.user.getNativeAuthenticationMethod().verificationToken;
@@ -221,10 +213,10 @@ export class CustomerService {
             ctx,
             {
                 emailAddress: input.emailAddress,
-                customerType: input.customerType,
-                firstName: input.firstName || '',
-                lastName: input.lastName || '',
-                phoneNumber: input.phoneNumber || '',
+                firstName: input.firstName,
+                lastName: input.lastName,
+                phoneNumber: input.phoneNumber,
+                role: input.role,
             },
             true,
         );
@@ -241,7 +233,6 @@ export class CustomerService {
         if (!user) {
             const customerUser = await this.userService.createCustomerUser(
                 ctx,
-                input.customerType,
                 input.emailAddress,
                 input.password || undefined,
             );
@@ -458,7 +449,7 @@ export class CustomerService {
      */
     async createOrUpdate(
         ctx: RequestContext,
-        input: Partial<CreateCustomerInput> & { customerType: CustomerType; emailAddress: string },
+        input: Partial<CreateCustomerInput> & { emailAddress: string },
         errorOnExistingUser: boolean = false,
     ): Promise<Customer> {
         input.emailAddress = normalizeEmailAddress(input.emailAddress);
@@ -504,5 +495,19 @@ export class CustomerService {
             throw new EntityNotFoundException('Customer', userId);
         }
         return customer;
+    }
+
+    /**
+     * Validates that an email address is not already registered to a customer.
+     */
+    async validateEmailAddressAvailability(ctx: RequestContext, emailAddress: string): Promise<void> {
+        emailAddress = normalizeEmailAddress(emailAddress);
+        const existingCustomer = await this.connection.getRepository(ctx, Customer).findOne({
+            where: { emailAddress },
+        });
+
+        if (existingCustomer) {
+            throw new EmailAddressConflictException();
+        }
     }
 }

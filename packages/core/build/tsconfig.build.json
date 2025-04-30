@@ -5,5 +5,5 @@
         "outDir": "../dist",
         "rootDirs": ["../src"]
     },
-    "files": ["../src/index.ts", "../typings.d.ts"]
+    "files": ["../src/index.ts"]
 }

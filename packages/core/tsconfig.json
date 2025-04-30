@@ -8,7 +8,6 @@
         "strictPropertyInitialization": false,
         "sourceMap": true,
         "allowJs": true,
-        "outDir": "./dist",
-        "baseUrl": "./src"
+        "outDir": "./dist"
     }
 }

@@ -10,6 +10,7 @@ export const CurrentUserRole = z.object({
 export const CurrentUser = z.object({
     id: ID,
     identifier: z.string(),
+    verified: z.boolean(),
     roles: z.array(CurrentUserRole),
     permissions: z.array(Permission),
 });

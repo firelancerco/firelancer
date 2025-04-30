@@ -136,6 +136,7 @@ export class BaseAuthController {
         return {
             id: user.id,
             identifier: user.identifier,
+            verified: user.verified,
             roles: user.roles.map(role => ({ code: role.code, description: role.description })),
             permissions: getUserPermissions(user),
         };

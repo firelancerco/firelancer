@@ -1,22 +1,22 @@
 import z from 'zod';
 import { ID } from '../common/common-types.schema';
-import { CustomerType } from '../common/customer-type.schema';
+import { CustomerRole } from '../common';
 
 export const CreateCustomerInput = z.object({
-    firstName: z.string(),
-    lastName: z.string(),
+    firstName: z.string().min(2).max(50),
+    lastName: z.string().min(2).max(50),
     emailAddress: z.string().email(),
-    customerType: CustomerType,
+    role: CustomerRole,
     phoneNumber: z.string().optional(),
 });
 
 export const UpdateCustomerInput = z.object({
     id: ID,
-    firstName: z.string().optional(),
-    lastName: z.string().optional(),
+    firstName: z.string().min(2).max(50).optional(),
+    lastName: z.string().min(2).max(50).optional(),
     phoneNumber: z.string().optional(),
+    role: CustomerRole.optional(),
     emailAddress: z.string().email().optional(),
-    customerType: CustomerType.optional(),
 });
 
 export const MutationCreateCustomerArgs = z.object({

@@ -73,19 +73,15 @@ export class AuthService {
         user: User,
         authenticationStrategyName: string,
     ): Promise<AuthenticatedSession> {
-        const externalAuthenticationMethods = (user.authenticationMethods ?? []).filter(
-            am => am instanceof ExternalAuthenticationMethod,
-        );
-        if (
-            !externalAuthenticationMethods.length &&
-            this.configService.authOptions.requireVerification &&
-            !user.verified
-        ) {
-            throw new NotVerifiedException();
-        }
+        // const extAuths = (user.authenticationMethods ?? []).filter(am => am instanceof ExternalAuthenticationMethod);
+        // if (!extAuths.length && this.configService.authOptions.requireVerification && !user.verified) {
+        //     throw new NotVerifiedException();
+        // }
+
         if (ctx.session) {
             await this.sessionService.deleteSessionsByUser(ctx, user);
         }
+
         user.lastLogin = new Date();
         await this.connection.getRepository(ctx, User).save(user, { reload: false });
         const session = await this.sessionService.createNewAuthenticatedSession(ctx, user, authenticationStrategyName);
