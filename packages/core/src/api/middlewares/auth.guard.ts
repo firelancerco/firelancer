@@ -3,17 +3,18 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
 
-import { ForbiddenException } from '../../common/error/errors';
+import { ForbiddenException, NotVerifiedException } from '../../common/error/errors';
 import { extractSessionToken } from '../../common/extract-session-token';
 import { parseContext } from '../../common/parse-context';
 import { internal_setRequestContext } from '../../common/request-context';
 import { setSessionToken } from '../../common/set-session-token';
 import { ConfigService } from '../../config/config.service';
 import { AuthOptions } from '../../config/firelancer-config';
-import { CachedSession } from '../../config/strategies/session-cache/session-cache-strategy';
+import { CachedSession, CachedSessionUser } from '../../config/strategies/session-cache/session-cache-strategy';
 import { RequestContextService } from '../../service/helpers/request-context/request-context.service';
 import { SessionService } from '../../service/services/session.service';
 import { PERMISSIONS_METADATA_KEY } from '../decorators/allow.decorator';
+import { Verification, VERIFICATION_METADATA_KEY } from '../decorators/require-verification.decorator';
 
 /**
  * @description
@@ -35,7 +36,12 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const { req, res } = parseContext(context);
-        const requiredPermissions = this.reflector.get(PERMISSIONS_METADATA_KEY, context.getHandler());
+        const requiredPermissions = this.reflector.get<Permission[]>(PERMISSIONS_METADATA_KEY, context.getHandler());
+        const requiredVerifications = this.reflector.get<Verification[]>(
+            VERIFICATION_METADATA_KEY,
+            context.getHandler(),
+        );
+
         const isAuthDisabled = this.configService.authOptions.disableAuth;
         const isPublicEndpoint = !!requiredPermissions && requiredPermissions.includes(Permission.Public);
         const isOwnerEndpoint = !!requiredPermissions && requiredPermissions.includes(Permission.Owner);
@@ -56,6 +62,14 @@ export class AuthGuard implements CanActivate {
 
         if (!hasRequiredPermissions && !isAuthorizedAsOwner) {
             throw new ForbiddenException();
+        }
+
+        // Check if user has completed required verifications
+        if (requiredVerifications?.length && session?.user) {
+            const missingVerifications = this.getMissingVerifications(requiredVerifications, session.user);
+            if (missingVerifications.length > 0) {
+                throw new NotVerifiedException();
+            }
         }
 
         return true;
@@ -97,5 +111,16 @@ export class AuthGuard implements CanActivate {
             });
         }
         return serializedSession;
+    }
+
+    private getMissingVerifications(requiredVerifications: Verification[], user: CachedSessionUser): Verification[] {
+        return requiredVerifications.filter(verification => {
+            switch (verification) {
+                case Verification.EMAIL:
+                    return !user.verified;
+                default:
+                    return true;
+            }
+        });
     }
 }

@@ -20,6 +20,7 @@ import { JobPostService } from '../../../service/services/job-post.service';
 import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';
 import { Transaction } from '../../decorators/transaction.decorator';
+import { RequireVerification, Verification } from '../../decorators/require-verification.decorator';
 
 @Controller('hiring/job-posts')
 export class ShopHiringJobPostController {
@@ -30,6 +31,7 @@ export class ShopHiringJobPostController {
 
     @Get()
     @Allow(Permission.Authenticated)
+    @RequireVerification(Verification.EMAIL)
     async getJobPostsList(
         @Ctx() ctx: RequestContext,
         @Query(new ZodValidationPipe(coreSchemas.shop.JobPostListOptions))
@@ -44,6 +46,7 @@ export class ShopHiringJobPostController {
 
     @Get(':id')
     @Allow(Permission.Authenticated)
+    @RequireVerification(Verification.EMAIL)
     async getJobPost(@Ctx() ctx: RequestContext, @Param('id', new ZodValidationPipe(schema.ID)) id: ID) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, id);
@@ -59,6 +62,7 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Post('create')
     @Allow(Permission.Authenticated)
+    @RequireVerification(Verification.EMAIL)
     async createJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationCreateJobPostArgs))
@@ -71,6 +75,7 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Patch('edit-draft')
     @Allow(Permission.Authenticated)
+    @RequireVerification(Verification.EMAIL)
     async editDraftJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationEditDraftJobPostArgs))
@@ -90,6 +95,7 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Delete('delete-draft')
     @Allow(Permission.Authenticated)
+    @RequireVerification(Verification.EMAIL)
     async deleteDraftJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationDeleteDraftJobPostArgs))
@@ -110,6 +116,7 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Post('publish')
     @Allow(Permission.Authenticated)
+    @RequireVerification(Verification.EMAIL)
     async requestPublishDraft(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationPublishJobPostArgs))
@@ -129,6 +136,7 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Patch('edit-published')
     @Allow(Permission.Authenticated)
+    @RequireVerification(Verification.EMAIL)
     async editPublishedJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationEditPublishedJobPostArgs))
@@ -148,6 +156,7 @@ export class ShopHiringJobPostController {
     @Transaction()
     @Post('close')
     @Allow(Permission.Authenticated)
+    @RequireVerification(Verification.EMAIL)
     async closePublishedJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationCloseJobPostArgs))

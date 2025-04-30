@@ -1,3 +1,4 @@
+import { CurrencyCode, LanguageCode } from '@firelancerco/common/lib/generated-schema';
 import {
     DEFAULT_AUTH_TOKEN_HEADER_KEY,
     SUPER_ADMIN_USER_IDENTIFIER,
@@ -22,7 +23,6 @@ import { defaultJobPostProcess } from './strategies/job-post/default/default-job
 import { DefaultLogger } from './strategies/logger/default/default-logger';
 import { InMemorySessionCacheStrategy } from './strategies/session-cache/default/in-memory-session-cache-strategy';
 import { InMemoryCacheStrategy } from './strategies/system/default/in-memory-cache-strategy';
-import { CurrencyCode, LanguageCode } from '@firelancerco/common/lib/generated-schema';
 
 /**
  * @description
