@@ -3,14 +3,14 @@ import { Project, SyntaxKind, TypeNode, UnionTypeNode, SourceFile } from 'ts-mor
 
 const { ZodToTypescript } = require('@duplojs/zod-to-typescript');
 
-// Generate and process schemas, return formatted TypeScript output
 export function zodSchemasToTs(schemas: Record<string, z.ZodTypeAny>): string {
     const ztt = new ZodToTypescript();
-
     for (const [schemaName, schema] of Object.entries(schemas)) {
         ztt.append(schema, schemaName);
     }
-    return processTypeAliases(ztt.toString());
+    const processedText = processTypeAliases(ztt.toString());
+    const normalizedText = normalizeNewlines(processedText);
+    return normalizedText;
 }
 
 // Use ts-morph to convert string union types to enums
@@ -20,7 +20,6 @@ function processTypeAliases(text: string): string {
     const outputFile = project.createSourceFile('real-output.ts', '', { overwrite: true });
 
     const typeAliases = virtualSourceFile.getTypeAliases();
-
     for (const typeAlias of typeAliases) {
         const name = typeAlias.getName();
         const typeNode = typeAlias.getTypeNode();
@@ -31,7 +30,6 @@ function processTypeAliases(text: string): string {
             copyTypeAliasToOutput(typeNode, name, outputFile);
         }
     }
-
     return outputFile.getFullText();
 }
 
@@ -75,4 +73,11 @@ function copyTypeAliasToOutput(typeNode: TypeNode, name: string, outputFile: Sou
         type: typeNode.getText(),
         isExported: true,
     });
+}
+
+function normalizeNewlines(text: string): string {
+    let normalized = text.replace(/\n{3,}/g, '\n\n');
+    normalized = normalized.replace(/\n\n(export|import|type|interface|enum|class|const|let|var|function)/g, '\n$1');
+    normalized = normalized.replace(/\n+$/, '\n');
+    return normalized;
 }

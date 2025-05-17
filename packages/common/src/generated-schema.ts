@@ -2,13 +2,11 @@ export type Coordinate = {
     x: number;
     y: number;
 };
-
 export enum AssetType {
     BINARY = 'BINARY',
     IMAGE = 'IMAGE',
     VIDEO = 'VIDEO',
 }
-
 export type Asset = {
     id: ID;
     createdAt: string;
@@ -46,20 +44,17 @@ export type CurrentUser = {
     roles: CurrentUserRole[];
     permissions: Permission[];
 };
-
 export enum BalanceEntryType {
     FIXED_PRICE = 'FIXED_PRICE',
     BONUS = 'BONUS',
     PAYMENT = 'PAYMENT',
     WITHDRAWAL = 'WITHDRAWAL',
 }
-
 export enum BalanceEntryState {
     PENDING = 'PENDING',
     SETTLED = 'SETTLED',
     REJECTED = 'REJECTED',
 }
-
 export type BalanceEntry = {
     type: BalanceEntryType;
     description?: string | undefined;
@@ -91,17 +86,14 @@ export type CollectionTranslation = {
     slug: string;
 };
 export type Money = number;
-
 export enum SortOrder {
     ASC = 'ASC',
     DESC = 'DESC',
 }
-
 export enum LogicalOperator {
     AND = 'AND',
     OR = 'OR',
 }
-
 export enum Permission {
     Authenticated = 'Authenticated',
     SuperAdmin = 'SuperAdmin',
@@ -128,7 +120,6 @@ export enum Permission {
     UpdateFacet = 'UpdateFacet',
     DeleteFacet = 'DeleteFacet',
 }
-
 export type ID = string | number;
 export type PaginatedList = {
     items: any[];
@@ -217,12 +208,10 @@ export type FacetValueFilterInput = {
     and?: ID | undefined;
     or?: ID[] | undefined;
 };
-
 export enum SearchIndex {
     JobPost = 'JobPost',
     Profile = 'Profile',
 }
-
 export type BaseSearchResultSortParameter = {};
 export type JobPostSearchResultSortParameter = {
     title?: SortOrder | undefined;
@@ -314,7 +303,6 @@ export type SearchInput = {
               sort?: ProfileSearchResultSortParameter | undefined;
           };
 };
-
 export enum CurrencyCode {
     AED = 'AED',
     AFN = 'AFN',
@@ -474,12 +462,10 @@ export enum CurrencyCode {
     ZMW = 'ZMW',
     ZWL = 'ZWL',
 }
-
 export enum CustomerRole {
     SELLER = 'SELLER',
     BUYER = 'BUYER',
 }
-
 export type FacetTranslation = {
     id: ID;
     createdAt: string;
@@ -573,7 +559,6 @@ export type FacetValueListOptions = {
     filter?: FacetValueFilterParameter | undefined;
     filterOperator?: LogicalOperator | undefined;
 };
-
 export enum HistoryEntryType {
     CUSTOMER_EMAIL_UPDATE_REQUESTED = 'CUSTOMER_EMAIL_UPDATE_REQUESTED',
     CUSTOMER_EMAIL_UPDATE_VERIFIED = 'CUSTOMER_EMAIL_UPDATE_VERIFIED',
@@ -584,7 +569,6 @@ export enum HistoryEntryType {
     CUSTOMER_REGISTERED = 'CUSTOMER_REGISTERED',
     CUSTOMER_VERIFIED = 'CUSTOMER_VERIFIED',
 }
-
 export enum JobPostState {
     DRAFT = 'DRAFT',
     DRAFT_DELETED = 'DRAFT_DELETED',
@@ -593,17 +577,14 @@ export enum JobPostState {
     OPEN = 'OPEN',
     CLOSED = 'CLOSED',
 }
-
 export enum JobPostVisibility {
     PUBLIC = 'PUBLIC',
     INVITE_ONLY = 'INVITE_ONLY',
 }
-
 export type JobPostProcessState = {
     name: string;
     to: string[];
 };
-
 export enum LanguageCode {
     af = 'af',
     ak = 'ak',
@@ -763,7 +744,6 @@ export enum LanguageCode {
     zh_Hant = 'zh_Hant',
     zu = 'zu',
 }
-
 export type Role = {
     id: ID;
     createdAt: string;
@@ -1227,7 +1207,6 @@ export type JobPostListOptions = {
     filter?: JobPostFilterParameter | undefined;
     filterOperator?: LogicalOperator | undefined;
 };
-
 export enum JobState {
     CANCELLED = 'CANCELLED',
     COMPLETED = 'COMPLETED',
@@ -1236,7 +1215,6 @@ export enum JobState {
     RETRYING = 'RETRYING',
     RUNNING = 'RUNNING',
 }
-
 export type Job = {
     id: ID;
     createdAt: string;
