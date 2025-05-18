@@ -8,13 +8,12 @@ export const JobPost: z.ZodType<any> = z.object({
     id: ID,
     customerId: ID,
     customer: Customer.optional(),
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-    deletedAt: z.string().datetime().nullable().optional(),
-    publishedAt: z.string().datetime().nullable().optional(),
-    closedAt: z.string().datetime().nullable().optional(),
-    rejectedAt: z.string().datetime().nullable().optional(),
-    editedAt: z.string().datetime().nullable().optional(),
+    createdAt: z.coerce.date(),
+    deletedAt: z.coerce.date().nullable().optional(),
+    publishedAt: z.coerce.date().nullable().optional(),
+    closedAt: z.coerce.date().nullable().optional(),
+    rejectedAt: z.coerce.date().nullable().optional(),
+    editedAt: z.coerce.date().nullable().optional(),
     state: JobPostState,
     title: z.string().nullable().optional(),
     description: z.string().nullable().optional(),
@@ -44,7 +43,6 @@ export const JobPostList = z.object({
 export const JobPostSortParameter = z.object({
     id: SortOrder.optional(),
     createdAt: SortOrder.optional(),
-    updatedAt: SortOrder.optional(),
     closedAt: SortOrder.optional(),
     publishedAt: SortOrder.optional(),
 });
@@ -61,7 +59,6 @@ export const JobPostFilterParameter: z.ZodType<any> = z.object({
     state: StringOperators.optional(),
     publishedAt: DateOperators.optional(),
     createdAt: DateOperators.optional(),
-    updatedAt: DateOperators.optional(),
     closedAt: DateOperators.optional(),
 });
 

@@ -9,9 +9,9 @@ export const JobState = z.enum(['CANCELLED', 'COMPLETED', 'FAILED', 'PENDING', '
 
 export const Job = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    startedAt: z.string().datetime().optional(),
-    settledAt: z.string().datetime().optional(),
+    createdAt: z.coerce.date(),
+    startedAt: z.coerce.date().optional(),
+    settledAt: z.coerce.date().optional(),
     queueName: z.string(),
     state: JobState,
     progress: z.number(),

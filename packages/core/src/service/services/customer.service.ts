@@ -179,9 +179,7 @@ export class CustomerService {
             customerId: customer.id,
             ctx,
             type: HistoryEntryType.CUSTOMER_DETAIL_UPDATED,
-            data: {
-                input,
-            },
+            data: { input },
         });
         return assertFound(this.findOne(ctx, customer.id));
     }
@@ -310,7 +308,7 @@ export class CustomerService {
             },
         });
 
-        const verifiedUser = assertFound(this.findOneByUserId(ctx, user.id));
+        const verifiedUser = await assertFound(this.findOneByUserId(ctx, user.id));
         await this.eventBus.publish(new AccountVerifiedEvent(ctx, customer));
         return verifiedUser;
     }
@@ -485,7 +483,7 @@ export class CustomerService {
         await this.eventBus.publish(new CustomerEvent(ctx, customer, 'deleted', customerId));
     }
 
-    async getUserCustomerFromRequest(ctx: RequestContext) {
+    async getUserCustomerFromRequest(ctx: RequestContext): Promise<Customer> {
         const userId = ctx.session?.user?.id;
         if (!userId) {
             throw new UnauthorizedException();

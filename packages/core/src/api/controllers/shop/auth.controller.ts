@@ -16,7 +16,7 @@ import {
 import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
-import { ZodValidationPipe } from 'nestjs-zod';
+import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
@@ -51,6 +51,7 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('login')
     @Allow(Permission.Public)
+    @ZodSerializerDto(coreSchemas.common.CurrentUser)
     async login(
         @Ctx() ctx: RequestContext,
         @Request() req: ExpressRequest,
@@ -65,6 +66,7 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('authenticate')
     @Allow(Permission.Public)
+    @ZodSerializerDto(coreSchemas.common.CurrentUser)
     async authenticate(
         @Ctx() ctx: RequestContext,
         @Request() req: ExpressRequest,
@@ -73,12 +75,13 @@ export class ShopAuthController extends BaseAuthController {
         args: MutationAuthenticateArgs,
     ) {
         const result = await this.authenticateAndCreateSession(ctx, args, req, res);
-        return res.send({ login: result });
+        return res.send(result);
     }
 
     @Transaction()
     @Post('logout')
     @Allow(Permission.Public)
+    @ZodSerializerDto(coreSchemas.common.Success)
     async logout(@Ctx() ctx: RequestContext, @Request() req: ExpressRequest, @Response() res: ExpressResponse) {
         return super.logout(ctx, req, res);
     }
@@ -92,6 +95,7 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('register')
     @Allow(Permission.Public)
+    @ZodSerializerDto(coreSchemas.common.Success)
     async registerCustomerAccount(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationRegisterCustomerAccountArgs))
@@ -106,13 +110,14 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('verify')
     @Allow(Permission.Public)
+    @ZodSerializerDto(coreSchemas.common.CurrentUser)
     async verifyCustomerAccount(
         @Ctx() ctx: RequestContext,
         @Request() req: ExpressRequest,
         @Response() res: ExpressResponse,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationVerifyCustomerAccountArgs))
         args: MutationVerifyCustomerAccountArgs,
-    ): Promise<void> {
+    ) {
         this.requireNativeAuthStrategy();
         const { token, password } = args;
         const customer = await this.customerService.verifyCustomerEmailAddress(ctx, token, password || undefined);
@@ -138,11 +143,12 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('refresh-verification')
     @Allow(Permission.Public)
+    @ZodSerializerDto(coreSchemas.common.Success)
     async refreshCustomerVerification(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationRefreshCustomerVerificationArgs))
         args: MutationRefreshCustomerVerificationArgs,
-    ): Promise<{ success: boolean }> {
+    ) {
         this.requireNativeAuthStrategy();
         await this.customerService.refreshVerificationToken(ctx, args.emailAddress);
         return { success: true };
@@ -151,11 +157,12 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('request-reset-password')
     @Allow(Permission.Public)
+    @ZodSerializerDto(coreSchemas.common.Success)
     async requestPasswordReset(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationRequestPasswordResetArgs))
         args: MutationRequestPasswordResetArgs,
-    ): Promise<{ success: boolean }> {
+    ) {
         this.requireNativeAuthStrategy();
         await this.customerService.requestPasswordReset(ctx, args.emailAddress);
         return { success: true };
@@ -165,13 +172,14 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('reset-password')
     @Allow(Permission.Public)
+    @ZodSerializerDto(coreSchemas.common.CurrentUser)
     async resetPassword(
         @Ctx() ctx: RequestContext,
         @Request() req: ExpressRequest,
         @Response() res: ExpressResponse,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationRequestPasswordResetArgs))
         args: MutationResetPasswordArgs,
-    ): Promise<void> {
+    ) {
         this.requireNativeAuthStrategy();
         const { token, password } = args;
         const user = await this.customerService.resetPassword(ctx, token, password);
@@ -195,6 +203,7 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('update-password')
     @Allow(Permission.Owner)
+    @ZodSerializerDto(coreSchemas.common.Success)
     async updateCustomerPassword(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationUpdateCustomerPasswordArgs))
@@ -222,6 +231,7 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('request-update-email')
     @Allow(Permission.Owner)
+    @ZodSerializerDto(coreSchemas.common.Success)
     async requestUpdateCustomerEmailAddress(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationRequestUpdateCustomerEmailAddressArgs))
@@ -237,15 +247,14 @@ export class ShopAuthController extends BaseAuthController {
             ctx.activeUserId,
             args.newEmailAddress,
         );
-        return {
-            success: result,
-        };
+        return { success: result };
     }
 
     @Throttle({ default: { ttl: 60000, limit: 20 } })
     @Transaction()
     @Post('update-email')
     @Allow(Permission.Owner)
+    @ZodSerializerDto(coreSchemas.common.Success)
     async updateCustomerEmailAddress(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationUpdateCustomerEmailAddressArgs))
@@ -258,6 +267,7 @@ export class ShopAuthController extends BaseAuthController {
 
     @Transaction()
     @Post('validate-email')
+    @ZodSerializerDto(coreSchemas.common.Success)
     async validateEmailAddress(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationValidateEmailAddressArgs))

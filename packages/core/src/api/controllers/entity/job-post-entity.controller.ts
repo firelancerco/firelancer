@@ -1,7 +1,7 @@
 import { JobPostListOptions, JobPostState, JobPostVisibility } from '@firelancerco/common/lib/generated-shop-schema';
 import { Controller, Get, Query } from '@nestjs/common';
-
 import { ZodValidationPipe } from 'nestjs-zod';
+
 import { coreSchemas } from '../../../api/schema/core-schemas';
 import { ApiType } from '../../../common';
 import { RequestContext } from '../../../common/request-context';

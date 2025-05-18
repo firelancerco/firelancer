@@ -10,8 +10,8 @@ export const AssetType = z.enum(['BINARY', 'IMAGE', 'VIDEO']);
 
 export const Asset = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     fileSize: z.number().int().positive(),
     focalPoint: Coordinate.optional(),
     height: z.number().int().positive(),
@@ -30,8 +30,8 @@ export const AssetList = z.object({
 
 export const OrderableAsset = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     assetId: ID,
     asset: Asset.optional(),
     position: z.number().int(),

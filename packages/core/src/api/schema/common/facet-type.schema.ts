@@ -6,16 +6,16 @@ import { FacetValue } from './facet-value-type.schema';
 
 export const FacetTranslation = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     name: z.string(),
     languageCode: LanguageCode,
 });
 
 export const Facet = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     code: z.string(),
     languageCode: LanguageCode.optional(),
     name: z.string().optional(),

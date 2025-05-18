@@ -5,16 +5,15 @@ import {
     JobPostState,
     JobPostVisibility,
 } from '@firelancerco/common/lib/generated-schema';
-import { PaginatedList } from '@firelancerco/common/lib/shared-types';
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ZodValidationPipe } from 'nestjs-zod';
+import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 
 import z from 'zod';
 import { Api } from '../../../api/decorators/api.decorator';
 import { FieldsDecoratorConfig, RelationPaths, Relations } from '../../../api/decorators/relations.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { coreSchemas } from '../../../api/schema/core-schemas';
-import { ApiType, RequestContext, Translated } from '../../../common';
+import { ApiType, RequestContext } from '../../../common';
 import { Collection, JobPost } from '../../../entity';
 import { CollectionService, JobPostService } from '../../../service';
 import * as schema from '../../schema/common';
@@ -38,11 +37,13 @@ export class CollectionEntityController {
         @Api() apiType: ApiType,
         @Query(new ZodValidationPipe(coreSchemas.shop.CollectionListOptions)) options: CollectionListOptions,
         @Relations(relationsOptions) relations?: RelationPaths<Collection>,
-    ): Promise<PaginatedList<Translated<Collection>>> {
-        options = { ...options, filter: { ...(options && options.filter), isPrivate: { eq: false } } };
+    ) {
+        const schema = apiType === 'admin' ? coreSchemas.admin.CollectionList : coreSchemas.shop.CollectionList;
+        const privacyFilter = apiType === 'admin' ? {} : { isPrivate: { eq: false } };
+
+        options = { ...options, filter: { ...(options && options.filter), ...privacyFilter } };
         const result = await this.collectionService.findAll(ctx, options || undefined, relations);
-        result.items.forEach(collection => this.resolveCollection(ctx, collection, apiType));
-        return result;
+        return schema.parse(result);
     }
 
     @Get(':id')
@@ -51,13 +52,14 @@ export class CollectionEntityController {
         @Api() apiType: ApiType,
         @Param('id', new ZodValidationPipe(schema.ID)) id: ID,
         @Relations(relationsOptions) relations?: RelationPaths<Collection>,
-    ): Promise<Translated<Collection> | undefined> {
+    ) {
+        const schema = apiType === 'admin' ? coreSchemas.admin.Collection : coreSchemas.shop.Collection;
+
         const collection = await this.collectionService.findOne(ctx, id, relations);
-        if (!collection || collection.isPrivate) {
+        if (!collection || (apiType !== 'admin' && collection.isPrivate)) {
             return undefined;
         }
-        this.resolveCollection(ctx, collection, apiType);
-        return collection;
+        return schema.parse(collection);
     }
 
     @Get('slug/:slug')
@@ -66,13 +68,14 @@ export class CollectionEntityController {
         @Api() apiType: ApiType,
         @Param('slug', new ZodValidationPipe(z.string())) slug: string,
         @Relations(relationsOptions) relations?: RelationPaths<Collection>,
-    ): Promise<Translated<Collection> | undefined> {
+    ) {
+        const schema = apiType === 'admin' ? coreSchemas.admin.Collection : coreSchemas.shop.Collection;
+
         const collection = await this.collectionService.findOneBySlug(ctx, slug, relations);
-        if (!collection || collection.isPrivate) {
+        if (!collection || (apiType !== 'admin' && collection.isPrivate)) {
             return undefined;
         }
-        this.resolveCollection(ctx, collection, apiType);
-        return collection;
+        return schema.parse(collection);
     }
 
     @Get(':id/job-posts')
@@ -82,7 +85,9 @@ export class CollectionEntityController {
         @Param('id', new ZodValidationPipe(schema.ID)) id: ID,
         @Query(new ZodValidationPipe(coreSchemas.shop.JobPostListOptions)) options: JobPostListOptions,
         @Relations({ entity: JobPost, omit: ['assets'] }) relations: RelationPaths<JobPost>,
-    ): Promise<PaginatedList<JobPost>> {
+    ) {
+        const schema = apiType === 'admin' ? coreSchemas.admin.JobPostList : coreSchemas.shop.JobPostList;
+
         if (apiType === 'shop') {
             options = {
                 ...options,
@@ -93,18 +98,25 @@ export class CollectionEntityController {
                 },
             };
         }
-        return this.jobPostService.getJobPostsByCollectionId(ctx, id, options, relations);
+        const result = await this.jobPostService.getJobPostsByCollectionId(ctx, id, options, relations);
+        return schema.parse(result);
     }
 
-    private async resolveCollection(ctx: RequestContext, collection: Collection, apiType: ApiType) {
-        if (apiType === 'shop') {
-            collection.filters = undefined as any;
-            collection.position = undefined as any;
-            collection.inheritFilters = undefined as any;
-            collection.isPrivate = undefined as any;
-            collection.isRoot = undefined as any;
+    @Get(':id/breadcrumbs')
+    @ZodSerializerDto(coreSchemas.common.CollectionBreadcrumb)
+    async getCollectionBreadcrumbs(
+        @Ctx() ctx: RequestContext,
+        @Api() apiType: ApiType,
+        @Param('id', new ZodValidationPipe(schema.ID)) id: ID,
+        @Relations(relationsOptions) relations?: RelationPaths<Collection>,
+    ) {
+        const collection = await this.collectionService.findOne(ctx, id, relations);
+        if (!collection || (apiType !== 'admin' && collection.isPrivate)) {
+            return undefined;
         }
+
         const breadcrumbs = await this.collectionService.getBreadcrumbs(ctx, collection);
-        return { ...collection, breadcrumbs };
+
+        return breadcrumbs;
     }
 }

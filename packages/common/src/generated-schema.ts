@@ -9,8 +9,8 @@ export enum AssetType {
 }
 export type Asset = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     fileSize: number;
     focalPoint?: Coordinate | undefined;
     height: number;
@@ -27,8 +27,8 @@ export type AssetList = {
 };
 export type OrderableAsset = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     assetId: ID;
     asset?: Asset | undefined;
     position: number;
@@ -64,9 +64,9 @@ export type BalanceEntry = {
     creduit: Money;
     debit: Money;
     reviewDays: number;
-    settledAt?: string | undefined;
+    settledAt?: Date | undefined;
     prevBalance?: Money | undefined;
-    prevSettledAt?: string | undefined;
+    prevSettledAt?: Date | undefined;
     parentId?: ID | undefined;
     parent?: BalanceEntry | undefined;
     children: BalanceEntry[];
@@ -79,8 +79,8 @@ export type CollectionBreadcrumb = {
 };
 export type CollectionTranslation = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     languageCode: LanguageCode;
     name: string;
     slug: string;
@@ -194,15 +194,18 @@ export type NumberOperators = {
     isNull?: boolean | undefined;
 };
 export type DateRange = {
-    end: string;
-    start: string;
+    end: Date;
+    start: Date;
 };
 export type DateOperators = {
-    after?: string | undefined;
-    before?: string | undefined;
+    after?: Date | undefined;
+    before?: Date | undefined;
     between?: DateRange | undefined;
-    eq?: string | undefined;
+    eq?: Date | undefined;
     isNull?: boolean | undefined;
+};
+export type Success = {
+    success: boolean;
 };
 export type FacetValueFilterInput = {
     and?: ID | undefined;
@@ -468,15 +471,15 @@ export enum CustomerRole {
 }
 export type FacetTranslation = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     name: string;
     languageCode: LanguageCode;
 };
 export type Facet = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     code: string;
     languageCode?: LanguageCode | undefined;
     name?: string | undefined;
@@ -513,15 +516,15 @@ export type FacetListOptions = {
 };
 export type FacetValueTranslation = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     languageCode: LanguageCode;
     name: string;
 };
 export type FacetValue = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     code: string;
     facetId: ID;
     languageCode?: LanguageCode | undefined;
@@ -746,9 +749,8 @@ export enum LanguageCode {
 }
 export type Role = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
-    strategy: string;
+    createdAt: Date;
+    updatedAt: Date;
     description: string;
     permissions: Permission[];
 };
@@ -781,18 +783,17 @@ export type RoleListOptions = {
 };
 export type AuthenticationMethod = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     strategy?: string | undefined;
     user: any;
 };
 export type User = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
-    authenticationMethods: AuthenticationMethod[];
+    createdAt: Date;
+    authenticationMethods?: AuthenticationMethod[] | undefined;
     identifier: string;
-    lastLogin?: string | undefined;
+    lastLogin?: Date | undefined;
     verified: boolean;
     roles: Role[];
 };
@@ -847,8 +848,8 @@ export type MutationDeleteAdministratorsArgs = {
 };
 export type Administrator = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     firstName: string;
     lastName: string;
     emailAddress: string;
@@ -903,8 +904,8 @@ export type MutationLoginArgs = {
 };
 export type Collection = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     languageCode: LanguageCode;
     name: string;
     slug: string;
@@ -920,8 +921,8 @@ export type Collection = {
 };
 export type CollectionAsset = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     assetId: ID;
     asset?: Asset | undefined;
     position: number;
@@ -1012,13 +1013,14 @@ export type MutationUpdateCollectionArgs = {
     input: UpdateCollectionInput;
 };
 export type Customer = {
+    id: ID;
     firstName: string;
     lastName: string;
     emailAddress: string;
     role: CustomerRole | null;
     phoneNumber: string | null;
     user?: User | undefined;
-    deletedAt: string | null;
+    deletedAt: Date | null;
     history: HistoryEntry[];
 };
 export type CustomerList = {
@@ -1121,8 +1123,8 @@ export type MutationUpdateFacetValuesArgs = {
 };
 export type HistoryEntry = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     type: HistoryEntryType;
     data: any;
     isPublic: boolean;
@@ -1142,13 +1144,13 @@ export type JobPost = {
     id: ID;
     customerId: ID;
     customer?: Customer | undefined;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt?: (string | null) | undefined;
-    publishedAt?: (string | null) | undefined;
-    closedAt?: (string | null) | undefined;
-    rejectedAt?: (string | null) | undefined;
-    editedAt?: (string | null) | undefined;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt?: (Date | null) | undefined;
+    publishedAt?: (Date | null) | undefined;
+    closedAt?: (Date | null) | undefined;
+    rejectedAt?: (Date | null) | undefined;
+    editedAt?: (Date | null) | undefined;
     state: JobPostState;
     title?: (string | null) | undefined;
     description?: (string | null) | undefined;
@@ -1166,8 +1168,8 @@ export type JobPost = {
 };
 export type JobPostAsset = {
     id: ID;
-    createdAt: string;
-    updatedAt: string;
+    createdAt: Date;
+    updatedAt: Date;
     assetId: ID;
     asset?: Asset | undefined;
     position: number;
@@ -1217,9 +1219,9 @@ export enum JobState {
 }
 export type Job = {
     id: ID;
-    createdAt: string;
-    startedAt?: string | undefined;
-    settledAt?: string | undefined;
+    createdAt: Date;
+    startedAt?: Date | undefined;
+    settledAt?: Date | undefined;
     queueName: string;
     state: JobState;
     progress: number;

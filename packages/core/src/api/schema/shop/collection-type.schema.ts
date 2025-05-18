@@ -13,8 +13,8 @@ import { CollectionBreadcrumb, CollectionTranslation, LanguageCode, OrderableAss
 
 export const Collection: z.ZodType<any> = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     languageCode: LanguageCode,
     name: z.string().min(3).max(255),
     slug: z.string().min(3).max(255),
@@ -59,7 +59,6 @@ export const CollectionFilterParameter: z.ZodType<any> = z.object({
     description: StringOperators.optional(),
     parentId: IdOperators.optional(),
     topLevelOnly: BooleanOperators.optional(),
-    isRoot: BooleanOperators.optional(),
 });
 
 export const CollectionListOptions = z.object({

@@ -95,17 +95,22 @@ export const NumberOperators = z.object({
 });
 
 export const DateRange = z.object({
-    end: z.string().datetime(),
-    start: z.string().datetime(),
+    end: z.coerce.date(),
+    start: z.coerce.date(),
 });
 
 // Operators for filtering on a DateTime field
 export const DateOperators = z.object({
-    after: z.string().datetime().optional(),
-    before: z.string().datetime().optional(),
+    after: z.coerce.date().optional(),
+    before: z.coerce.date().optional(),
     between: DateRange.optional(),
-    eq: z.string().datetime().optional(),
+    eq: z.coerce.date().optional(),
     isNull: z.boolean().optional(),
+});
+
+// Indicates that an operation succeeded, where we do not want to return any more specific information.
+export const Success = z.object({
+    success: z.boolean(),
 });
 
 /**

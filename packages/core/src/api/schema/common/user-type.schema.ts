@@ -4,8 +4,8 @@ import { Role } from './role-type.schema';
 
 export const AuthenticationMethod = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     strategy: z.string().optional(),
     // TODO
     user: z.any(),
@@ -13,11 +13,10 @@ export const AuthenticationMethod = z.object({
 
 export const User = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-    authenticationMethods: z.array(AuthenticationMethod),
+    createdAt: z.coerce.date(),
+    authenticationMethods: z.array(AuthenticationMethod).optional(),
     identifier: z.string(),
-    lastLogin: z.string().datetime().optional(),
+    lastLogin: z.coerce.date().optional(),
     verified: z.boolean(),
     roles: z.array(Role),
 });

@@ -3,8 +3,8 @@ import { HistoryEntryType, ID } from '../common';
 
 export const HistoryEntry = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     type: HistoryEntryType,
     data: z.any(),
 });

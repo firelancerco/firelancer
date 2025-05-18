@@ -10,17 +10,17 @@ import {
     Permission,
 } from '@firelancerco/common/lib/generated-shop-schema';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ZodValidationPipe } from 'nestjs-zod';
+import { ZodSerializerDto, ZodValidationPipe } from 'nestjs-zod';
 
-import * as schema from '../../schema/common';
-import { coreSchemas } from '../../schema/core-schemas';
 import { EntityNotFoundException, ForbiddenException, RequestContext } from '../../../common';
 import { CustomerService } from '../../../service';
 import { JobPostService } from '../../../service/services/job-post.service';
 import { Allow } from '../../decorators/allow.decorator';
 import { Ctx } from '../../decorators/request-context.decorator';
-import { Transaction } from '../../decorators/transaction.decorator';
 import { RequireVerification, Verification } from '../../decorators/require-verification.decorator';
+import { Transaction } from '../../decorators/transaction.decorator';
+import * as schema from '../../schema/common';
+import { coreSchemas } from '../../schema/core-schemas';
 
 @Controller('hiring/job-posts')
 export class ShopHiringJobPostController {
@@ -32,6 +32,7 @@ export class ShopHiringJobPostController {
     @Get()
     @Allow(Permission.Authenticated)
     @RequireVerification(Verification.EMAIL)
+    @ZodSerializerDto(coreSchemas.shop.JobPostList)
     async getJobPostsList(
         @Ctx() ctx: RequestContext,
         @Query(new ZodValidationPipe(coreSchemas.shop.JobPostListOptions))
@@ -47,6 +48,7 @@ export class ShopHiringJobPostController {
     @Get(':id')
     @Allow(Permission.Authenticated)
     @RequireVerification(Verification.EMAIL)
+    @ZodSerializerDto(coreSchemas.shop.JobPost)
     async getJobPost(@Ctx() ctx: RequestContext, @Param('id', new ZodValidationPipe(schema.ID)) id: ID) {
         const customer = await this.customerService.getUserCustomerFromRequest(ctx);
         const jobPost = await this.jobPostService.findOne(ctx, id);
@@ -63,6 +65,7 @@ export class ShopHiringJobPostController {
     @Post('create')
     @Allow(Permission.Authenticated)
     @RequireVerification(Verification.EMAIL)
+    @ZodSerializerDto(coreSchemas.shop.JobPost)
     async createJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationCreateJobPostArgs))
@@ -76,6 +79,7 @@ export class ShopHiringJobPostController {
     @Patch('edit-draft')
     @Allow(Permission.Authenticated)
     @RequireVerification(Verification.EMAIL)
+    @ZodSerializerDto(coreSchemas.shop.JobPost)
     async editDraftJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationEditDraftJobPostArgs))
@@ -96,6 +100,7 @@ export class ShopHiringJobPostController {
     @Delete('delete-draft')
     @Allow(Permission.Authenticated)
     @RequireVerification(Verification.EMAIL)
+    @ZodSerializerDto(coreSchemas.shop.JobPost)
     async deleteDraftJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationDeleteDraftJobPostArgs))
@@ -117,6 +122,7 @@ export class ShopHiringJobPostController {
     @Post('publish')
     @Allow(Permission.Authenticated)
     @RequireVerification(Verification.EMAIL)
+    @ZodSerializerDto(coreSchemas.shop.JobPost)
     async requestPublishDraft(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationPublishJobPostArgs))
@@ -137,6 +143,7 @@ export class ShopHiringJobPostController {
     @Patch('edit-published')
     @Allow(Permission.Authenticated)
     @RequireVerification(Verification.EMAIL)
+    @ZodSerializerDto(coreSchemas.shop.JobPost)
     async editPublishedJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationEditPublishedJobPostArgs))
@@ -157,6 +164,7 @@ export class ShopHiringJobPostController {
     @Post('close')
     @Allow(Permission.Authenticated)
     @RequireVerification(Verification.EMAIL)
+    @ZodSerializerDto(coreSchemas.shop.JobPost)
     async closePublishedJobPost(
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationCloseJobPostArgs))

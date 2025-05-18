@@ -1,17 +1,18 @@
 import z from 'zod';
 import { CustomerRole, User } from '../common';
 import { LogicalOperator, SortOrder } from '../common/common-enums.schema';
-import { DateOperators, IdOperators, StringOperators } from '../common/common-types.schema';
+import { DateOperators, ID, IdOperators, StringOperators } from '../common/common-types.schema';
 import { HistoryEntry } from './history-entry-type.schema';
 
 export const Customer = z.object({
+    id: ID,
     firstName: z.string().min(2).max(75),
     lastName: z.string().min(2).max(75),
     emailAddress: z.string().email(),
     role: CustomerRole.nullable(),
     phoneNumber: z.string().nullable(), // TODO
     user: User.optional(),
-    deletedAt: z.string().datetime().nullable(),
+    deletedAt: z.coerce.date().nullable(),
     history: z.array(HistoryEntry),
 });
 

@@ -10,8 +10,8 @@ export const CollectionBreadcrumb = z.object({
 
 export const CollectionTranslation = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     languageCode: LanguageCode,
     name: z.string(),
     slug: z.string(),

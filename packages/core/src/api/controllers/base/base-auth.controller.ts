@@ -40,7 +40,7 @@ export class BaseAuthController {
             res,
         );
 
-        return res.send({ login: result });
+        return res.send(result);
     }
 
     async logout(ctx: RequestContext, req: Request, res: Response) {
@@ -60,7 +60,7 @@ export class BaseAuthController {
             sessionToken: '',
         });
 
-        return res.send({ logout: { success: true } });
+        return res.send({ success: true });
     }
 
     /**
@@ -71,14 +71,20 @@ export class BaseAuthController {
         if (!userId) {
             throw new ForbiddenException(LogLevel.Verbose);
         }
+
         if (apiType === 'admin') {
             const administrator = await this.administratorService.findOneByUserId(ctx, userId, ['user.roles']);
             if (!administrator) {
                 throw new ForbiddenException(LogLevel.Verbose);
             }
         }
-        const user = userId && (await this.userService.getUserById(ctx, userId));
-        return { me: user ? this.publiclyAccessibleUser(user) : null };
+
+        const user = await this.userService.getUserById(ctx, userId);
+        if (!user) {
+            throw new ForbiddenException(LogLevel.Verbose);
+        }
+
+        return this.publiclyAccessibleUser(user);
     }
 
     /**

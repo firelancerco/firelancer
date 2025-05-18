@@ -6,9 +6,8 @@ import { DateOperators, IdOperators, StringOperators } from '../common/common-ty
 
 export const Role = z.object({
     id: ID,
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-    strategy: z.string(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
     description: z.string(),
     permissions: z.array(Permission),
 });

@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Observable, of } from 'rxjs';
+import { Observable, from, firstValueFrom } from 'rxjs';
 
 import { parseContext } from '../../common/parse-context';
 import { internal_getRequestContext, internal_setRequestContext, RequestContext } from '../../common/request-context';
@@ -40,15 +40,14 @@ export class TransactionInterceptor implements NestInterceptor {
                 context.getHandler(),
             );
 
-            return of(
+            return from(
                 this.transactionWrapper.executeInTransaction(
                     ctx,
                     _ctx => {
                         // Registers transactional request context associated
                         // with execution handler function
                         internal_setRequestContext(req, _ctx, context);
-
-                        return next.handle();
+                        return firstValueFrom(next.handle());
                     },
                     transactionMode,
                     transactionIsolationLevel,

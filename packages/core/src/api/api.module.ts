@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
 import { ConnectionModule } from '../connection/connection.module';
 import { DataImportModule } from '../data-import';
@@ -9,6 +9,7 @@ import { ServiceModule } from '../service/service.module';
 import { AdminModule, ApiSharedModule, ShopModule } from './api-internal-modules';
 import { AuthGuard } from './middlewares/auth.guard';
 import { ExceptionHandlerFilter } from './middlewares/exception-handler.filter';
+import { ZodSerializerInterceptor } from 'nestjs-zod';
 
 @Module({
     imports: [
@@ -30,6 +31,10 @@ import { ExceptionHandlerFilter } from './middlewares/exception-handler.filter';
         {
             provide: APP_FILTER,
             useClass: ExceptionHandlerFilter,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: ZodSerializerInterceptor,
         },
     ],
 })
