@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { alphabet, generateRandomString } from '@firelancerco/common/lib/shared-utils';
 
 import { ConfigService } from '../../../config/config.service';
-/* eslint-disable-next-line @typescript-eslint/no-require-imports */
+
 const ms = require('ms');
 
 /**
@@ -14,11 +14,10 @@ export class VerificationTokenGenerator {
     constructor(private configService: ConfigService) {}
 
     /**
-     * Generates a verification token which encodes the time of generation and concatenates it with a
-     * random id.
+     * Generates a verification token
      */
     generateVerificationToken() {
-        return generateRandomString(6, alphabet('0-9'));
+        return generateRandomString(6, alphabet('0-9', 'A-Z'));
     }
 
     /**
