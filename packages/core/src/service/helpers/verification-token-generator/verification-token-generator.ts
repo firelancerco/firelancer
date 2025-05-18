@@ -17,7 +17,7 @@ export class VerificationTokenGenerator {
      * Generates a verification token
      */
     generateVerificationToken() {
-        return generateRandomString(6, alphabet('0-9', 'A-Z'));
+        return generateRandomString(5, '23456789ABCDEFGHJKLMNPQRSTUVWXYZ');
     }
 
     /**
