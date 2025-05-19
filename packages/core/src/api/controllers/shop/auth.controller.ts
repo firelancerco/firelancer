@@ -75,7 +75,7 @@ export class ShopAuthController extends BaseAuthController {
         args: MutationAuthenticateArgs,
     ) {
         const result = await this.authenticateAndCreateSession(ctx, args, req, res);
-        return res.send(result);
+        res.send(result);
     }
 
     @Transaction()
@@ -208,7 +208,7 @@ export class ShopAuthController extends BaseAuthController {
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationUpdateCustomerPasswordArgs))
         args: MutationUpdateCustomerPasswordArgs,
-    ): Promise<{ success: boolean }> {
+    ) {
         this.requireNativeAuthStrategy();
 
         await super.updatePassword(ctx, args.currentPassword, args.newPassword);
@@ -236,7 +236,7 @@ export class ShopAuthController extends BaseAuthController {
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationRequestUpdateCustomerEmailAddressArgs))
         args: MutationRequestUpdateCustomerEmailAddressArgs,
-    ): Promise<{ success: boolean }> {
+    ) {
         this.requireNativeAuthStrategy();
         if (!ctx.activeUserId) {
             throw new ForbiddenException();
@@ -259,7 +259,7 @@ export class ShopAuthController extends BaseAuthController {
         @Ctx() ctx: RequestContext,
         @Body(new ZodValidationPipe(coreSchemas.shop.MutationUpdateCustomerEmailAddressArgs))
         args: MutationUpdateCustomerEmailAddressArgs,
-    ): Promise<{ success: boolean }> {
+    ) {
         this.requireNativeAuthStrategy();
         const result = await this.customerService.updateEmailAddress(ctx, args.token);
         return { success: result };

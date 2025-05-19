@@ -1,14 +1,12 @@
 import { Permission } from '@firelancerco/common/lib/generated-schema';
 import { Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ZodSerializerDto } from 'nestjs-zod';
 
 import { RequestContext } from '../../../../common';
 import { AssetService } from '../../../../service';
 import { Allow } from '../../../decorators/allow.decorator';
 import { Ctx } from '../../../decorators/request-context.decorator';
 import { Transaction } from '../../../decorators/transaction.decorator';
-import { coreSchemas } from '../../../schema/core-schemas';
 
 @Controller('assets')
 export class AssetEntityController {
@@ -18,7 +16,6 @@ export class AssetEntityController {
     @Post('upload')
     @Allow(Permission.Public)
     @UseInterceptors(FilesInterceptor('files'))
-    @ZodSerializerDto(coreSchemas.common.Asset.array())
     async upload(@Ctx() ctx: RequestContext, @UploadedFiles() files: Array<Express.Multer.File>) {
         const assets = [];
         if (files && files.length > 0) {
@@ -27,6 +24,7 @@ export class AssetEntityController {
                 assets.push(asset);
             }
         }
+
         return assets;
     }
 }
