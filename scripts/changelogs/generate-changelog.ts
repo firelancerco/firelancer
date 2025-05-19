@@ -13,7 +13,7 @@ if (process.argv.includes('--next') || process.env.npm_config_argv?.includes('pu
 /**
  * The types of commit which will be included in the changelog.
  */
-const VALID_TYPES = ['feat', 'fix', 'perf'];
+const VALID_TYPES = ['feat', 'fix', 'perf', 'refactor', 'revert'];
 
 /**
  * Define which packages to create changelog entries for.
