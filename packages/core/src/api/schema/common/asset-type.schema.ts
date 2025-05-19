@@ -31,7 +31,6 @@ export const AssetList = z.object({
 export const OrderableAsset = z.object({
     id: ID,
     createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date(),
     assetId: ID,
     asset: Asset.optional(),
     position: z.number().int(),

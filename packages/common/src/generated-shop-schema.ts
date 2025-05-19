@@ -28,7 +28,6 @@ export type AssetList = {
 export type OrderableAsset = {
     id: ID;
     createdAt: Date;
-    updatedAt: Date;
     assetId: ID;
     asset?: Asset | undefined;
     position: number;
@@ -74,14 +73,6 @@ export type BalanceEntry = {
 };
 export type CollectionBreadcrumb = {
     id: ID;
-    name: string;
-    slug: string;
-};
-export type CollectionTranslation = {
-    id: ID;
-    createdAt: Date;
-    updatedAt: Date;
-    languageCode: LanguageCode;
     name: string;
     slug: string;
 };
@@ -469,99 +460,6 @@ export enum CustomerRole {
     SELLER = 'SELLER',
     BUYER = 'BUYER',
 }
-export type FacetTranslation = {
-    id: ID;
-    createdAt: Date;
-    updatedAt: Date;
-    name: string;
-    languageCode: LanguageCode;
-};
-export type Facet = {
-    id: ID;
-    createdAt: Date;
-    updatedAt: Date;
-    code: string;
-    languageCode?: LanguageCode | undefined;
-    name?: string | undefined;
-    translations: FacetTranslation[];
-    facetValues?: FacetValue[] | undefined;
-};
-export type FacetList = {
-    items: Facet[];
-    totalItems: number;
-};
-export type FacetSortParameter = {
-    id?: SortOrder | undefined;
-    createdAt?: SortOrder | undefined;
-    updatedAt?: SortOrder | undefined;
-    code?: SortOrder | undefined;
-    name?: SortOrder | undefined;
-};
-export type FacetFilterParameter = {
-    _and?: FacetFilterParameter[] | undefined;
-    _or?: FacetFilterParameter[] | undefined;
-    id?: IdOperators | undefined;
-    code?: StringOperators | undefined;
-    createdAt?: DateOperators | undefined;
-    updatedAt?: DateOperators | undefined;
-    languageCode?: StringOperators | undefined;
-    name?: StringOperators | undefined;
-};
-export type FacetListOptions = {
-    take?: number | undefined;
-    skip?: number | undefined;
-    sort?: FacetSortParameter | undefined;
-    filter?: FacetFilterParameter | undefined;
-    filterOperator?: LogicalOperator | undefined;
-};
-export type FacetValueTranslation = {
-    id: ID;
-    createdAt: Date;
-    updatedAt: Date;
-    languageCode: LanguageCode;
-    name: string;
-};
-export type FacetValue = {
-    id: ID;
-    createdAt: Date;
-    updatedAt: Date;
-    code: string;
-    facetId: ID;
-    languageCode?: LanguageCode | undefined;
-    name?: string | undefined;
-    translations: FacetValueTranslation[];
-    facet?: Facet | undefined;
-};
-export type FacetValueList = {
-    items: FacetValue[];
-    totalItems: number;
-};
-export type FacetValueSortParameter = {
-    id?: SortOrder | undefined;
-    createdAt?: SortOrder | undefined;
-    updatedAt?: SortOrder | undefined;
-    code?: SortOrder | undefined;
-    facetId?: SortOrder | undefined;
-    name?: SortOrder | undefined;
-};
-export type FacetValueFilterParameter = {
-    _and?: FacetValueFilterParameter[] | undefined;
-    _or?: FacetValueFilterParameter[] | undefined;
-    id?: IdOperators | undefined;
-    code?: StringOperators | undefined;
-    createdAt?: DateOperators | undefined;
-    updatedAt?: DateOperators | undefined;
-    languageCode?: StringOperators | undefined;
-    name?: StringOperators | undefined;
-    facetId?: IdOperators | undefined;
-};
-export type FacetValueListOptions = {
-    take?: number | undefined;
-    skip?: number | undefined;
-    sort?: FacetValueSortParameter | undefined;
-    filter?: FacetValueFilterParameter | undefined;
-    filterOperator?: LogicalOperator | undefined;
-};
 export enum HistoryEntryType {
     CUSTOMER_EMAIL_UPDATE_REQUESTED = 'CUSTOMER_EMAIL_UPDATE_REQUESTED',
     CUSTOMER_EMAIL_UPDATE_VERIFIED = 'CUSTOMER_EMAIL_UPDATE_VERIFIED',
@@ -816,8 +714,6 @@ export type MutationLoginArgs = {
 };
 export type Collection = {
     id: ID;
-    createdAt: Date;
-    updatedAt: Date;
     languageCode: LanguageCode;
     name: string;
     slug: string;
@@ -829,10 +725,14 @@ export type Collection = {
     assets?: CollectionAsset[] | undefined;
     translations?: CollectionTranslation[] | undefined;
 };
+export type CollectionTranslation = {
+    languageCode: LanguageCode;
+    name: string;
+    slug: string;
+};
 export type CollectionAsset = {
     id: ID;
     createdAt: Date;
-    updatedAt: Date;
     assetId: ID;
     asset?: Asset | undefined;
     position: number;
@@ -931,7 +831,6 @@ export type Customer = {
 export type HistoryEntry = {
     id: ID;
     createdAt: Date;
-    updatedAt: Date;
     type: HistoryEntryType;
     data: any;
 };
@@ -1037,7 +936,6 @@ export type JobPost = {
 export type JobPostAsset = {
     id: ID;
     createdAt: Date;
-    updatedAt: Date;
     assetId: ID;
     asset?: Asset | undefined;
     position: number;
@@ -1073,5 +971,80 @@ export type JobPostListOptions = {
     skip?: number | undefined;
     sort?: JobPostSortParameter | undefined;
     filter?: JobPostFilterParameter | undefined;
+    filterOperator?: LogicalOperator | undefined;
+};
+export type FacetTranslation = {
+    name: string;
+    languageCode: LanguageCode;
+};
+export type Facet = {
+    id: ID;
+    code: string;
+    languageCode?: LanguageCode | undefined;
+    name?: string | undefined;
+    translations: FacetTranslation[];
+    facetValues?: FacetValue[] | undefined;
+};
+export type FacetList = {
+    items: Facet[];
+    totalItems: number;
+};
+export type FacetSortParameter = {
+    id?: SortOrder | undefined;
+    code?: SortOrder | undefined;
+    name?: SortOrder | undefined;
+};
+export type FacetFilterParameter = {
+    _and?: FacetFilterParameter[] | undefined;
+    _or?: FacetFilterParameter[] | undefined;
+    id?: IdOperators | undefined;
+    code?: StringOperators | undefined;
+    languageCode?: StringOperators | undefined;
+    name?: StringOperators | undefined;
+};
+export type FacetListOptions = {
+    take?: number | undefined;
+    skip?: number | undefined;
+    sort?: FacetSortParameter | undefined;
+    filter?: FacetFilterParameter | undefined;
+    filterOperator?: LogicalOperator | undefined;
+};
+export type FacetValueTranslation = {
+    languageCode: LanguageCode;
+    name: string;
+};
+export type FacetValue = {
+    id: ID;
+    code: string;
+    facetId: ID;
+    languageCode?: LanguageCode | undefined;
+    name?: string | undefined;
+    translations: FacetValueTranslation[];
+    facet?: Facet | undefined;
+};
+export type FacetValueList = {
+    items: FacetValue[];
+    totalItems: number;
+};
+export type FacetValueSortParameter = {
+    id?: SortOrder | undefined;
+    code?: SortOrder | undefined;
+    facetId?: SortOrder | undefined;
+    name?: SortOrder | undefined;
+};
+export type FacetValueFilterParameter = {
+    _and?: FacetValueFilterParameter[] | undefined;
+    _or?: FacetValueFilterParameter[] | undefined;
+    id?: IdOperators | undefined;
+    code?: StringOperators | undefined;
+    languageCode?: StringOperators | undefined;
+    name?: StringOperators | undefined;
+    facetId?: IdOperators | undefined;
+};
+export type FacetValueListOptions = {
+    take?: number | undefined;
+    skip?: number | undefined;
+    sort?: FacetValueSortParameter | undefined;
+    filter?: FacetValueFilterParameter | undefined;
     filterOperator?: LogicalOperator | undefined;
 };

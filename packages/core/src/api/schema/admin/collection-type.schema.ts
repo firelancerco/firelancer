@@ -9,7 +9,7 @@ import {
     NumberOperators,
     StringOperators,
 } from '../common/common-types.schema';
-import { CollectionBreadcrumb, CollectionTranslation, LanguageCode, OrderableAsset } from '../common';
+import { CollectionBreadcrumb, LanguageCode, OrderableAsset } from '../common';
 
 export const Collection: z.ZodType<any> = z.object({
     id: ID,
@@ -28,6 +28,15 @@ export const Collection: z.ZodType<any> = z.object({
 
     isPrivate: z.boolean(),
     inheritFilters: z.boolean(),
+});
+
+export const CollectionTranslation = z.object({
+    id: ID,
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
+    languageCode: LanguageCode,
+    name: z.string(),
+    slug: z.string(),
 });
 
 export const CollectionAsset = OrderableAsset.extend({

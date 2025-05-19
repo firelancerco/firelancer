@@ -6,8 +6,6 @@ export * from './common-enums.schema';
 export * from './common-types.schema';
 export * from './currency-code.schema';
 export * from './customer-type.schema';
-export * from './facet-type.schema';
-export * from './facet-value-type.schema';
 export * from './history-entry-type.schema';
 export * from './job-post-type.schema';
 export * from './language-code.schema';

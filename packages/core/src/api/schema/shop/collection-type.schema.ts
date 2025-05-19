@@ -9,12 +9,10 @@ import {
     NumberOperators,
     StringOperators,
 } from '../common/common-types.schema';
-import { CollectionBreadcrumb, CollectionTranslation, LanguageCode, OrderableAsset } from '../common';
+import { CollectionBreadcrumb, LanguageCode, OrderableAsset } from '../common';
 
 export const Collection: z.ZodType<any> = z.object({
     id: ID,
-    createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date(),
     languageCode: LanguageCode,
     name: z.string().min(3).max(255),
     slug: z.string().min(3).max(255),
@@ -25,6 +23,12 @@ export const Collection: z.ZodType<any> = z.object({
     children: z.lazy(() => Collection.array().optional()),
     assets: z.lazy(() => CollectionAsset.array().optional()),
     translations: z.lazy(() => CollectionTranslation.array().optional()),
+});
+
+export const CollectionTranslation = z.object({
+    languageCode: LanguageCode,
+    name: z.string(),
+    slug: z.string(),
 });
 
 export const CollectionAsset = OrderableAsset.extend({

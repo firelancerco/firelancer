@@ -5,3 +5,5 @@ export * from './customer-type.schema';
 export * from './history-entry-type.schema';
 export * from './job-post-api.schema';
 export * from './job-post-type.schema';
+export * from './facet-type.schema';
+export * from './facet-value-type.schema';

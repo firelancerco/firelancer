@@ -1,8 +1,6 @@
 import z from 'zod';
-import { LogicalOperator, SortOrder } from './common-enums.schema';
-import { DateOperators, ID, IdOperators, StringOperators } from './common-types.schema';
-import { LanguageCode } from './language-code.schema';
 import { FacetValue } from './facet-value-type.schema';
+import { DateOperators, ID, IdOperators, LanguageCode, LogicalOperator, SortOrder, StringOperators } from '../common';
 
 export const FacetTranslation = z.object({
     id: ID,

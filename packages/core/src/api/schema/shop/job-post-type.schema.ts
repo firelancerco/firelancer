@@ -1,8 +1,9 @@
 import z from 'zod';
-import { FacetValue, JobPostState, JobPostVisibility, LogicalOperator, OrderableAsset, SortOrder } from '../common';
+import { JobPostState, JobPostVisibility, LogicalOperator, OrderableAsset, SortOrder } from '../common';
 import { DateOperators, ID, IdOperators, NumberOperators, StringOperators } from '../common/common-types.schema';
 import { Collection } from './collection-type.schema';
 import { Customer } from './customer-type.schema';
+import { FacetValue } from './facet-value-type.schema';
 
 export const JobPost: z.ZodType<any> = z.object({
     id: ID,
