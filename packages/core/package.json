@@ -1,6 +1,6 @@
 {
     "name": "@firelancerco/core",
-    "version": "1.3.0-alpha.3",
+    "version": "1.3.0-alpha.4",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [
@@ -21,7 +21,7 @@
     },
     "dependencies": {
         "@duplojs/zod-to-typescript": "^0.4.0",
-        "@firelancerco/common": "^1.3.0-alpha.3",
+        "@firelancerco/common": "^1.3.0-alpha.4",
         "@nestjs/common": "^10.0.0",
         "@nestjs/core": "^10.0.0",
         "@nestjs/platform-express": "^10.0.0",
